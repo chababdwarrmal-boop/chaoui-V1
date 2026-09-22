@@ -988,28 +988,67 @@
 
   </div>
 
-  <!-- SUPABASE: primary CDN + automatic fallback -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- CHAoui boot loader: load Supabase without blocking the splash forever. -->
   <script>
-    if (!window.supabase) {
-      document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\\/script>');
-    }
-  </script>
+    (function () {
+      const splash = document.getElementById("splash");
+      const auth = document.getElementById("authScreen");
+      const showAuthSafely = () => {
+        if (splash) {
+          splash.classList.remove("show");
+          splash.style.display = "none";
+        }
+        if (auth) auth.style.display = "flex";
+      };
 
-  <!-- MAIN JS -->
-  <script src="script.js"></script>
+      // Safety net starts BEFORE any external dependency.
+      window.setTimeout(showAuthSafely, 9000);
 
-  <!-- Emergency splash failsafe: never leave the user stuck on the splash screen. -->
-  <script>
-    window.setTimeout(() => {
-      const splash = document.getElementById('splash');
-      if (splash && getComputedStyle(splash).display !== 'none') {
-        splash.classList.remove('show');
-        splash.style.display = 'none';
-        const auth = document.getElementById('authScreen');
-        if (auth) auth.style.display = 'flex';
+      const sources = [
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+        "https://unpkg.com/@supabase/supabase-js@2"
+      ];
+
+      let index = 0;
+
+      function loadNext() {
+        if (window.supabase) {
+          const app = document.createElement("script");
+          app.src = "script.js";
+          app.onload = () => console.log("CHAoui app loaded");
+          app.onerror = () => showAuthSafely();
+          document.head.appendChild(app);
+          return;
+        }
+
+        if (index >= sources.length) {
+          console.error("Supabase CDN unavailable");
+          showAuthSafely();
+          return;
+        }
+
+        const src = sources[index++];
+        const tag = document.createElement("script");
+        let done = false;
+
+        const finish = (ok) => {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          tag.remove();
+          if (ok && window.supabase) loadNext();
+          else loadNext();
+        };
+
+        const timer = window.setTimeout(() => finish(false), 5000);
+        tag.onload = () => finish(true);
+        tag.onerror = () => finish(false);
+        tag.src = src;
+        document.head.appendChild(tag);
       }
-    }, 9000);
+
+      loadNext();
+    })();
   </script>
 
   <!-- PWA SERVICE WORKER -->
