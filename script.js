@@ -2296,144 +2296,94 @@ async function renderMatches() {
    ========================================================= */
 
 async function renderRanking() {
+  const box = $("rankingList");
+  if (!box) return;
 
-  const box =
-    $("rankingList");
-
-
-  if (!box) {
-    return;
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id, username, display_name, avatar_url, rating, wins, losses, points, level, title"
-      );
-
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("id, username, display_name, avatar_url, rating, wins, losses, draws, points, level, title");
 
   if (error) {
-
     console.error(error);
-
-    box.innerHTML =
-      `<div class="empty-card">وقع مشكل فتحميل الترتيب.</div>`;
-
+    box.innerHTML = '<div class="empty-card">وقع مشكل فتحميل الترتيب.</div>';
     return;
-
   }
 
-
-  const players =
-    data || [];
-
-
+  const players = data || [];
   players.sort((a, b) => {
-
-    if (
-      currentRankingType ===
-      "points"
-    ) {
-
-      return (
-        (b.points || 0) -
-        (a.points || 0)
-      );
-
-    }
-
-
-    if (
-      currentRankingType ===
-      "wins"
-    ) {
-
-      return (
-        (b.wins || 0) -
-        (a.wins || 0)
-      );
-
-    }
-
-
-    return (
-      (b.rating || 0) -
-      (a.rating || 0)
-    );
-
+    if (currentRankingType === "points") return (b.points || 0) - (a.points || 0);
+    if (currentRankingType === "wins") return (b.wins || 0) - (a.wins || 0);
+    return (b.rating || 0) - (a.rating || 0);
   });
 
+  box.innerHTML = players.slice(0, 50).map((player, index) => {
+    const isMe = currentUser?.id === player.id;
+    const played = Number(player.wins || 0) + Number(player.losses || 0) + Number(player.draws || 0);
+    const winrate = played ? Math.round(Number(player.wins || 0) * 100 / played) : 0;
+    const value = currentRankingType === "points"
+      ? ${player.points || 0} P
+      : currentRankingType === "wins"
+        ? ${player.wins || 0} W
+        : ${player.rating || 0} ELO;
 
-  box.innerHTML =
-    players
-      .slice(0, 50)
-      .map((player, index) => `
-
-        <article class="ranking-row">
-
-          <div class="ranking-position">
-            #${index + 1}
-          </div>
-
-
-          <div class="ranking-avatar">
-            ${escapeHTML(
-              getInitials(
-                player.display_name ||
-                player.username
-              )
-            )}
-          </div>
-
-
-          <div class="ranking-player">
-
-            <strong>
-              ${escapeHTML(
-                player.display_name ||
-                player.username
-              )}
-            </strong>
-
-            <small>
-              @${escapeHTML(
-                player.username
-              )}
-            </small>
-
-          </div>
-
-
-          <div class="ranking-value">
-
-            ${
-              currentRankingType ===
-              "points"
-
-                ? `${player.points || 0} P`
-
-                : currentRankingType ===
-                  "wins"
-
-                  ? `${player.wins || 0} W`
-
-                  : `${player.rating || 0}`
-            }
-
-          </div>
-
-        </article>
-
-      `)
-      .join("");
-
+    return \`
+      <article class="ranking-row">
+        <div class="ranking-position">#${index + 1}</div>
+        <div class="ranking-avatar">${escapeHTML(getInitials(player.display_name || player.username))}</div>
+        <div class="ranking-player">
+          <strong>${escapeHTML(player.display_name || player.username)}</strong>
+          <small>@${escapeHTML(player.username || "")} · LV.${Number(player.level || 1)}</small>
+        </div>
+        <div class="ranking-value">${value}</div>
+        <div class="ranking-extra">
+          <small>${player.wins || 0}W · ${player.losses || 0}L · ${player.draws || 0}D</small>
+          <small>${winrate}% WR</small>
+          ${isMe ? '<button class="secondary-btn rating-history-btn" onclick="openRatingHistory()">📈 تاريخ ELO</button>' : ""}
+        </div>
+      </article>
+    \`;
+  }).join("") || '<div class="empty-card">مازال ما كاين حتى لاعب فالترتيب.</div>';
 }
 
+async function openRatingHistory() {
+  if (!currentUser) return showToast("دخل للحساب باش تشوف تاريخ ELO.");
+  const { data, error } = await supabaseClient
+    .from("rating_history")
+    .select("id, match_id, opponent_id, result, rating_before, rating_after, rating_delta, opponent_rating_before, created_at")
+    .eq("player_id", currentUser.id)
+    .order("created_at", { ascending: false })
+    .limit(30);
+
+  if (error) {
+    console.error(error);
+    return showToast("تعذر تحميل تاريخ ELO.");
+  }
+
+  const rows = data || [];
+  if (!rows.length) {
+    return openModal(\`
+      <div class="modal-head"><h2>📈 تاريخ ELO</h2><button onclick="closeModal()">×</button></div>
+      <div class="modal-body"><div class="empty-card">مازال ما تسجل حتى تغيير فـ ELO.</div></div>
+    \`);
+  }
+
+  const deltaClass = d => Number(d) > 0 ? "positive" : Number(d) < 0 ? "negative" : "";
+  const html = rows.map((r, i) => \`
+    <article class="rating-history-row">
+      <div><strong>#${rows.length - i}</strong><span>${escapeHTML(r.result || "match")}</span></div>
+      <div><small>${formatDate(r.created_at)}</small><small>قبل: ${Number(r.rating_before)} → بعد: ${Number(r.rating_after)}</small></div>
+      <strong class="${deltaClass(r.rating_delta)}">${Number(r.rating_delta) > 0 ? "+" : ""}${Number(r.rating_delta)}</strong>
+    </article>
+  \`).join("");
+
+  openModal(\`
+    <div class="modal-head"><h2>📈 تاريخ ELO ديالك</h2><button onclick="closeModal()">×</button></div>
+    <div class="modal-body rating-history-list">
+      <p>آخر 30 تغيير فالتقييم. التحديث كيوقع أوتوماتيكياً منين كتتأكد نتيجة الماتش.</p>
+      ${html}
+    </div>
+  \`);
+}
 
 /* =========================================================
    PROFILE
