@@ -1,0 +1,15 @@
+CHAoui-Pro MASTER — 2026-09-22
+
+New systems:
+- CHAoui Player ID
+- Direct Chat + Match Rooms + Realtime notifications
+- Coins Wallet + Ledger + Daily/Win/Draw/Streak/Tournament rewards
+- Owner Coin Grant + Coin Economy settings
+- Shop price/level controls for Owner
+- Mystery Boxes with weighted rewards + Owner controls
+- Clubs
+- Seasons + Missions with backend progress/rewards
+- Community Activity Feed
+- CHAoui Assistant
+- Tournament organizer contact
+- Sensitive profile economy/stat columns protected from direct client updates
