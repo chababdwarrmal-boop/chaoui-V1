@@ -3156,3 +3156,19 @@ body{background:radial-gradient(circle at 80% 0%,rgba(0,132,255,.15),transparent
 @media(max-width:820px){.wallet-grid,.chat-layout{grid-template-columns:1fr}.chat-sidebar{border-left:0;border-bottom:1px solid rgba(255,255,255,.07);max-height:220px;overflow:auto}.chat-messages{min-height:360px}.wallet-hero{flex-direction:column;align-items:stretch}.wallet-balance strong{font-size:34px}.shop-card,.mystery-box-card,.club-card{align-items:flex-start;flex-wrap:wrap}.coin-settings-grid{grid-template-columns:1fr}.profile-wallet-line{flex-wrap:wrap}}
 .owner-manager-list{display:flex;flex-direction:column;gap:10px}.owner-edit-row{display:grid;grid-template-columns:1.5fr 110px 100px auto auto;gap:8px;align-items:center;padding:10px;border-radius:15px;background:#09182d;border:1px solid rgba(255,255,255,.06)}.owner-edit-row.mini{grid-template-columns:1.5fr 100px 90px auto auto}.owner-edit-row .modal-input{margin:0}.owner-box-manager{padding:10px;border-radius:18px;border:1px solid rgba(255,255,255,.07);background:#071326}.box-reward-editor{display:flex;flex-direction:column;gap:7px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
 @media(max-width:720px){.owner-edit-row,.owner-edit-row.mini{grid-template-columns:1fr 1fr}.owner-edit-row>span,.owner-edit-row>strong{grid-column:1/-1}}
+
+
+/* ELO rating history */
+.ranking-extra{display:flex;flex-direction:column;gap:4px;align-items:flex-end;min-width:110px}
+.ranking-extra small{opacity:.78}
+.rating-history-btn{font-size:.78rem;padding:6px 9px}
+.rating-history-list{display:flex;flex-direction:column;gap:10px}
+.rating-history-row{display:grid;grid-template-columns:1fr 1.5fr auto;gap:10px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.03)}
+.rating-history-row>div{display:flex;flex-direction:column;gap:4px}
+.rating-history-row .positive{font-weight:800}
+.rating-history-row .negative{font-weight:800}
+@media(max-width:700px){
+  .ranking-extra{min-width:90px}
+  .rating-history-row{grid-template-columns:1fr auto}
+  .rating-history-row>div:nth-child(2){grid-column:1/-1}
+}
