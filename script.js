@@ -425,6 +425,26 @@ function showLoginForm() {
 }
 
 
+async function resetPassword() {
+  const email = $("loginEmail")?.value.trim().toLowerCase();
+
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    return showMessage("دخل الإيميل ديالك الأول باش نصيفطو رابط استرجاع كلمة السر.", "error");
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin
+    });
+    if (error) throw error;
+    showMessage("تصيفط رابط تغيير كلمة السر للإيميل ديالك إذا كان الحساب موجود. 📩", "success");
+  } catch (error) {
+    console.error("PASSWORD RESET ERROR:", error);
+    showMessage(error?.message || "ما قدرناش نصيفطو رابط استرجاع كلمة السر.", "error");
+  }
+}
+
+
 function showRegisterForm() {
 
   const login = $("loginBox");
@@ -814,15 +834,24 @@ async function loginUser() {
 
   } catch (error) {
 
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
+    console.error("LOGIN ERROR:", error);
 
-    showMessage(
-      "البريد الإلكتروني أو كلمة السر غير صحيحة.",
-      "error"
-    );
+    const raw = String(error?.message || error || "").toLowerCase();
+    let message = "تعذر تسجيل الدخول.";
+
+    if (raw.includes("invalid login credentials")) {
+      message = "البريد الإلكتروني أو كلمة السر غير صحيحة.";
+    } else if (raw.includes("email not confirmed")) {
+      message = "خاصك تأكد البريد الإلكتروني ديالك قبل الدخول.";
+    } else if (raw.includes("too many requests") || raw.includes("rate limit")) {
+      message = "كاينين محاولات كثيرة. تسنى شوية وعاود.";
+    } else if (raw.includes("network") || raw.includes("fetch")) {
+      message = "كاين مشكل فالاتصال بـ Supabase. تأكد من الإنترنت وعاود.";
+    } else if (error?.message) {
+      message = error.message;
+    }
+
+    showMessage(message, "error");
 
 
   } finally {
