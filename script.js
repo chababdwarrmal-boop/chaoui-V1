@@ -429,21 +429,51 @@ async function resetPassword() {
   const email = $("loginEmail")?.value.trim().toLowerCase();
 
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-    return showMessage("دخل الإيميل ديالك الأول باش نصيفطو رابط استرجاع كلمة السر.", "error");
+    showMessage("دخل الإيميل ديالك الأول.", "error");
+    return;
   }
 
   try {
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin
+      redirectTo: window.location.origin + window.location.pathname
     });
+
     if (error) throw error;
-    showMessage("تصيفط رابط تغيير كلمة السر للإيميل ديالك إذا كان الحساب موجود. 📩", "success");
+
+    showMessage(
+      "تصيفط رابط تغيير كلمة السر للإيميل ديالك. شوف Inbox وSpam 📩",
+      "success"
+    );
   } catch (error) {
     console.error("PASSWORD RESET ERROR:", error);
-    showMessage(error?.message || "ما قدرناش نصيفطو رابط استرجاع كلمة السر.", "error");
+    const raw = String(error?.message || error || "");
+    showMessage(
+      raw.includes("redirect") || raw.includes("not allowed")
+        ? "رابط الاسترجاع مازال ما مضافش فـ Supabase. خاصنا نضيفو فـ Auth URL Configuration."
+        : raw,
+      "error"
+    );
   }
 }
 
+async function handlePasswordRecovery() {
+  const password = window.prompt("دخل كلمة السر الجديدة (6 أحرف على الأقل):");
+  if (!password) return;
+  if (password.length < 6) {
+    showMessage("كلمة السر خاصها تكون 6 أحرف على الأقل.", "error");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.updateUser({ password });
+  if (error) {
+    showMessage(error.message || "ما قدرناش نبدلو كلمة السر.", "error");
+    return;
+  }
+
+  showMessage("تبدلات كلمة السر بنجاح ✅ دابا دخل بها.", "success");
+  await supabaseClient.auth.signOut();
+  showLoginForm();
+}
 
 function showRegisterForm() {
 
@@ -877,151 +907,54 @@ async function loginUser() {
    ========================================================= */
 
 async function loadProfile() {
-
   if (!currentUser) {
-
     currentProfile = null;
-
     return null;
-
   }
-
 
   try {
+    // Backend-owned profile resolution. This works for PLAYER and OWNER
+    // without trusting frontend role values or relying on an INSERT from the browser.
+    const { data: ensured, error: ensureError } =
+      await supabaseClient.rpc("ensure_my_profile");
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id", currentUser.id)
-        .maybeSingle();
+    if (!ensureError && ensured) {
+      currentProfile = ensured;
+      await loadPlayerPrivate();
+      return currentProfile;
+    }
 
+    if (ensureError) {
+      console.error("ENSURE PROFILE ERROR:", ensureError);
+    }
+
+    // Safe read fallback for an already-existing profile.
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", currentUser.id)
+      .maybeSingle();
 
     if (error) {
-
-      console.error(
-        "PROFILE ERROR:",
-        error
-      );
-
+      console.error("PROFILE ERROR:", error);
       currentProfile = null;
-
       return null;
-
     }
-
-
-    /*
-       If profile exists, use it.
-    */
 
     if (data) {
-
       currentProfile = data;
-
       await loadPlayerPrivate();
-
       return currentProfile;
-
     }
-
-
-    /*
-       Profile does not exist.
-       Try creating a normal PLAYER profile.
-    */
-
-    const metadata =
-      currentUser.user_metadata || {};
-
-
-    const username =
-      metadata.username ||
-      currentUser.email
-        ?.split("@")[0] ||
-      `player_${currentUser.id.slice(0, 8)}`;
-
-
-    const displayName =
-      metadata.display_name ||
-      username;
-
-
-    const {
-      data: createdProfile,
-      error: createError
-    } =
-      await supabaseClient
-        .from("profiles")
-        .insert({
-
-          id: currentUser.id,
-
-          username,
-
-          display_name: displayName,
-
-          role: "player",
-
-          level: 1,
-
-          points: 0,
-
-          rating: 0,
-
-          wins: 0,
-
-          losses: 0,
-
-          premium: false
-
-        })
-        .select()
-        .single();
-
-
-    if (createError) {
-
-      console.error(
-        "PROFILE AUTO CREATE ERROR:",
-        createError
-      );
-
-      currentProfile = null;
-
-      return null;
-
-    }
-
-
-    currentProfile =
-      createdProfile;
-
-
-    await loadPlayerPrivate();
-
-
-    return currentProfile;
-
-
-  } catch (error) {
-
-    console.error(
-      "LOAD PROFILE CRASH:",
-      error
-    );
 
     currentProfile = null;
-
     return null;
-
+  } catch (error) {
+    console.error("LOAD PROFILE CRASH:", error);
+    currentProfile = null;
+    return null;
   }
-
 }
-
 
 /* =========================================================
    PLAYER PRIVATE
@@ -5631,6 +5564,11 @@ supabaseClient.auth.onAuthStateChange(
       "AUTH:",
       event
     );
+
+    if (event === "PASSWORD_RECOVERY") {
+      await handlePasswordRecovery();
+      return;
+    }
 
 
     if (
