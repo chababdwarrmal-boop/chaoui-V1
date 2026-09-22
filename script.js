@@ -6364,6 +6364,12 @@ document.addEventListener(
         loginUser
       );
 
+    $("resetPasswordBtn")
+      ?.addEventListener(
+        "click",
+        resetPassword
+      );
+
 
     $("registerBtn")
       ?.addEventListener(
