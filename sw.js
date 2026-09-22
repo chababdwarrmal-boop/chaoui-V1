@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v5";
+const CACHE_NAME = "chaoui-v6";
 
 const APP_FILES = [
   "./",
