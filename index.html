@@ -992,42 +992,71 @@
 
   </div>
 
-  <!-- CHAoui boot loader: load Supabase without blocking the splash forever. -->
+  <!-- CHAoui boot loader: load Supabase first, then the app, with cache-busting and visible failure feedback. -->
   <script>
     (function () {
       const splash = document.getElementById("splash");
       const auth = document.getElementById("authScreen");
-      const showAuthSafely = () => {
+
+      const showAuthSafely = (message) => {
         if (splash) {
           splash.classList.remove("show");
           splash.style.display = "none";
         }
         if (auth) auth.style.display = "flex";
+
+        if (message) {
+          const box = document.getElementById("authMessage");
+          if (box) {
+            box.textContent = message;
+            box.className = "auth-message error";
+          }
+        }
       };
 
-      // Safety net starts BEFORE any external dependency.
-      window.setTimeout(showAuthSafely, 9000);
+      // Never leave the user stuck on the splash if a CDN or script fails.
+      window.setTimeout(() => {
+        if (!window.CHAOUI_APP_LOADED) {
+          showAuthSafely("تعذر تحميل محرك التطبيق. عاود تحديث الصفحة، وإذا بقات نفس المشكلة غادي نصلحوها من السيرفر.");
+        }
+      }, 12000);
 
       const sources = [
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
-        "https://unpkg.com/@supabase/supabase-js@2"
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+        "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"
       ];
 
       let index = 0;
 
-      function loadNext() {
+      function loadApp() {
+        if (!window.supabase) {
+          console.error("Supabase SDK is unavailable.");
+          showAuthSafely("ما قدرناش نحمّلو خدمة تسجيل الدخول. عاود تحديث الصفحة.");
+          return;
+        }
+
+        const app = document.createElement("script");
+        app.src = "script.js?v=20260922-auth2";
+        app.onload = () => {
+          window.CHAOUI_APP_LOADED = true;
+          console.log("CHAoui app loaded");
+        };
+        app.onerror = () => {
+          console.error("CHAoui script failed to load.");
+          showAuthSafely("ملف التطبيق ما تحمّلش. عاود تحديث الصفحة.");
+        };
+        document.head.appendChild(app);
+      }
+
+      function loadNextSupabase() {
         if (window.supabase) {
-          const app = document.createElement("script");
-          app.src = "script.js";
-          app.onload = () => console.log("CHAoui app loaded");
-          app.onerror = () => showAuthSafely();
-          document.head.appendChild(app);
+          loadApp();
           return;
         }
 
         if (index >= sources.length) {
-          console.error("Supabase CDN unavailable");
-          showAuthSafely();
+          console.error("All Supabase CDN sources failed.");
+          showAuthSafely("خدمة تسجيل الدخول ما تحمّلاتش. عاود تحديث الصفحة.");
           return;
         }
 
@@ -1035,23 +1064,27 @@
         const tag = document.createElement("script");
         let done = false;
 
-        const finish = (ok) => {
+        const timer = window.setTimeout(() => finish(false), 8000);
+
+        function finish(ok) {
           if (done) return;
           done = true;
           clearTimeout(timer);
-          tag.remove();
-          if (ok && window.supabase) loadNext();
-          else loadNext();
-        };
+          if (ok && window.supabase) {
+            loadApp();
+          } else {
+            tag.remove();
+            loadNextSupabase();
+          }
+        }
 
-        const timer = window.setTimeout(() => finish(false), 5000);
         tag.onload = () => finish(true);
         tag.onerror = () => finish(false);
         tag.src = src;
         document.head.appendChild(tag);
       }
 
-      loadNext();
+      loadNextSupabase();
     })();
   </script>
 
