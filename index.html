@@ -988,11 +988,29 @@
 
   </div>
 
-  <!-- SUPABASE -->
+  <!-- SUPABASE: primary CDN + automatic fallback -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    if (!window.supabase) {
+      document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\\/script>');
+    }
+  </script>
 
   <!-- MAIN JS -->
   <script src="script.js"></script>
+
+  <!-- Emergency splash failsafe: never leave the user stuck on the splash screen. -->
+  <script>
+    window.setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash && getComputedStyle(splash).display !== 'none') {
+        splash.classList.remove('show');
+        splash.style.display = 'none';
+        const auth = document.getElementById('authScreen');
+        if (auth) auth.style.display = 'flex';
+      }
+    }, 9000);
+  </script>
 
   <!-- PWA SERVICE WORKER -->
   <script>
