@@ -15,7 +15,7 @@
   <title>CHAoui-Pro | eFootball Tournament Platform</title>
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="social.css?v=20260923-social2">
+  <link rel="stylesheet" href="social.css?v=20260923-social3">
 </head>
 
 <body>
@@ -1039,17 +1039,17 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260923-mystery5";
+        app.src = "script.js?v=20260923-social3";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
           console.log("CHAoui app loaded");
           const universe = document.createElement("script");
-          universe.src = "universe.js?v=20260923-universe1";
+          universe.src = "universe.js?v=20260923-universe2";
           universe.onload = () => console.log("CHAoui Universe loaded");
           universe.onerror = () => console.warn("CHAoui Universe failed to load");
           document.head.appendChild(universe);
           const social = document.createElement("script");
-          social.src = "social.js?v=20260923-social2";
+          social.src = "social.js?v=20260923-social3";
           social.onload = () => console.log("CHAoui Social loaded");
           social.onerror = () => console.warn("CHAoui Social failed to load");
           document.head.appendChild(social);
