@@ -5904,75 +5904,70 @@ async function renderWallet() {
 
 async function openMysteryBox(id){
   if(!currentUser)return showToast('دخل للحساب أولاً.');
-  openModal('<div class="mystery-opening" dir="rtl"><div class="mystery-orbit"><div class="mystery-box-3d">🎁</div></div><div class="mystery-opening-kicker">MYSTERY BOX</div><h2>الصندوق كيتحل...</h2><p>شنو غادي يطيح ليك؟ 👀</p><div class="mystery-shuffle"><i></i><i></i><i></i><i></i><i></i></div></div>');
-  await new Promise(resolve=>setTimeout(resolve,2200));
+
+  const {data:box}=await supabaseClient
+    .from('mystery_boxes')
+    .select('id,name,icon,cost')
+    .eq('id',id)
+    .single();
+
+  const boxName=box?.name||'MYSTERY BOX';
+  const boxIcon=box?.icon||'🎁';
+
+  openModal(`
+    <div class="mystery-stage" dir="rtl">
+      <div class="mystery-topline"><span>CHAOUI PRO</span><b>PACK OPENING</b></div>
+      <div class="mystery-logo-wrap"><img src="logo.png" alt="CHAoui"></div>
+      <div class="mystery-arena">
+        <div class="mystery-light"></div>
+        <div class="mystery-ring ring-a"></div><div class="mystery-ring ring-b"></div>
+        <div class="mystery-particle p1"></div><div class="mystery-particle p2"></div>
+        <div class="mystery-particle p3"></div><div class="mystery-particle p4"></div>
+        <div class="mystery-box-core"><div class="mystery-box-face">${escapeHTML(boxIcon)}</div><div class="mystery-box-shine"></div></div>
+      </div>
+      <div class="mystery-pack-name">${escapeHTML(boxName)}</div>
+      <h2>جاهز للمفاجأة؟</h2>
+      <p>الصندوق كيتحل دابا… 🔥</p>
+      <div class="mystery-progress"><span></span></div>
+      <div class="mystery-dots"><i></i><i></i><i></i></div>
+    </div>`);
+  
+  await new Promise(resolve=>setTimeout(resolve,2500));
+
   const {data,error}=await supabaseClient.rpc('open_mystery_box',{p_box_id:id});
-  if(error){closeModal();const m=error.message||'';return showToast(m.includes('INSUFFICIENT_COINS')?'Coins ما كافياش.':m.includes('LEVEL_REQUIRED')?'خاصك Level أعلى.':'ما قدرناش نفتح الصندوق.');}
-  await loadProfile(); renderCurrentUser(); renderProfile(); renderHomeDashboard(); renderWallet();
+  if(error){
+    closeModal();
+    const m=error.message||'';
+    return showToast(m.includes('INSUFFICIENT_COINS')?'Coins ما كافياش.':m.includes('LEVEL_REQUIRED')?'خاصك Level أعلى.':'ما قدرناش نفتح الصندوق.');
+  }
+
+  await loadProfile();
+  renderCurrentUser(); renderProfile(); renderHomeDashboard(); renderWallet();
+
   const negative=Boolean(data?.negative);
-  const reward=negative?('⚠️ '+String(data?.reward_value||'مفاجأة سلبية')):(data?.reward_type==='coins'?`+${data.amount} Coins`:data?.reward_type==='xp'?`+${data.amount} XP`:data?.reward_value||'جائزة');
-  openModal('<div class="mystery-result '+(negative?'mystery-negative':'')+'" dir="rtl"><div class="mystery-win-icon">'+(negative?'⚠️':'🎉')+'</div><span>'+escapeHTML(data?.box||'Mystery Box')+'</span><h2>'+escapeHTML(reward)+'</h2><p>'+(negative?'هاد المرة جاتك جائزة سلبية 😈 — الحظ ما وقفش معاك.':'مبروك! هادي هي الجائزة ديالك 🔥')+'</p><small>الرصيد الجديد: 🪙 '+Number(data?.coins||0)+'</small><button class="primary-btn" onclick="closeModal()">وااااعر 🔥</button></div>');
-}
-async function renderConversations(){
-  const list=$("conversationList"); if(!list||!currentUser)return;
-  const {data: memberships,error}=await supabaseClient.from('conversation_members').select('conversation_id,last_read_at').eq('user_id',currentUser.id).order('joined_at',{ascending:false});
-  if(error){list.innerHTML='<div class="empty-card">تعذر تحميل الرسائل.</div>';return;}
-  const ids=(memberships||[]).map(x=>x.conversation_id);
-  if(!ids.length){list.innerHTML='<div class="empty-card">مازال ما عندك حتى شات.<br>ضغط + شات وبدا.</div>';return;}
-  const {data: convs}=await supabaseClient.from('conversations').select('id,kind,title,created_at').in('id',ids).order('created_at',{ascending:false});
-  const {data: members}=await supabaseClient.from('conversation_members').select('conversation_id,user_id').in('conversation_id',ids);
-  const otherIds=[...new Set((members||[]).filter(m=>m.user_id!==currentUser.id).map(m=>m.user_id))];
-  const {data: players}=otherIds.length?await supabaseClient.from('profiles').select('id,username,display_name,player_code,profile_badge,online').in('id',otherIds):{data:[]};
-  const pm=new Map((players||[]).map(x=>[x.id,x]));
-  list.innerHTML=(convs||[]).map(c=>{const other=(members||[]).find(m=>m.conversation_id===c.id&&m.user_id!==currentUser.id);const p=pm.get(other?.user_id);const title=c.kind==='direct'?(p?.display_name||p?.username||'لاعب'):c.title||'CHAoui Chat';return `<button class="conversation-item ${currentChatId===c.id?'active':''}" type="button" onclick="openChatConversation('${c.id}')"><span class="chat-avatar">${escapeHTML(p?.profile_badge||'💬')}</span><span><strong>${escapeHTML(title)}</strong><small>${escapeHTML(p?.player_code||c.kind)}</small></span><i>${p?.online?'●':'○'}</i></button>`}).join('');
-  if(!currentChatId&&convs?.[0]) openChatConversation(convs[0].id);
+  const reward=negative
+    ? String(data?.reward_value||'مفاجأة سلبية')
+    : (data?.reward_type==='coins'?'+ '+data.amount+' Coins':data?.reward_type==='xp'?'+ '+data.amount+' XP':data?.reward_value||'جائزة');
+  const icon=negative?'⚠️':(data?.reward_type==='coins'?'🪙':data?.reward_type==='xp'?'⚡':data?.icon||'🏆');
+
+  openModal(`
+    <div class="mystery-reveal-stage ${negative?'is-negative':''}" dir="rtl">
+      <div class="mystery-flash"></div>
+      <div class="mystery-result-badge">${negative?'UNLUCKY DROP':'LEGENDARY DROP'}</div>
+      <div class="mystery-reward-logo"><img src="logo.png" alt="CHAoui"></div>
+      <div class="mystery-reward-card">
+        <div class="mystery-card-glow"></div>
+        <div class="mystery-reward-icon">${icon}</div>
+        <span>${escapeHTML(data?.box||boxName)}</span>
+        <h2>${escapeHTML(reward)}</h2>
+        <p>${negative?'أوووف 😈 هادي كانت Silbiya! حظك هاد المرة ما وقفش معاك.':'وااااعر 🔥! الجائزة طاحت ليك بنجاح.'}</p>
+      </div>
+      <div class="mystery-burst"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <small class="mystery-balance">الرصيد الجديد: 🪙 ${Number(data?.coins||0)}</small>
+      <button class="primary-btn mystery-continue" onclick="closeModal()">CONTINUE 🔥</button>
+    </div>`);
 }
 
-async function openNewChatModal(){
-  if(!currentUser)return showToast('دخل للحساب أولاً.');
-  openModal(`<div class="modal-head"><h2>💬 شات جديد</h2><button onclick="closeModal()">×</button></div><div class="modal-body"><input id="newChatSearch" class="modal-input" placeholder="قلب بالـUsername أو CHAoui ID"><div id="newChatResults" class="cards-grid" style="margin-top:12px"></div></div>`);
-  const input=$("newChatSearch"); input?.addEventListener('input',()=>searchChatPlayers(input.value)); input?.focus();
-}
-async function searchChatPlayers(term){
-  const box=$("newChatResults"); if(!box)return; const q=term.trim(); if(!q){box.innerHTML='<div class="empty-card">كتب Username أو Player ID.</div>';return;}
-  const {data,error}=await supabaseClient.from('profiles').select('id,username,display_name,player_code,level,profile_badge').neq('id',currentUser.id).or(`username.ilike.%${q.replace(/[,%()]/g,'')}%,display_name.ilike.%${q.replace(/[,%()]/g,'')}%,player_code.ilike.%${q.replace(/[,%()]/g,'')}%`).limit(12);
-  if(error){box.innerHTML='<div class="empty-card">تعذر البحث.</div>';return;}
-  box.innerHTML=(data||[]).map(p=>`<button class="info-card chat-player-result" type="button" onclick="startChatFromProfile('${p.id}')"><span>${escapeHTML(p.profile_badge||'👤')}</span><strong>${escapeHTML(p.display_name||p.username)}</strong><small>@${escapeHTML(p.username)} · ${escapeHTML(p.player_code||'')}</small></button>`).join('')||'<div class="empty-card">ما لقيتش.</div>';
-}
-async function startChatFromProfile(id){
-  const {data,error}=await supabaseClient.rpc('start_direct_chat',{p_other:id});
-  if(error)return showToast('ما قدرناش نبداو الشات.');
-  closeModal(); showPage('chat'); setTimeout(()=>openChatConversation(data),100);
-}
-async function openChatConversation(id){
-  currentChatId=id;
-  const header=$("chatRoomHeader"), messages=$("chatMessages");
-  if(!header||!messages)return;
-  const {data: members}=await supabaseClient.from('conversation_members').select('user_id').eq('conversation_id',id);
-  const otherId=(members||[]).map(x=>x.user_id).find(x=>x!==currentUser.id);
-  const {data:p}=otherId?await supabaseClient.from('profiles').select('display_name,username,player_code,profile_badge,online').eq('id',otherId).single():{data:null};
-  header.innerHTML=`<div class="chat-header-avatar">${escapeHTML(p?.profile_badge||'💬')}</div><div><strong>${escapeHTML(p?.display_name||'CHAoui Chat')}</strong><small>${escapeHTML(p?.player_code||'')} ${p?.online?'· متصل 🟢':''}</small></div><button class="secondary-btn" type="button" onclick="renderConversations()">↻</button>`;
-  const {data: rows}=await supabaseClient.from('messages').select('id,sender_id,body,created_at').eq('conversation_id',id).order('created_at',{ascending:true}).limit(200);
-  const senderIds=[...new Set((rows||[]).map(x=>x.sender_id))]; const {data: ps}=senderIds.length?await supabaseClient.from('profiles').select('id,display_name,username,profile_badge').in('id',senderIds):{data:[]}; const map=new Map((ps||[]).map(x=>[x.id,x]));
-  messages.innerHTML=(rows||[]).map(m=>`<div class="chat-bubble-row ${m.sender_id===currentUser.id?'mine':''}"><span class="chat-badge">${escapeHTML(map.get(m.sender_id)?.profile_badge||'👤')}</span><div class="chat-bubble"><p>${escapeHTML(m.body)}</p><small>${escapeHTML(formatDate(m.created_at))}</small></div></div>`).join('')||'<div class="empty-card">بدا أول رسالة 👋</div>';
-  messages.scrollTop=messages.scrollHeight;
-  if(chatRealtimeChannel){try{await supabaseClient.removeChannel(chatRealtimeChannel)}catch(_){} }
-  chatRealtimeChannel=supabaseClient.channel(`chat-${id}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${id}`},()=>openChatConversation(id)).subscribe();
-}
-async function sendChatMessage(){
-  const input=$("chatMessageInput"); const body=input?.value.trim(); if(!currentChatId||!body)return;
-  const {error}=await supabaseClient.rpc('send_chat_message',{p_conversation_id:currentChatId,p_body:body}); if(error)return showToast('ما قدرناش نصيفطو الرسالة.'); input.value=''; openChatConversation(currentChatId);
-}
-
-async function renderClubs(){
-  const list=$("clubsList"), mine=$("myClubCard"); if(!list||!currentUser)return;
-  const {data: clubs}=await supabaseClient.from('clubs').select('*').order('club_points',{ascending:false}).limit(30);
-  const {data: mineRows}=await supabaseClient.from('club_members').select('club_id,role').eq('player_id',currentUser.id);
-  const myId=mineRows?.[0]?.club_id; const myClub=(clubs||[]).find(c=>c.id===myId);
-  mine.innerHTML=myClub?`<div class="club-hero"><div class="club-logo">${escapeHTML(myClub.logo||'🛡️')}</div><div><span>ناديك</span><h2>${escapeHTML(myClub.name)}</h2><p>[${escapeHTML(myClub.tag)}] · Level ${Number(myClub.level)}</p></div><strong>${Number(myClub.club_points)} pts</strong></div>`:`<div class="empty-card">مازال ما عندكش نادي. صايب واحد أو دخل لشي نادي.</div>`;
-  const counts={}; for(const c of clubs||[]){const {count}=await supabaseClient.from('club_members').select('*',{count:'exact',head:true}).eq('club_id',c.id);counts[c.id]=count||0;}
-  list.innerHTML=(clubs||[]).map(c=>`<article class="club-card"><div class="club-logo">${escapeHTML(c.logo||'🛡️')}</div><div><h3>${escapeHTML(c.name)}</h3><small>[${escapeHTML(c.tag)}] · Level ${Number(c.level)} · ${Number(counts[c.id]||0)} أعضاء</small></div><strong>${Number(c.club_points)} pts</strong>${c.id===myId?'<span class="entry-badge">منخرط</span>':`<button class="secondary-btn" onclick="joinClub('${c.id}')">انضمام</button>`}</article>`).join('')||'<div class="empty-card">مازال ما كاين حتى نادي.</div>';
-}
 function openCreateClubModal(){openModal(`<div class="modal-head"><h2>🏟️ إنشاء نادي</h2><button onclick="closeModal()">×</button></div><div class="modal-body"><label>اسم النادي</label><input id="clubName" class="modal-input" maxlength="40"><label>Tag</label><input id="clubTag" class="modal-input" maxlength="8"><label>شعار</label><input id="clubLogo" class="modal-input" maxlength="4" value="🛡️"><button class="primary-btn" onclick="createClub()">إنشاء النادي</button></div>`)}
 async function createClub(){const n=$("clubName")?.value.trim(),t=$("clubTag")?.value.trim(),l=$("clubLogo")?.value.trim();const {error}=await supabaseClient.rpc('create_club',{p_name:n,p_tag:t,p_logo:l});if(error)return showToast('ما قدرناش نصايبو النادي.');closeModal();showToast('🏟️ تصايب النادي!');renderClubs();}
 async function joinClub(id){const {error}=await supabaseClient.rpc('join_club',{p_club_id:id});if(error)return showToast((error.message||'').includes('ALREADY_IN_CLUB')?'راك منخرط فشي نادي.':'ما قدرناش تنضم.');showToast('دخلتي للنادي 🏟️');renderClubs();}
