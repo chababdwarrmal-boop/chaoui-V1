@@ -11,32 +11,13 @@ let viewedProfileId=null;
 let socialInstalled=false;
 
 function install(){
+ // Social layer is intentionally limited to tournament-community features.
+ // Do not replace the CHAoui tournament home or main navigation with a social feed.
  const home=$("home"), profile=$("profile"), nav=$("bottomNav");
- if(home&&!$("socialHome")){
-  [...home.children].forEach(x=>x.classList.add("social-legacy-home"));
-  const d=document.createElement("div");d.id="socialHome";d.className="social-home";
-  d.innerHTML='<div class="social-topbar"><button class="social-brand" data-social-home>CHAoui<span>+</span></button><div class="social-top-actions"><button data-social-nav="notifications" aria-label="Notifications">♡<i class="social-badge" id="socialNotifBadge"></i></button><button data-social-nav="chat" aria-label="Messages">✉</button></div></div><div class="social-section-label"><b>Stories</b><small>24h</small></div><div id="socialStories" class="social-stories"></div><div class="social-feed-head"><div><small>CHAoui COMMUNITY</small><h2>آخر النشاط</h2></div><button data-social-create>＋</button></div><div id="socialFeed" class="social-feed"></div>';
-  home.prepend(d);
- }
- if(profile&&!$("socialProfile")){
-  [...profile.children].forEach(x=>x.classList.add("social-legacy-profile"));
-  const d=document.createElement("div");d.id="socialProfile";d.className="social-profile";
-  d.innerHTML='<div class="social-profile-bar"><button data-social-back>←</button><b>Profile</b><button data-social-nav="notifications">♡</button></div><div id="socialProfileBody"></div>';
-  profile.prepend(d);
- }
- if(nav){
-  const a=[...nav.querySelectorAll(".nav-item")];
-  if(a.length>=5){
-   const labels=[["home","⌂","الرئيسية"],["search","⌕","اكتشف"],["","＋","نشر"],["chat","✉","الرسائل"],["profile","◎","صفحتي"]];
-   labels.forEach((x,i)=>{if(!a[i])return;a[i].dataset.page=x[0];const s=a[i].querySelector("span"),sm=a[i].querySelector("small");if(s)s.textContent=x[1];if(sm)sm.textContent=x[2]});
-   a[2].removeAttribute("data-page");a[2].dataset.socialCreate="";a[2].classList.add("social-create-nav");
-   for(let i=5;i<a.length;i++)a[i].classList.add("social-nav-hidden");
-   nav.classList.add("social-nav");
-  }
- }
+ if(profile && !profile.dataset.socialCommunityReady) profile.dataset.socialCommunityReady="1";
+ if(nav) nav.classList.remove("social-nav");
  socialInstalled=true;
 }
-
 async function updateNotifBadge(){
  const b=$("socialNotifBadge");if(!b||!currentUser)return;
  const r=await supabaseClient.from("social_notifications").select("id",{count:"exact",head:true}).eq("user_id",currentUser.id).is("read_at",null);
@@ -170,9 +151,9 @@ async function startDirectChat(id){
  closeModal();showPage("chat");
  setTimeout(()=>{if(window.openConversation)window.openConversation(r.data);else if(window.openNewChatModal)window.openNewChatModal(id)},120);
 }
-function render(){install();if(!currentUser)return;if(currentPageId==="home"){stories();feed();updateNotifBadge()}if(currentPageId==="profile")profile(viewedProfileId||currentUser.id);}
+function render(){install();if(!currentUser)return;if(currentPageId==="profile"&&viewedProfileId)profile(viewedProfileId);}
 
-window.CHAOUI_SOCIAL_BOOT=()=>{if(!currentUser)return;install();render()};
+window.CHAOUI_SOCIAL_BOOT=()=>{if(!currentUser)return;install()};
 const old=window.showPage;
 if(old&&!window.__socialWrapped){window.__socialWrapped=true;window.showPage=(p,o)=>{old(p,o);if(p==="home"||p==="profile")setTimeout(render,60)}}
 
