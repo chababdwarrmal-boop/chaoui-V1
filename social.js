@@ -104,7 +104,8 @@ async function sharePost(id){
  try{await navigator.clipboard.writeText(url);toast("🔗 رابط Post تنسخ.");}catch{toast("🔗 رابط Post: "+url)}
 }
 async function savePost(id){localStorage.setItem("chaoui_saved_"+id,"1");toast("🔖 تزاد فالمحفوظات.");}
-function render(){install();if(currentPageId==="home"){stories();feed()}if(currentPageId==="profile")profile(viewedProfileId||currentUser?.id)}
+function render(){install();if(!currentUser)return;if(currentPageId==="home"){stories();feed()}if(currentPageId==="profile")profile(viewedProfileId||currentUser?.id)}
+window.CHAOUI_SOCIAL_BOOT=()=>{if(!currentUser)return;install();render();};
 const old=window.showPage;
 if(old&&!window.__socialWrapped){window.__socialWrapped=true;window.showPage=(p,o)=>{old(p,o);if(p==="home"||p==="profile")setTimeout(render,60)}}
 document.addEventListener("click",e=>{
@@ -125,5 +126,5 @@ document.addEventListener("click",e=>{
  const msg=e.target.closest("[data-social-message]");if(msg){if(window.openNewChatModal)window.openNewChatModal(msg.dataset.socialMessage);else showPage("chat");return}
  const pg=e.target.closest("[data-page]");if(pg&&pg.closest(".ig-tabs")){showPage(pg.dataset.page);return}
 });
-const boot=()=>setTimeout(render,150);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
+const boot=()=>setTimeout(()=>{install();if(currentUser)render()},150);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
 })();
