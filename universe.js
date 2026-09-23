@@ -92,7 +92,7 @@
     ensurePage();
     const originalShow=window.showApp;
     // App is already visible when this script loads; initialize once.
-    const tryInit=()=>{if(window.currentUser){renderTab('power')}else setTimeout(tryInit,1000)};
+    const tryInit=()=>{if(typeof currentUser !== 'undefined' && currentUser){renderTab('power')}else setTimeout(tryInit,1000)};
     tryInit();
   }
   boot();
