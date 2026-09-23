@@ -3663,3 +3663,62 @@ input::placeholder,textarea::placeholder{
     transition-duration:.01ms!important;
   }
 }
+
+
+/* =========================================================
+   CINEMATIC CHAOUI OPENING
+   ========================================================= */
+.splash-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:10px;
+  padding:6px 12px;
+  border:1px solid rgba(0,190,255,.28);
+  border-radius:999px;
+  background:rgba(0,190,255,.07);
+  color:#8fe8ff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.8px;
+  box-shadow:0 0 28px rgba(0,190,255,.08);
+}
+.splash-content > p{
+  min-height:20px;
+  font-size:14px;
+  color:#d9eaff;
+  letter-spacing:.2px;
+}
+.splash-live-line{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:12px;
+  color:#8291a8;
+  font-size:10px;
+}
+.splash-live-line span{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#20e0a0;
+  box-shadow:0 0 14px rgba(32,224,160,.8);
+  animation:splashDot 1.2s ease-in-out infinite;
+}
+@keyframes splashDot{
+  50%{transform:scale(1.7);opacity:.45}
+}
+.splash-logo{
+  background:linear-gradient(145deg,rgba(0,190,255,.16),rgba(0,90,255,.06));
+  border-color:rgba(0,190,255,.32);
+  box-shadow:0 0 70px rgba(0,150,255,.18),inset 0 0 30px rgba(255,255,255,.025);
+}
+.splash-glow{
+  background:#008cff;
+  opacity:.15;
+}
+.splash-progress{
+  background:linear-gradient(90deg,#00bfff,#247cff,#8eeaff);
+  box-shadow:0 0 18px rgba(0,191,255,.7);
+}
