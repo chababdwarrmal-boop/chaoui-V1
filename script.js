@@ -6283,9 +6283,7 @@ document.addEventListener(
    INITIALIZE
    ========================================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  async () => {
+async function startCHAouiApp() {
 
     console.log(
       "CHAOUI 🔥 starting..."
@@ -6608,5 +6606,10 @@ document.addEventListener(
       "CHAOUI 🔥 ready."
     );
 
-  }
-);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startCHAouiApp, { once: true });
+} else {
+  startCHAouiApp();
+}
