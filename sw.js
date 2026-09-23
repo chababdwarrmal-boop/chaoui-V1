@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v6";
+const CACHE_NAME = "chaoui-v8-social";
 
 const APP_FILES = [
   "./",
@@ -9,7 +9,10 @@ const APP_FILES = [
   "./icon.svg",
   "./icon-192.png",
   "./icon-512.png",
-  "./logo.png"
+  "./logo.png",
+  "./social.css",
+  "./social.js",
+  "./universe.js"
 ];
 
 self.addEventListener("install", event => {
