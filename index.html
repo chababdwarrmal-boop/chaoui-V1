@@ -1048,6 +1048,11 @@
           universe.onload = () => console.log("CHAoui Universe loaded");
           universe.onerror = () => console.warn("CHAoui Universe failed to load");
           document.head.appendChild(universe);
+          const social = document.createElement("script");
+          social.src = "social.js?v=20260923-social1";
+          social.onload = () => console.log("CHAoui Social loaded");
+          social.onerror = () => console.warn("CHAoui Social failed to load");
+          document.head.appendChild(social);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
