@@ -2260,35 +2260,23 @@ async function renderMatches() {
 async function renderRanking() {
   const box = $("rankingList");
   if (!box) return;
-
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("id, username, display_name, avatar_url, rating, wins, losses, draws, points, level, title");
-
-  if (error) {
-    console.error(error);
-    box.innerHTML = '<div class="empty-card">وقع مشكل فتحميل الترتيب.</div>';
-    return;
-  }
-
+  const { data, error } = await supabaseClient.from("profiles").select("id, username, display_name, avatar_url, rating, wins, losses, draws, points, level, title");
+  if (error) { console.error(error); box.innerHTML = '<div class="empty-card">وقع مشكل فتحميل الترتيب.</div>'; return; }
   const players = data || [];
   players.sort((a, b) => {
     if (currentRankingType === "points") return (b.points || 0) - (a.points || 0);
     if (currentRankingType === "wins") return (b.wins || 0) - (a.wins || 0);
     return (b.rating || 0) - (a.rating || 0);
   });
-
   box.innerHTML = players.slice(0, 50).map((player, index) => {
     const isMe = currentUser?.id === player.id;
     const played = Number(player.wins || 0) + Number(player.losses || 0) + Number(player.draws || 0);
     const winrate = played ? Math.round(Number(player.wins || 0) * 100 / played) : 0;
-
     const value = currentRankingType === "points"
       ? \`\${player.points || 0} P\`
       : currentRankingType === "wins"
         ? \`\${player.wins || 0} W\`
         : \`\${player.rating || 0} ELO\`;
-
     return \`
       <article class="ranking-row">
         <div class="ranking-position">#\${index + 1}</div>
