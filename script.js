@@ -76,6 +76,16 @@ const FEATURE_LABELS = {
 };
 
 
+const ALL_OWNER_FEATURES = [
+  "advanced_brackets","advanced_stats","broadcast_announcements","champion_badge",
+  "coin_booster","custom_badge","daily_missions","elite_card_effects","match_insights",
+  "moderation_center","organizer_analytics","player_card_studio","player_search",
+  "priority_registration","private_match_rooms","profile_showcase","report_export",
+  "reward_shop","season_rankings","smart_scheduling","staff_roles","streak_shield",
+  "title_customization","tournament_analytics","tournament_branding"
+];
+
+
 const PREMIUM_FEATURES = [
 
   {
@@ -118,6 +128,7 @@ function getUnlockedFeatures(profile) {
 
   // Owner has full feature access regardless of level.
   if (profile.role === "owner") {
+    ALL_OWNER_FEATURES.forEach(feature => unlocked.add(feature));
     Object.keys(FEATURE_LABELS).forEach(feature => unlocked.add(feature));
     return Array.from(unlocked);
   }
