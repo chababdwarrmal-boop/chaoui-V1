@@ -1087,10 +1087,25 @@ function showApp() {
     }
   );
 
-  // Social must boot AFTER the authenticated app is visible.
-  // This guarantees the Instagram-style shell is applied even though social.js is loaded dynamically.
-  if (window.CHAOUI_SOCIAL_BOOT) {
-    window.CHAOUI_SOCIAL_BOOT();
+  // Social boot is retried because social.js is loaded dynamically after script.js.
+  // This removes the race where authentication finishes before the social shell script arrives.
+  const bootSocialShell = () => {
+    if (window.CHAOUI_SOCIAL_BOOT) {
+      window.CHAOUI_SOCIAL_BOOT();
+      return true;
+    }
+    return false;
+  };
+  if (!bootSocialShell()) {
+    let tries = 0;
+    clearInterval(window.__chaouiSocialBootTimer);
+    window.__chaouiSocialBootTimer = setInterval(() => {
+      tries += 1;
+      if (bootSocialShell() || tries >= 24) {
+        clearInterval(window.__chaouiSocialBootTimer);
+        window.__chaouiSocialBootTimer = null;
+      }
+    }, 250);
   }
 
 
