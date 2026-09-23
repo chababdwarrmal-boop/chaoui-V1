@@ -1087,6 +1087,12 @@ function showApp() {
     }
   );
 
+  // Social must boot AFTER the authenticated app is visible.
+  // This guarantees the Instagram-style shell is applied even though social.js is loaded dynamically.
+  if (window.CHAOUI_SOCIAL_BOOT) {
+    window.CHAOUI_SOCIAL_BOOT();
+  }
+
 
   renderHomeTournaments();
   renderHomeDashboard();
