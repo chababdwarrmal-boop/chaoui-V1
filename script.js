@@ -349,12 +349,36 @@ function initSplash() {
 
   if (!splash) return;
 
-  const TOTAL_DURATION = 6000;
-  const SKIP_AFTER = 3000;
+  const TOTAL_DURATION = 4200;
+  const SKIP_AFTER = 1200;
 
   const startedAt = Date.now();
 
   let finished = false;
+
+  const message = $("splashMessage");
+  const messages = [
+    "هنا كتبدأ المنافسة الحقيقية.",
+    "واجه، ربح، طلع فـRanking. 🔥",
+    "كل ماتش كيزيدك خطوة.",
+    "CHAOUI PRO — لعبتك، ترتيبك، قصتك."
+  ];
+  let messageIndex = 0;
+  if (message) {
+    message.textContent = messages[0];
+    const messageTimer = setInterval(() => {
+      if (finished) {
+        clearInterval(messageTimer);
+        return;
+      }
+      messageIndex = (messageIndex + 1) % messages.length;
+      message.animate(
+        [{opacity:.25, transform:"translateY(4px)"},{opacity:1, transform:"translateY(0)"}],
+        {duration:280, easing:"ease-out"}
+      );
+      message.textContent = messages[messageIndex];
+    }, 900);
+  }
 
   function enterApp() {
 
