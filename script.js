@@ -2312,28 +2312,28 @@ async function openRatingHistory() {
 
   const rows = data || [];
   if (!rows.length) {
-    return openModal(\`
+    return openModal(`
       <div class="modal-head"><h2>📈 تاريخ ELO</h2><button onclick="closeModal()">×</button></div>
       <div class="modal-body"><div class="empty-card">مازال ما تسجل حتى تغيير فـ ELO.</div></div>
-    \`);
+    `);
   }
 
   const deltaClass = d => Number(d) > 0 ? "positive" : Number(d) < 0 ? "negative" : "";
-  const html = rows.map((r, i) => \`
+  const html = rows.map((r, i) => `
     <article class="rating-history-row">
       <div><strong>#${rows.length - i}</strong><span>${escapeHTML(r.result || "match")}</span></div>
       <div><small>${formatDate(r.created_at)}</small><small>قبل: ${Number(r.rating_before)} → بعد: ${Number(r.rating_after)}</small></div>
       <strong class="${deltaClass(r.rating_delta)}">${Number(r.rating_delta) > 0 ? "+" : ""}${Number(r.rating_delta)}</strong>
     </article>
-  \`).join("");
+  `).join("");
 
-  openModal(\`
+  openModal(`
     <div class="modal-head"><h2>📈 تاريخ ELO ديالك</h2><button onclick="closeModal()">×</button></div>
     <div class="modal-body rating-history-list">
       <p>آخر 30 تغيير فالتقييم. التحديث كيوقع أوتوماتيكياً منين كتتأكد نتيجة الماتش.</p>
       ${html}
     </div>
-  \`);
+  `);
 }
 
 /* =========================================================
