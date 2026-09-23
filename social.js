@@ -140,7 +140,14 @@ async function profile(id=currentUser?.id){
  b.innerHTML='<section class="ig-profile-card"><div class="ig-profile-main">'+avatar(p)+'<div class="ig-identity"><h1>'+esc(p.display_name||p.username||"CHAoui Player")+(p.premium?" 💎":"")+'</h1><small>@'+esc(p.username||"player")+'</small><p>'+esc(p.bio||"eFootball player • CHAoui community ⚡")+'</p><div class="ig-tags"><span>⚡ '+Number(p.rating||0)+' ELO</span><span>LV.'+Number(p.level||1)+'</span><span>🔥 '+Number(p.current_streak||0)+'</span></div></div></div><div class="ig-stats"><button data-followers="'+id+'"><b>'+Number(f.count||0)+'</b><small>Followers</small></button><button data-following="'+id+'"><b>'+Number(g.count||0)+'</b><small>Following</small></button><button><b>'+matches+'</b><small>Matches</small></button><button><b>'+Number(p.wins||0)+'</b><small>Wins</small></button></div><div class="ig-profile-actions">'+(id===currentUser?.id?'<button class="ig-primary" data-edit-social>تعديل الملف</button><button data-social-share>↗ مشاركة</button>':'<button class="ig-primary '+(following?"following":"")+'" data-follow="'+id+'">'+(following?"Following":"Follow")+'</button><button data-social-message="'+id+'">💬 رسالة</button>')+'</div></section><div class="ig-tabs"><button class="active">▦ Posts</button><button data-page="matches">⚽ Matches</button><button data-page="ranking">📊 Ranking</button><button>🏆 Awards</button></div><div class="ig-post-grid">'+((posts.data||[]).map(x=>'<article data-comments="'+x.id+'">'+(x.media_url?'<img src="'+esc(x.media_url)+'" alt="">':"")+'<b>'+(x.post_type==="match"?"⚽":x.post_type==="achievement"?"🏆":x.post_type==="card"?"🃏":x.post_type==="moment"?"🔥":"✦")+'</b><p>'+esc(x.body||"")+'</p><small>'+timeAgo(x.created_at)+'</small></article>').join("")||'<div class="social-empty">مازال ما نشر حتى Post.</div>')+'</div>';
 }
 
-async function follow(id){const r=await supabaseClient.rpc("toggle_profile_follow",{p_target:id});if(r.error)return toast("Follow ما خدمش.");profile(id);updateNotifBadge()}
+async function follow(id){
+ const r=await supabaseClient.rpc("toggle_profile_follow",{p_target:id});
+ if(r.error){console.error("FOLLOW ERROR",r.error);return toast("Follow ما خدمش: "+(r.error.message||"عاود المحاولة."));}
+ const next=!!r.data?.following;
+ toast(next?"❤️ تبعتي هاد اللاعب.":"تم إلغاء المتابعة.");
+ await profile(id);
+ updateNotifBadge();
+}
 async function people(type,id){
  const col=type==="followers"?"following_id":"follower_id",wanted=type==="followers"?"follower_id":"following_id";
  const r=await supabaseClient.from("profile_follows").select(wanted+",profiles:"+wanted+"(id,username,display_name,avatar_url,rating,level,premium)").eq(col,id);
@@ -189,6 +196,127 @@ document.addEventListener("click",e=>{
  const msg=e.target.closest("[data-social-message]");if(msg){startDirectChat(msg.dataset.socialMessage);return}
  const pg=e.target.closest("[data-page]");if(pg&&pg.closest(".ig-tabs")){showPage(pg.dataset.page);return}
 });
+
+/* SOCIAL CHAT — production implementation */
+let socialChatChannel=null;
+let socialChatConversationId=null;
+let socialChatPoll=null;
+
+function socialChatResetChannel(){
+  if(socialChatChannel&&window.supabaseClient?.removeChannel){
+    try{supabaseClient.removeChannel(socialChatChannel)}catch{}
+  }
+  socialChatChannel=null;
+  if(socialChatPoll){clearInterval(socialChatPoll);socialChatPoll=null}
+}
+
+async function loadChatConversations(){
+  const list=$("conversationList");
+  if(!list||!currentUser)return;
+  list.innerHTML='<div class="social-loading">جاري تحميل المحادثات...</div>';
+  const m=await supabaseClient.from("conversation_members").select("conversation_id,conversations(id,kind,title,created_at)").eq("user_id",currentUser.id);
+  if(m.error){list.innerHTML='<div class="social-empty">تعذر تحميل الرسائل.</div>';return}
+  const rows=m.data||[];
+  if(!rows.length){list.innerHTML='<div class="social-empty">مازال ما عندك حتى محادثة.<br>دخل لProfile ديال لاعب وضغط «رسالة».</div>';return}
+  const ids=rows.map(x=>x.conversation_id);
+  const members=await supabaseClient.from("conversation_members").select("conversation_id,user_id,profiles:user_id(id,username,display_name,avatar_url,online)").in("conversation_id",ids).neq("user_id",currentUser.id);
+  const msgs=await supabaseClient.from("messages").select("conversation_id,body,created_at,sender_id").in("conversation_id",ids).order("created_at",{ascending:false}).limit(Math.min(200,Math.max(50,ids.length*20)));
+  const byConv={};
+  (members.data||[]).forEach(x=>{if(!byConv[x.conversation_id])byConv[x.conversation_id]=x.profiles||{}})
+  const last={};
+  (msgs.data||[]).forEach(x=>{if(!last[x.conversation_id])last[x.conversation_id]=x});
+  list.innerHTML=rows.map(x=>{
+    const p=byConv[x.conversation_id]||{},lm=last[x.conversation_id];
+    return '<button class="conversation-item '+(socialChatConversationId===x.conversation_id?'active':'')+'" data-open-conversation="'+x.conversation_id+'">'+avatar(p)+'<span><b>'+esc(p.display_name||p.username||x.conversations?.title||"محادثة")+'</b><small>'+esc(lm?.body||"بدا محادثة جديدة")+'</small></span><time>'+timeAgo(lm?.created_at||x.conversations?.created_at)+'</time></button>'
+  }).join("");
+}
+
+async function openSocialConversation(id){
+  if(!id||!currentUser)return;
+  socialChatConversationId=id;
+  socialChatResetChannel();
+  const header=$("chatRoomHeader"), box=$("chatMessages");
+  if(!header||!box)return;
+  header.innerHTML='<span>جاري تحميل المحادثة...</span>';
+  const members=await supabaseClient.from("conversation_members").select("user_id,profiles:user_id(id,username,display_name,avatar_url,online)").eq("conversation_id",id);
+  const other=(members.data||[]).find(x=>x.user_id!==currentUser.id)?.profiles||{};
+  header.innerHTML='<div class="social-chat-head">'+avatar(other)+'<div><b>'+esc(other.display_name||other.username||"Player")+'</b><small>@'+esc(other.username||"player")+(other.online?" · 🟢 Online":"")+'</small></div></div>';
+  await renderSocialMessages(id);
+  await supabaseClient.from("conversation_members").update({last_read_at:new Date().toISOString()}).eq("conversation_id",id).eq("user_id",currentUser.id);
+  socialChatChannel=supabaseClient.channel("chaoui-chat-"+id)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"conversation_id=eq."+id},payload=>{
+      if(payload?.new?.conversation_id===id)renderSocialMessages(id);
+      loadChatConversations();
+    }).subscribe();
+  socialChatPoll=setInterval(()=>{if(socialChatConversationId===id)renderSocialMessages(id)},5000);
+  loadChatConversations();
+}
+
+async function renderSocialMessages(id){
+  const box=$("chatMessages");if(!box)return;
+  const r=await supabaseClient.from("messages").select("id,conversation_id,sender_id,body,created_at,profiles:sender_id(id,username,display_name,avatar_url)").eq("conversation_id",id).order("created_at",{ascending:true}).limit(300);
+  if(r.error){box.innerHTML='<div class="social-empty">تعذر تحميل الرسائل.</div>';return}
+  const rows=r.data||[];
+  box.innerHTML=rows.length?rows.map(m=>{
+    const mine=m.sender_id===currentUser.id;
+    return '<div class="social-chat-row '+(mine?'mine':'')+'"><div class="social-chat-bubble">'+esc(m.body)+'<small>'+timeAgo(m.created_at)+'</small></div></div>'
+  }).join(""):'<div class="social-empty">بدا المحادثة 👋</div>';
+  box.scrollTop=box.scrollHeight;
+}
+
+async function sendSocialChatMessage(){
+  const input=$("chatMessageInput");if(!input||!socialChatConversationId||!currentUser)return;
+  const body=input.value.trim();if(!body)return;
+  input.disabled=true;
+  const r=await supabaseClient.rpc("send_chat_message",{p_conversation_id:socialChatConversationId,p_body:body});
+  input.disabled=false;
+  if(r.error){toast("ما قدرناش نصيفطو الرسالة.");console.error(r.error);return}
+  input.value="";
+  await renderSocialMessages(socialChatConversationId);
+  loadChatConversations();
+}
+
+function openNewSocialChatModal(){
+  openModal('<div class="modal-head"><h2>💬 محادثة جديدة</h2><button onclick="closeModal()">×</button></div><div class="modal-body"><input id="newChatSearch" class="modal-input" placeholder="قلب على لاعب..." autocomplete="off"><div id="newChatResults" class="social-people-list"><div class="social-empty">كتب اسم اللاعب باش تقلب.</div></div></div>');
+  const input=$("newChatSearch"),results=$("newChatResults");
+  let timer=null;
+  const run=async()=>{
+    const q=input.value.trim();if(!q){results.innerHTML='<div class="social-empty">كتب اسم اللاعب باش تقلب.</div>';return}
+    const r=await supabaseClient.from("profiles").select("id,username,display_name,efootball_name,avatar_url,rating,level,premium,online").or("username.ilike.%"+q+"%,display_name.ilike.%"+q+"%,efootball_name.ilike.%"+q+"%").neq("id",currentUser.id).limit(20);
+    const rows=r.data||[];
+    results.innerHTML=rows.length?rows.map(p=>'<button class="social-person" data-start-chat="'+p.id+'">'+avatar(p)+'<span><b>'+esc(p.display_name||p.username||"Player")+(p.premium?" 💎":"")+'</b><small>@'+esc(p.username||"player")+' · '+(p.online?"🟢":"⚪")+' · LV.'+Number(p.level||1)+'</small></span></button>').join(""):'<div class="social-empty">ما لقيناش اللاعب.</div>';
+  };
+  input.addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(run,250)});
+  setTimeout(()=>input.focus(),50);
+}
+
+function installSocialChat(){
+  const form=$("chatComposer");
+  if(form&&!form.dataset.socialChatBound){
+    form.dataset.socialChatBound="1";
+    form.addEventListener("submit",e=>{e.preventDefault();sendSocialChatMessage()});
+  }
+  if(!$("conversationList")||!currentUser)return;
+  loadChatConversations();
+}
+
+async function socialOpenPageHook(p){
+  if(p==="chat"){setTimeout(installSocialChat,80)}
+}
+
+window.openConversation=openSocialConversation;
+window.openNewChatModal=openNewSocialChatModal;
+window.sendChatMessage=sendSocialChatMessage;
+
+document.addEventListener("click",e=>{
+  const q=e.target.closest("[data-open-conversation]");
+  if(q){openSocialConversation(q.dataset.openConversation);return}
+  const nc=e.target.closest("[data-start-chat]");
+  if(nc){startDirectChat(nc.dataset.startChat);return}
+  const searchNav=e.target.closest(".social-nav [data-page='search']");
+  if(searchNav){setTimeout(discover,50);return}
+});
+
 const boot=()=>setTimeout(()=>{install();if(currentUser)render()},150);
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
 })();
