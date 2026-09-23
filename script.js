@@ -2282,25 +2282,26 @@ async function renderRanking() {
     const isMe = currentUser?.id === player.id;
     const played = Number(player.wins || 0) + Number(player.losses || 0) + Number(player.draws || 0);
     const winrate = played ? Math.round(Number(player.wins || 0) * 100 / played) : 0;
+
     const value = currentRankingType === "points"
-      ? ${player.points || 0} P
+      ? \`\${player.points || 0} P\`
       : currentRankingType === "wins"
-        ? ${player.wins || 0} W
-        : ${player.rating || 0} ELO;
+        ? \`\${player.wins || 0} W\`
+        : \`\${player.rating || 0} ELO\`;
 
     return \`
       <article class="ranking-row">
-        <div class="ranking-position">#${index + 1}</div>
-        <div class="ranking-avatar">${escapeHTML(getInitials(player.display_name || player.username))}</div>
+        <div class="ranking-position">#\${index + 1}</div>
+        <div class="ranking-avatar">\${escapeHTML(getInitials(player.display_name || player.username))}</div>
         <div class="ranking-player">
-          <strong>${escapeHTML(player.display_name || player.username)}</strong>
-          <small>@${escapeHTML(player.username || "")} · LV.${Number(player.level || 1)}</small>
+          <strong>\${escapeHTML(player.display_name || player.username)}</strong>
+          <small>@\${escapeHTML(player.username || "")} · LV.\${Number(player.level || 1)}</small>
         </div>
-        <div class="ranking-value">${value}</div>
+        <div class="ranking-value">\${value}</div>
         <div class="ranking-extra">
-          <small>${player.wins || 0}W · ${player.losses || 0}L · ${player.draws || 0}D</small>
-          <small>${winrate}% WR</small>
-          ${isMe ? '<button class="secondary-btn rating-history-btn" onclick="openRatingHistory()">📈 تاريخ ELO</button>' : ""}
+          <small>\${player.wins || 0}W · \${player.losses || 0}L · \${player.draws || 0}D</small>
+          <small>\${winrate}% WR</small>
+          \${isMe ? '<button class="secondary-btn rating-history-btn" onclick="openRatingHistory()">📈 تاريخ ELO</button>' : ""}
         </div>
       </article>
     \`;
