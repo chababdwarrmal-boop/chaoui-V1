@@ -54,3 +54,11 @@
 .social-story-create{display:grid;gap:10px}.social-muted{color:var(--muted);font-size:10px;line-height:1.6}
 .social-discover-box{display:grid;grid-template-columns:1fr 95px;gap:7px;margin-bottom:12px}.social-discover-box .modal-input{margin:0}.social-post-actions button.saved{color:var(--fire)}.ig-post-grid article img{width:100%;height:72px;object-fit:cover;border-radius:6px;margin-bottom:7px}
 @media(max-width:430px){.social-story-viewer{min-height:78vh}.social-story-media{height:72vh}.social-story-text{min-height:420px;font-size:21px}}
+
+
+/* Tournament community UI: Instagram-inspired profile actions without turning CHAoui into a social network. */
+.public-social-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.public-social-mini>div{padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;text-align:center;background:rgba(255,255,255,.025)}
+.public-social-mini strong{display:block;font-size:18px}
+.public-social-mini small{display:block;opacity:.65;margin-top:2px}
+.public-follow-btn.following{opacity:.75}
