@@ -5904,13 +5904,15 @@ async function renderWallet() {
 
 async function openMysteryBox(id){
   if(!currentUser)return showToast('دخل للحساب أولاً.');
+  openModal('<div class="mystery-opening" dir="rtl"><div class="mystery-orbit"><div class="mystery-box-3d">🎁</div></div><div class="mystery-opening-kicker">MYSTERY BOX</div><h2>الصندوق كيتحل...</h2><p>شنو غادي يطيح ليك؟ 👀</p><div class="mystery-shuffle"><i></i><i></i><i></i><i></i><i></i></div></div>');
+  await new Promise(resolve=>setTimeout(resolve,2200));
   const {data,error}=await supabaseClient.rpc('open_mystery_box',{p_box_id:id});
-  if(error){const m=error.message||'';return showToast(m.includes('INSUFFICIENT_COINS')?'Coins ما كافياش.':m.includes('LEVEL_REQUIRED')?'خاصك Level أعلى.':'ما قدرناش نفتح الصندوق.');}
+  if(error){closeModal();const m=error.message||'';return showToast(m.includes('INSUFFICIENT_COINS')?'Coins ما كافياش.':m.includes('LEVEL_REQUIRED')?'خاصك Level أعلى.':'ما قدرناش نفتح الصندوق.');}
   await loadProfile(); renderCurrentUser(); renderProfile(); renderHomeDashboard(); renderWallet();
-  const reward = data?.reward_type==='coins'?`+${data.amount} Coins`:data?.reward_type==='xp'?`+${data.amount} XP`:data?.reward_value||'جائزة';
-  openModal(`<div class="mystery-result"><div class="mystery-win-icon">🎁</div><span>فتحت ${escapeHTML(data?.box||'Mystery Box')}</span><h2>${escapeHTML(reward)}</h2><p>الرصيد الجديد: 🪙 ${Number(data?.coins||0)}</p><button class="primary-btn" onclick="closeModal()">وااااعر 🔥</button></div>`);
+  const negative=Boolean(data?.negative);
+  const reward=negative?('⚠️ '+String(data?.reward_value||'مفاجأة سلبية')):(data?.reward_type==='coins'?`+${data.amount} Coins`:data?.reward_type==='xp'?`+${data.amount} XP`:data?.reward_value||'جائزة');
+  openModal('<div class="mystery-result '+(negative?'mystery-negative':'')+'" dir="rtl"><div class="mystery-win-icon">'+(negative?'⚠️':'🎉')+'</div><span>'+escapeHTML(data?.box||'Mystery Box')+'</span><h2>'+escapeHTML(reward)+'</h2><p>'+(negative?'هاد المرة جاتك جائزة سلبية 😈 — الحظ ما وقفش معاك.':'مبروك! هادي هي الجائزة ديالك 🔥')+'</p><small>الرصيد الجديد: 🪙 '+Number(data?.coins||0)+'</small><button class="primary-btn" onclick="closeModal()">وااااعر 🔥</button></div>');
 }
-
 async function renderConversations(){
   const list=$("conversationList"); if(!list||!currentUser)return;
   const {data: memberships,error}=await supabaseClient.from('conversation_members').select('conversation_id,last_read_at').eq('user_id',currentUser.id).order('joined_at',{ascending:false});
