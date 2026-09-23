@@ -3722,3 +3722,98 @@ input::placeholder,textarea::placeholder{
   background:linear-gradient(90deg,#00bfff,#247cff,#8eeaff);
   box-shadow:0 0 18px rgba(0,191,255,.7);
 }
+
+
+/* =========================================================
+   BOTTOM NAV 2026 — PRIMARY APP DESTINATIONS
+   Home / Tournaments / Matches / Ranking / Coins / Messages / AI / More
+   ========================================================= */
+:root{--nav-height:136px}
+
+.bottom-nav{
+  left:50%;
+  right:auto;
+  bottom:12px;
+  width:min(760px,calc(100% - 20px));
+  height:auto;
+  min-height:116px;
+  transform:translateX(-50%);
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(48px,1fr));
+  gap:5px;
+  padding:7px;
+  border-radius:26px;
+  background:
+    linear-gradient(145deg,rgba(11,22,36,.96),rgba(5,11,20,.94));
+  border:1px solid rgba(105,190,255,.13);
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.62),
+    0 0 45px rgba(0,130,255,.07),
+    inset 0 1px 0 rgba(255,255,255,.045);
+  backdrop-filter:blur(24px) saturate(135%);
+}
+
+.nav-item{
+  min-height:48px;
+  gap:3px;
+  border-radius:17px;
+  color:#71839a;
+  border:1px solid transparent;
+}
+
+.nav-item span{
+  font-size:18px;
+  line-height:1;
+  transition:transform .2s var(--ease),filter .2s var(--ease);
+}
+
+.nav-item small{
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.15px;
+}
+
+.nav-item:hover{
+  color:#dcecff;
+  background:rgba(50,150,255,.07);
+  border-color:rgba(80,170,255,.10);
+}
+
+.nav-item.active{
+  color:#fff;
+  background:
+    linear-gradient(145deg,rgba(0,145,255,.22),rgba(0,91,180,.08));
+  border-color:rgba(0,183,255,.18);
+  box-shadow:
+    inset 0 0 18px rgba(0,145,255,.08),
+    0 4px 20px rgba(0,110,255,.07);
+}
+
+.nav-item.active span{
+  filter:drop-shadow(0 0 9px rgba(0,190,255,.65));
+  transform:translateY(-1px) scale(1.04);
+}
+
+.nav-item-coin:not(.active) span{filter:drop-shadow(0 0 6px rgba(255,190,40,.24))}
+.nav-item-chat:not(.active) span{filter:drop-shadow(0 0 6px rgba(70,180,255,.22))}
+.nav-item-ai:not(.active) span{filter:drop-shadow(0 0 7px rgba(160,100,255,.25))}
+.nav-item-more span{font-size:19px}
+
+@media(max-width:560px){
+  .bottom-nav{
+    width:calc(100% - 14px);
+    bottom:7px;
+    min-height:112px;
+    border-radius:23px;
+    padding:6px;
+    gap:4px;
+  }
+  .nav-item{min-height:47px;border-radius:15px}
+  .nav-item span{font-size:17px}
+  .nav-item small{font-size:7.5px}
+  .app{padding-bottom:calc(var(--nav-height) + 10px)}
+}
+
+@media(min-width:900px){
+  .bottom-nav{bottom:16px}
+}
