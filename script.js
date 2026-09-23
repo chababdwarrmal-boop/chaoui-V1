@@ -116,6 +116,12 @@ function getUnlockedFeatures(profile) {
 
   const unlocked = new Set();
 
+  // Owner has full feature access regardless of level.
+  if (profile.role === "owner") {
+    Object.keys(FEATURE_LABELS).forEach(feature => unlocked.add(feature));
+    return Array.from(unlocked);
+  }
+
   const level = Number(profile.level) || 1;
 
   Object.keys(LEVEL_FEATURES).forEach(lvl => {
@@ -3297,7 +3303,8 @@ function renderPremium() {
 
 
   const active =
-    currentProfile?.premium === true;
+    currentProfile?.premium === true ||
+    currentProfile?.role === "owner";
 
 
   const featuresHtml =
@@ -5712,7 +5719,7 @@ async function renderProgression() {
   achievementsBox.innerHTML=(a.data||[]).map(x=>{const z=unlocked.get(x.id);return `<article class="info-card progression-card ${z?"is-unlocked":"is-locked"}"><h3>${escapeHTML(x.icon||"🏆")} ${escapeHTML(x.name)}</h3><p>${escapeHTML(x.description)}</p><small>${z?"مفتوح":"🔒 لم يُفتح بعد"} · +${Number(x.xp_reward||0)} XP · +${Number(x.coin_reward||0)} Coins</small></article>`}).join("")||`<div class="empty-card">مازال ما كاين حتى إنجاز.</div>`;
   const pm=new Map((pc.data||[]).map(x=>[x.challenge_id,x]));
   challengesBox.innerHTML=(c.data||[]).map(x=>{const z=pm.get(x.id),target=Number(x.condition?.value||x.condition?.target||0);return `<article class="info-card progression-card"><h3>🎯 ${escapeHTML(x.title)}</h3><p>${escapeHTML(x.description)}</p><small>${z?.completed_at?"✅ مكتمل":`${Number(z?.progress||0)} / ${target||"?"}`} · +${Number(x.xp_reward||0)} XP · +${Number(x.coins_reward||0)} Coins</small></article>`}).join("")||`<div class="empty-card">ما كايناش تحديات حالياً.</div>`;
-  const featureRows=Object.entries(LEVEL_FEATURES).flatMap(([req,keys])=>keys.map(key=>{const info=FEATURE_LABELS[key];if(!info)return"";const open=level>=Number(req);return `<article class="info-card progression-card ${open?"is-unlocked":"is-locked"}"><h3>${info.icon} ${escapeHTML(info.label)}</h3><p>${open?"متاحة ليك دابا ✅":`🔒 كتتحل فـ Level ${req}`}</p></article>`})).join("");
+  const featureRows=Object.entries(LEVEL_FEATURES).flatMap(([req,keys])=>keys.map(key=>{const info=FEATURE_LABELS[key];if(!info)return"";const open=currentProfile?.role==="owner" || level>=Number(req);return `<article class="info-card progression-card ${open?"is-unlocked":"is-locked"}"><h3>${info.icon} ${escapeHTML(info.label)}</h3><p>${open?"متاحة ليك دابا ✅":`🔒 كتتحل فـ Level ${req}`}</p></article>`})).join("");
   const redeemed=new Set((pr.data||[]).map(x=>x.reward_id));
   const rewardCards=(r.data||[]).map(x=>{const ok=level>=Number(x.level_required)&&coins>=Number(x.cost)&&!redeemed.has(x.id);return `<article class="info-card progression-card ${ok?"is-unlocked":"is-locked"}"><h3>${escapeHTML(x.icon||"🎁")} ${escapeHTML(x.name)}</h3><p>${escapeHTML(x.description)}</p><small>Level ${Number(x.level_required)} · ${Number(x.cost)} Coins · ${redeemed.has(x.id)?"✅ مستلمة":level<Number(x.level_required)?"🔒 Level غير كافي":coins<Number(x.cost)?"🪙 Coins غير كافية":"جاهزة"}</small><button class="secondary-btn" type="button" ${ok?`onclick="redeemReward('${x.id}')"`:"disabled"}>${redeemed.has(x.id)?"مستلمة":"استبدال"}</button></article>`}).join("");
   const extra=document.createElement("div");extra.id="progressionExtras";extra.innerHTML=`<div class="section-head"><h2>🔓 مزايا المستويات</h2></div><div class="cards-grid">${featureRows}</div><div class="section-head"><h2>🎁 متجر المكافآت</h2></div><div class="cards-grid">${rewardCards||"<div class='empty-card'>المتجر خالي حالياً.</div>"}</div>`;
