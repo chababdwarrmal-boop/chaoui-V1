@@ -1087,28 +1087,6 @@ function showApp() {
     }
   );
 
-  // Social boot is retried because social.js is loaded dynamically after script.js.
-  // This removes the race where authentication finishes before the social shell script arrives.
-  const bootSocialShell = () => {
-    if (window.CHAOUI_SOCIAL_BOOT) {
-      window.CHAOUI_SOCIAL_BOOT();
-      return true;
-    }
-    return false;
-  };
-  if (!bootSocialShell()) {
-    let tries = 0;
-    clearInterval(window.__chaouiSocialBootTimer);
-    window.__chaouiSocialBootTimer = setInterval(() => {
-      tries += 1;
-      if (bootSocialShell() || tries >= 24) {
-        clearInterval(window.__chaouiSocialBootTimer);
-        window.__chaouiSocialBootTimer = null;
-      }
-    }, 250);
-  }
-
-
   renderHomeTournaments();
   renderHomeDashboard();
 
@@ -5852,28 +5830,24 @@ async function openPublicProfile(playerId) {
   const played = Number(player.wins || 0) + Number(player.losses || 0) + Number(player.draws || 0);
   const rate = played ? Math.round(Number(player.wins || 0) * 100 / played) : 0;
 
-  const [{ count: followersCount }, { count: followingCount }, followRow] = await Promise.all([
-    supabaseClient.from("profile_follows").select("follower_id", { count: "exact", head: true }).eq("following_id", playerId),
-    supabaseClient.from("profile_follows").select("following_id", { count: "exact", head: true }).eq("follower_id", playerId),
-    currentUser && currentUser.id !== playerId
-      ? supabaseClient.from("profile_follows").select("follower_id").eq("follower_id", currentUser.id).eq("following_id", playerId).maybeSingle()
-      : Promise.resolve({ data: null })
-  ]);
+  let whatsapp = "";
+  try {
+    const { data: privateRow } = await supabaseClient
+      .from("player_private")
+      .select("whatsapp")
+      .eq("id", playerId)
+      .maybeSingle();
+    whatsapp = String(privateRow?.whatsapp || "").trim();
+  } catch (_) {}
 
-  const isFollowing = !!followRow?.data;
-  const followLabel = isFollowing ? "Following" : "Follow";
-  const followClass = isFollowing ? "following" : "";
+  const waDigits = whatsapp.replace(/\D/g, "");
+  const waHref = waDigits ? `https://wa.me/${waDigits}` : "";
 
   openModal(`<div class="modal-head"><h2>CHAOUI Player Card</h2><button type="button" onclick="closeModal()">×</button></div>
   <div class="modal-body public-profile public-player-card">
-    <div class="public-player-hero">
-      <div class="public-player-avatar">${escapeHTML(getInitials(player.display_name || player.username))}</div>
+    <div class="public-player-hero player-card-hero-animated">
+      <div class="public-player-avatar player-avatar-glow">${escapeHTML(getInitials(player.display_name || player.username))}</div>
       <div><h2>${escapeHTML(player.display_name || player.username)}</h2><p>@${escapeHTML(player.username)} · ${escapeHTML(player.player_code || "CH-XXXXXXXX")}</p><span>${escapeHTML(player.title || "Rookie")} · LV.${Number(player.level || 1)}</span></div>
-    </div>
-    <div class="public-social-mini">
-      <div><strong>${Number(followersCount || 0)}</strong><small>Followers</small></div>
-      <div><strong>${Number(followingCount || 0)}</strong><small>Following</small></div>
-      <div><strong>${played}</strong><small>Matches</small></div>
     </div>
     <div class="modal-info-grid">
       <div><strong>${Number(player.points || 0)}</strong><small>Points</small></div>
@@ -5884,28 +5858,17 @@ async function openPublicProfile(playerId) {
       <div><strong>${Number(player.best_streak || 0)} 🔥</strong><small>Best Streak</small></div>
     </div>
     <div class="public-card-actions">
-      ${currentUser && currentUser.id !== playerId ? `<button class="secondary-btn public-follow-btn ${followClass}" type="button" onclick="togglePublicFollow('${escapeHTML(player.id)}')">❤️ ${followLabel}</button><button class="secondary-btn" type="button" onclick="startChatFromProfile('${escapeHTML(player.id)}')">💬 راسلو</button>` : ""}
+      ${whatsapp ? `<a class="secondary-btn whatsapp-profile-btn" href="${escapeHTML(waHref)}" target="_blank" rel="noopener">💬 WhatsApp</a>` : ""}
+      ${currentUser && currentUser.id !== playerId ? `<button class="secondary-btn" type="button" onclick="startChatFromProfile('${escapeHTML(player.id)}')">💬 راسلو داخل CHAoui</button>` : ""}
       <button class="secondary-btn" type="button" onclick="sharePlayerCard('${escapeHTML(player.id)}')">مشاركة Player Card</button>
     </div>
   </div>`);
-}
-
-async function togglePublicFollow(playerId) {
-  if (!currentUser || currentUser.id === playerId) return;
-  const { data, error } = await supabaseClient.rpc("toggle_profile_follow", { p_target: playerId });
-  if (error) {
-    console.error("PUBLIC FOLLOW ERROR", error);
-    return showToast("Follow ما خدمش. عاود المحاولة.");
-  }
-  showToast(data?.following ? "❤️ تبعتي هاد اللاعب." : "تم إلغاء المتابعة.");
-  await openPublicProfile(playerId);
 }
 
 function startChatFromProfile(playerId) {
   if (typeof window.startDirectChat === "function") return window.startDirectChat(playerId);
   return showToast("الرسائل مازال كتتحمل، عاود الضغط من بعد.");
 }
-
 
 async function sharePlayerCard(playerId) {
   const url = `${location.origin}${location.pathname}#profile/${playerId}`;
