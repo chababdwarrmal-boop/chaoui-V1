@@ -1,18 +1,16 @@
-const CACHE_NAME = "chaoui-v16-community-v12";
+const CACHE_NAME = "chaoui-v17-player-v1";
 
 const APP_FILES = [
   "./",
   "./index.html",
   "./style.css",
-  "./script.js",
+  "./script.js?v=20260925-player2",
   "./manifest.json",
   "./icon.svg",
   "./icon-192.png",
   "./icon-512.png",
   "./logo.png",
-  "./social.css",
-  "./social.js",
-  "./universe.js"
+  "./universe.js?v=20260925-universe5"
 ];
 
 self.addEventListener("install", event => {
