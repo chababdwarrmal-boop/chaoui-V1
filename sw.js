@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v16-community-v11";
+const CACHE_NAME = "chaoui-v16-community-v12";
 
 const APP_FILES = [
   "./",
