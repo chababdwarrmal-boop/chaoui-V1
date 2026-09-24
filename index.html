@@ -1039,7 +1039,7 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260923-social9";
+        app.src = "script.js?v=20260924-hotfix10";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
           console.log("CHAoui app loaded");
@@ -1049,7 +1049,7 @@
           universe.onerror = () => console.warn("CHAoui Universe failed to load");
           document.head.appendChild(universe);
           const social = document.createElement("script");
-          social.src = "social.js?v=20260923-social9";
+          social.src = "social.js?v=20260924-hotfix10";
           social.onload = () => console.log("CHAoui Social loaded");
           social.onerror = () => console.warn("CHAoui Social failed to load");
           document.head.appendChild(social);
@@ -1107,7 +1107,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260923-social9")
+          .register("./sw.js?v=20260924-hotfix10")
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
