@@ -1050,17 +1050,17 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260924-command11";
+        app.src = "script.js?v=20260925-player2";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
           console.log("CHAoui app loaded");
           const universe = document.createElement("script");
-          universe.src = "universe.js?v=20260924-universe4";
+          universe.src = "universe.js?v=20260925-universe5";
           universe.onload = () => console.log("CHAoui Universe loaded");
           universe.onerror = () => console.warn("CHAoui Universe failed to load");
           document.head.appendChild(universe);
           const social = document.createElement("script");
-          social.src = "social.js?v=20260925-chat1";
+          social.src = "social.js?v=20260925-chat2";
           social.onload = () => console.log("CHAoui Social loaded");
           social.onerror = () => console.warn("CHAoui Social failed to load");
           document.head.appendChild(social);
