@@ -1632,6 +1632,57 @@ async function renderHomeDashboard() {
   set("homePointsValue", Number(p?.points || 0));
   set("homeCoinsValue", Number(p?.coins || 0));
 
+  // Home Command Center: give the player one clear next action.
+  const commandText = $("homeCommandText");
+  const powerValue = $("homePowerValue");
+  const commandAction = $("homeCommandAction");
+  if (commandText && powerValue) {
+    if (!currentUser) {
+      commandText.textContent = "دخل للحساب باش نشوفو المباريات والحالة ديالك.";
+      powerValue.textContent = "--";
+    } else {
+      const nowIso = new Date().toISOString();
+      const [nextMatchRes, powerRes] = await Promise.all([
+        supabaseClient.from("matches")
+          .select("id,player_a,player_b,status,scheduled_at,round")
+          .or(`player_a.eq.${currentUser.id},player_b.eq.${currentUser.id}`)
+          .in("status", ["scheduled", "upcoming"])
+          .gte("scheduled_at", nowIso)
+          .order("scheduled_at", { ascending: true })
+          .limit(1),
+        supabaseClient.rpc("refresh_player_power", { p_player: currentUser.id })
+      ]);
+
+      const nextMatch = nextMatchRes.data?.[0];
+      const power = powerRes.data;
+      powerValue.textContent = power?.power_score != null ? Number(power.power_score) : "--";
+
+      if (nextMatch) {
+        const opponentId = nextMatch.player_a === currentUser.id ? nextMatch.player_b : nextMatch.player_a;
+        let opponentName = "المنافس";
+        if (opponentId) {
+          const { data: opponent } = await supabaseClient
+            .from("profiles")
+            .select("display_name,username")
+            .eq("id", opponentId)
+            .maybeSingle();
+          opponentName = opponent?.display_name || opponent?.username || opponentName;
+        }
+        commandText.textContent = `المباراة الجاية ضد ${opponentName} · ${formatDate(nextMatch.scheduled_at)}`;
+        if (commandAction) {
+          commandAction.textContent = "فتح المباراة ⚔️";
+          commandAction.dataset.page = "matches";
+        }
+      } else {
+        commandText.textContent = "ما عندك حتى مباراة مبرمجة دابا. قلب على بطولة جديدة وبدأ المنافسة.";
+        if (commandAction) {
+          commandAction.textContent = "شوف البطولات 🏆";
+          commandAction.dataset.page = "tournaments";
+        }
+      }
+    }
+  }
+
   const featureBox = $("homeFeatureGrid");
   if (featureBox) {
     const featureRows = [
