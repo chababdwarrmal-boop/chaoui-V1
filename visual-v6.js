@@ -1,4 +1,4 @@
-/* CHAoui Visual V7 — single icon layer, match cards and chat */
+/* CHAoui Visual V8 — More Hub, single icon layer, match cards and chat */
 (()=>{"use strict";
 const ICONS={
 home:"<svg viewBox='0 0 24 24' fill='none'><path d='M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5v-9Z'/></svg>",
@@ -22,7 +22,7 @@ settings:"<svg viewBox='0 0 24 24' fill='none'><path d='M12 8.5a3.5 3.5 0 1 0 0 
 function iconFor(page){return ICONS[page]||"<svg viewBox='0 0 24 24' fill='none'><circle cx='12' cy='12' r='8'/></svg>"}
 function decorate(){
  document.querySelectorAll("[data-page]").forEach(b=>{
-  const p=b.dataset.page;if(!ICONS[p]||b.dataset.v6icon)return;
+  const p=b.dataset.page;if(!ICONS[p]||b.dataset.v6icon||b.classList.contains("more-feature"))return;
   const first=b.firstElementChild;
   if(first && first.tagName==="SPAN" && /^[\p{Extended_Pictographic}\s]+$/u.test(first.textContent.trim())){
     first.className="v6-icon";
@@ -62,7 +62,53 @@ function improveChat(){
   form.insertBefore(tools,form.firstChild);
  }
 }
-function run(){decorate();improveMatches();improveChat()}
+
+
+const MORE_GROUPS={
+ player:[
+  ["profile","صفحتي","الملف والإحصائيات"],
+  ["notifications","الإشعارات","التنبيهات المهمة"],
+  ["progression","التقدم والتحديات","XP والإنجازات"],
+  ["season","الموسم","الموسم والتحديات"]
+ ],
+ community:[
+  ["chat","الرسائل","تواصل مع اللاعبين"],
+  ["clubs","الأندية","مجتمعك الرياضي"],
+  ["feed","النشاط","آخر النشاطات"],
+  ["search","البحث","ابحث عن لاعب أو محتوى"]
+ ],
+ rewards:[
+  ["wallet","Coins & Shop","الرصيد والمكافآت"],
+  ["premium","Premium","المزايا الإضافية"],
+  ["hall","الأساطير","Hall of Fame"]
+ ],
+ support:[
+  ["complaints","الشكايات","الدعم والنزاعات"],
+  ["assistant","المساعد","مساعد CHAoui"],
+  ["settings","الإعدادات","الحساب والتفضيلات"]
+ ]
+};
+const MORE_ICONS={player:"♙",community:"◉",rewards:"◆",support:"✦"};
+function initMoreHub(){
+ const root=document.querySelector("#more");
+ const panel=document.querySelector("#moreHubV8Panel");
+ if(!root||!panel||root.dataset.moreV8)return;
+ root.dataset.moreV8="1";
+ root.querySelectorAll(".more-category").forEach(card=>{
+  card.addEventListener("click",()=>{
+   const key=card.dataset.moreCategory, items=MORE_GROUPS[key]||[];
+   root.querySelectorAll(".more-category").forEach(x=>x.classList.toggle("active",x===card));
+   panel.hidden=false;
+   panel.innerHTML=`<div class="more-panel-head"><div><span class="more-panel-icon">${MORE_ICONS[key]}</span><div><small>CHAoui HUB</small><h2>${card.querySelector("b")?.textContent||""}</h2></div></div><button type="button" class="more-panel-close">×</button></div><div class="more-feature-list">${items.map(([page,title,desc])=>`<button type="button" class="more-feature" data-page="${page}"><span class="more-feature-icon"></span><span><b>${title}</b><small>${desc}</small></span><strong>‹</strong></button>`).join("")}</div>`;
+   decorate();
+   panel.querySelector(".more-panel-close").onclick=()=>{panel.hidden=true;root.querySelectorAll(".more-category").forEach(x=>x.classList.remove("active"))};
+   panel.querySelectorAll(".more-feature").forEach(btn=>btn.addEventListener("click",()=>{if(typeof window.showPage==="function") window.showPage(btn.dataset.page)}));
+   panel.querySelectorAll(".more-feature").forEach(btn=>{const p=btn.dataset.page;btn.querySelector(".more-feature-icon").innerHTML=iconFor(p)});
+  });
+ });
+}
+
+function run(){decorate();improveMatches();improveChat();initMoreHub()}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(run,500));else setTimeout(run,500);
 const mo=new MutationObserver(()=>{decorate();improveMatches();improveChat()});mo.observe(document.body,{subtree:true,childList:true});
 })();
