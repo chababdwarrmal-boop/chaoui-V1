@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v25-home-v3";
+const CACHE_NAME = "chaoui-v26-match-v3";
 
 const APP_FILES = [
   "./",
@@ -14,8 +14,8 @@ const APP_FILES = [
   "./tournament-v2.js",
   "./tournament-v2.css",
   "./tournament-v2-observer.js",
-  "./matches-v2.js",
-  "./matches-v2.css",
+  "./matches-v2.js?v=20260925-match3",
+  "./matches-v2.css?v=20260925-match3",
   "./elite-core-v2.js",
   "./elite-core-v2.css",
   "./player-page-v2.css?v=20260925-playerhq3",
