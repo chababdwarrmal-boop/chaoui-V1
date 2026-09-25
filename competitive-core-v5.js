@@ -169,8 +169,7 @@ function hook(){
  window.renderOrganizer=async()=>{if(oldOrg)await oldOrg();await organizerV5()};
  originalOpenTournament=window.openTournament;window.openTournament=tournamentHub;
  originalOpenMatchRoom=window.openMatchRoom;window.openMatchRoom=matchRoomV5;
- document.addEventListener("click",e=>{const p=e.target.closest("[data-page]");if(p&&p.dataset.page&&window.showPage)showPage(p.dataset.page)});
- setTimeout(()=>{homeV5();profileCareer();rankingV5();organizerV5()},500);
+ setTimeout(()=>{originalOpenTournament=window.openTournament;window.openTournament=tournamentHub;originalOpenMatchRoom=window.openMatchRoom;window.openMatchRoom=matchRoomV5;homeV5();profileCareer();rankingV5();organizerV5()},1400);
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",hook);else hook();
 })();
