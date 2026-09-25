@@ -3931,3 +3931,159 @@ input::placeholder,textarea::placeholder{
 @keyframes chaouiCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes chaouiCardShine{0%,35%{transform:translateX(-55%) rotate(8deg)}65%,100%{transform:translateX(55%) rotate(8deg)}}
 @keyframes chaouiAvatarPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,106,0,.08)}50%{box-shadow:0 0 0 10px rgba(255,106,0,0)}}
+
+
+/* =========================================================
+   CHAoui UI REFRESH 2026 — player-first / tournament-first
+   ========================================================= */
+:root{
+  --surface:rgba(255,255,255,.045);
+  --surface-strong:rgba(255,255,255,.07);
+  --line:rgba(255,255,255,.09);
+  --glow:rgba(255,106,0,.18);
+}
+
+.app{
+  max-width:1280px;
+  margin:0 auto;
+}
+
+.app-header{
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  background:linear-gradient(180deg,rgba(7,7,7,.94),rgba(7,7,7,.76));
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,106,0,.18);
+  background:
+    radial-gradient(circle at 82% 20%,rgba(255,106,0,.18),transparent 32%),
+    linear-gradient(135deg,rgba(255,255,255,.065),rgba(255,255,255,.025));
+  box-shadow:0 22px 70px rgba(0,0,0,.3);
+}
+
+.hero-card::after{
+  content:"";
+  position:absolute;
+  width:220px;height:220px;
+  left:-90px;bottom:-120px;
+  border-radius:50%;
+  background:rgba(255,106,0,.12);
+  filter:blur(45px);
+  pointer-events:none;
+}
+
+.home-dashboard-grid{
+  gap:10px;
+}
+
+.home-stat-card,
+.home-panel,
+.quick-card{
+  border-color:var(--line);
+  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+}
+
+.home-stat-card{
+  transition:transform .2s var(--ease),border-color .2s ease,box-shadow .2s ease;
+}
+
+.home-stat-card:hover,
+.quick-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,106,0,.25);
+  box-shadow:0 16px 45px rgba(0,0,0,.22);
+}
+
+.quick-grid{
+  gap:10px;
+}
+
+.quick-card{
+  min-height:104px;
+  border-radius:18px;
+}
+
+.page-title{
+  margin-bottom:18px;
+}
+
+.page-title h1{
+  letter-spacing:-.5px;
+}
+
+.section-head{
+  margin-top:22px;
+}
+
+.cards-grid{
+  gap:12px;
+}
+
+.bottom-nav{
+  width:min(720px,calc(100% - 20px));
+  margin:0 auto;
+  padding:7px;
+  gap:5px;
+  background:rgba(13,13,15,.88);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 18px 55px rgba(0,0,0,.45);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.nav-item{
+  min-width:0;
+  flex:1;
+  transition:transform .18s ease,background .18s ease,color .18s ease;
+}
+
+.nav-item.active{
+  background:linear-gradient(145deg,rgba(255,106,0,.2),rgba(255,106,0,.08));
+  box-shadow:inset 0 0 0 1px rgba(255,106,0,.18);
+}
+
+.nav-item:active{
+  transform:scale(.95);
+}
+
+@media(min-width:900px){
+  .app-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+  }
+
+  .bottom-nav{
+    bottom:18px;
+  }
+}
+
+@media(max-width:600px){
+  .app-header{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .hero-card{
+    border-radius:22px;
+  }
+
+  .page{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .bottom-nav{
+    width:calc(100% - 14px);
+    bottom:7px;
+    border-radius:22px;
+  }
+
+  .nav-item small{
+    font-size:8px;
+  }
+}
