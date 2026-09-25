@@ -260,15 +260,19 @@
         <article class="home-stat-card"><span>🪙</span><strong id="homeCoinsValue">0</strong><small>CHAoui Coins</small></article>
       </div>
 
-      <section class="home-command-center" id="homeCommandCenter">
-        <div class="command-copy">
-          <span class="home-card-kicker">MATCH CENTER</span>
-          <h2>جاهز للمواجهة؟ ⚡</h2>
-          <p id="homeCommandText">جاري تجهيز الحالة ديالك...</p>
+      <section class="home-next-match" id="homeCommandCenter">
+        <div class="next-match-top">
+          <div><span class="home-card-kicker">NEXT MATCH</span><h2>المواجهة الجاية ⚔️</h2></div>
+          <div class="next-match-power"><small>POWER</small><strong id="homePowerValue">--</strong></div>
         </div>
-        <div class="command-side">
-          <div class="command-power"><span>POWER</span><strong id="homePowerValue">--</strong></div>
-          <button id="homeCommandAction" class="primary-small" type="button" data-page="matches">شوف المباريات</button>
+        <div class="next-match-body">
+          <div class="next-match-player me"><span class="next-avatar" id="homeMyAvatar">C</span><strong id="homeMyName">أنت</strong><small>PLAYER</small></div>
+          <div class="next-match-vs"><span>VS</span><small id="homeMatchRound">MATCH</small></div>
+          <div class="next-match-player opponent"><span class="next-avatar" id="homeOpponentAvatar">?</span><strong id="homeOpponentName">المنافس</strong><small id="homeOpponentMeta">WAITING</small></div>
+        </div>
+        <div class="next-match-footer">
+          <div><span>الموعد</span><strong id="homeCommandText">جاري تجهيز الحالة...</strong><small id="homeMatchCountdown">--</small></div>
+          <button id="homeCommandAction" class="primary-small" type="button" data-page="matches">فتح المباراة ⚔️</button>
         </div>
       </section>
 
