@@ -1,4 +1,4 @@
-/* CHAoui Visual V6 — mobile-first polish */
+/* CHAoui Visual V7 — mobile-first polish */
 :root{--v6-blue:#168cff;--v6-cyan:#36c7ff;--v6-gold:#f5c451;--v6-green:#43df9a;--v6-red:#ff667d;--v6-violet:#9b7cff;--v6-pink:#f276b8;--v6-bg:#06111c}
 body{background:radial-gradient(circle at 85% 0,rgba(22,140,255,.11),transparent 28%),radial-gradient(circle at 5% 65%,rgba(155,124,255,.05),transparent 30%),#06111c}
 button,.mv2-card,.core5-quick button,.player-actions button,.more-grid button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -44,3 +44,6 @@ button,.mv2-card,.core5-quick button,.player-actions button,.more-grid button{to
  .more-grid{gap:8px}
 }
 @media(max-width:390px){.chat-v6 .chat-composer button[type=submit]{min-width:65px;padding:0 8px}.v6-icon{width:36px;height:36px}.more-grid .v6-icon{width:38px;height:38px}}
+
+/* Match Center cleanup: the V2/V5 center owns its summary; hide the legacy stats row. */
+#matches > .stats-strip{display:none!important}
