@@ -1253,6 +1253,7 @@ function updateRoleAccess() {
   if (organizerShortcut) {
 
     organizerShortcut.style.display =
+      currentProfile?.role === "owner" ||
       isOrganizerActive(currentProfile)
         ? "block"
         : "none";
@@ -6621,6 +6622,7 @@ async function startCHAouiApp() {
         () => {
 
           if (
+            currentProfile?.role === "owner" ||
             isOrganizerActive(
               currentProfile
             )
