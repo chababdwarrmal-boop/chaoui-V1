@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="home-v3.css?v=20260925-home3">
   <link rel="stylesheet" href="player-page-v2.css?v=20260925-playerhq3">
   <link rel="stylesheet" href="admin-hq-v9.css?v=20260925-admin10">
+  <link rel="stylesheet" href="organizer-v11.css?v=20260925-v11">
 </head>
 
 <body>
@@ -989,6 +990,11 @@
         adminHQ.onload = () => console.log("CHAoui Admin HQ V9 loaded");
         adminHQ.onerror = () => console.warn("CHAoui Admin HQ V9 failed to load");
         document.head.appendChild(adminHQ);
+        const organizerHQ = document.createElement("script");
+        organizerHQ.src = "organizer-v11.js?v=20260925-v11";
+        organizerHQ.onload = () => console.log("CHAoui Organizer HQ V11 loaded");
+        organizerHQ.onerror = () => console.warn("CHAoui Organizer HQ V11 failed to load");
+        document.head.appendChild(organizerHQ);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
@@ -1043,7 +1049,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260925-v8")
+          .register("./sw.js?v=20260925-v11")
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
