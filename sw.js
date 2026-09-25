@@ -4,7 +4,7 @@ const APP_FILES = [
   "./",
   "./index.html",
   "./style.css",
-  "./script.js?v=20260925-player2",
+  "./script.js?v=20260925-playerhq3",
   "./manifest.json",
   "./icon.svg",
   "./icon-192.png",
@@ -18,7 +18,7 @@ const APP_FILES = [
   "./matches-v2.css",
   "./elite-core-v2.js",
   "./elite-core-v2.css",
-  "./player-page-v2.css"
+  "./player-page-v2.css?v=20260925-playerhq3"
 ];
 
 async function transformAppAsset(request, response) {
