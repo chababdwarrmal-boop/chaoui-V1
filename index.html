@@ -15,6 +15,7 @@
   <title>CHAoui-Pro | eFootball Tournament Platform</title>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="player-page-v2.css?v=20260925-playerhq3">
 </head>
 
 <body>
@@ -1037,7 +1038,7 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260925-player2";
+        app.src = "script.js?v=20260925-playerhq3";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
           console.log("CHAoui app loaded");
@@ -1110,7 +1111,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260925-elite2")
+          .register("./sw.js?v=20260925-playerhq3")
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
