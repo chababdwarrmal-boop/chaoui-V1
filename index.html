@@ -1016,6 +1016,11 @@
           matchesV2.onload = () => console.log("CHAoui Match Center V2 loaded");
           matchesV2.onerror = () => console.warn("CHAoui Match Center V2 failed to load");
           document.head.appendChild(matchesV2);
+        const coreV5 = document.createElement("script");
+        coreV5.src = "competitive-core-v5.js?v=20260925-core5";
+        coreV5.onload = () => console.log("CHAoui Competitive Core V5 loaded");
+        coreV5.onerror = () => console.warn("CHAoui Competitive Core V5 failed to load");
+        document.head.appendChild(coreV5);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
