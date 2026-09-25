@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v20-tournaments-v2";
+const CACHE_NAME = "chaoui-v21-matches-v2";
 
 const APP_FILES = [
   "./",
@@ -13,7 +13,9 @@ const APP_FILES = [
   "./universe.js?v=20260925-universe5",
   "./tournament-v2.js",
   "./tournament-v2.css",
-  "./tournament-v2-observer.js"
+  "./tournament-v2-observer.js",
+  "./matches-v2.js",
+  "./matches-v2.css"
 ];
 
 async function transformAppAsset(request, response) {
