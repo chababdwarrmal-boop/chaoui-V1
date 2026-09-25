@@ -49,5 +49,5 @@ begin
  return join_status;
 end;$function$;
 
-revoke all on function public.join_tournament_with_registration(uuid,text,text,text,text,text,text,boolean,boolean,boolean,text) from public;
+revoke execute on function public.join_tournament_with_registration(uuid,text,text,text,text,text,text,boolean,boolean,boolean,text) from public, anon, authenticated;
 grant execute on function public.join_tournament_with_registration(uuid,text,text,text,text,text,text,boolean,boolean,boolean,text) to authenticated;
