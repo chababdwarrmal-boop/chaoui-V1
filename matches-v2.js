@@ -57,7 +57,12 @@ async function render(){
  const op=opponent(next,map);return `<section class="mv2-next"><div><span class="mv2-kicker">NEXT MATCH ⚔️</span><h2>المواجهة الجاية</h2><p>${esc(next.round||"Match")} · ${esc(fmt(next.scheduled_at))} · ${esc(tm(next.scheduled_at))}</p></div><div class="mv2-next-vs"><span>YOU</span><strong>VS</strong><span>${esc(op.display_name||op.username||"المنافس")}</span></div><div class="mv2-next-bottom"><b id="mv2Countdown">${esc(rel(next.scheduled_at))}</b><button class="primary-btn" onclick="openMatchRoom('${esc(next.id)}')">فتح Match Room 💬</button></div></section>`})():"";
  const sum=document.getElementById("mv2Summary");if(sum)sum.innerHTML=[["⚔️",ms.length,"المباريات"],["🏆",wins,"الانتصارات"],["⏳",needs,"تحتاج تأكيد"],["🔥",finished,"منتهية"]].map(x=>`<div><span>${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></div>`).join("");
  const visible=ms.filter(m=>(filter==="all"||m.status===filter)&&(!query||String(opponent(m,map).display_name||opponent(m,map).username||"").toLowerCase().includes(query)));
- box.innerHTML=visible.map(m=>card(m,map,rm)).join("")||'<div class="empty-card mv2-empty">ما كايناش مباريات بهاد الاختيار.</div>';
+ box.innerHTML=visible.map(m=>card(m,map,rm)).join("")||`
+  <div class="empty-card mv2-empty">
+    <strong>${ms.length ? "ما كايناش مباريات بهاد الاختيار" : "مازال ما عندك حتى مباراة"}</strong>
+    <span>${ms.length ? "بدّل الفلتر أو قلب باسم المنافس." : "دخل للبطولات وسجل فواحد المنافسة باش تبدا الماتشات ديالك."}</span>
+    <button type="button" class="primary-small" data-page="tournaments">شوف البطولات</button>
+  </div>`;
 }
 function boot(){shell();const original=window.renderMatches;window.renderMatches=render;setTimeout(render,200)}
 boot();
