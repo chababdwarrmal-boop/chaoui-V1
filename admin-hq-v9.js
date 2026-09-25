@@ -111,6 +111,6 @@ async function openTournamentAdmin(id){
  const html=rows.map(x=>{const p=map.get(x.player_id)||{};return'<div class="ahq-row"><div><b>'+esc(p.display_name||p.username||"Player")+'</b><small>Rating '+(p.rating||0)+" · "+(p.points||0)+" pts</small></div><span class=\"ahq-pill\">"+esc(x.status||"pending")+'</span><div class="ahq-actions"><button data-tp="'+x.id+'" data-status="accepted">✅ تأهيل</button><button data-tp="'+x.id+'" data-status="waitlist">⏳ انتظاري</button><button data-tp="'+x.id+'" data-status="rejected" class="danger-btn">❌ رفض</button></div></div>'}).join("")||empty("ماكاين حتى لاعب.");
  const m=document.createElement("div");m.className="ahq-modal";m.innerHTML='<div class="ahq-modal-box"><button class="ahq-close">×</button><span class="ahq-kicker">TOURNAMENT</span><h2>'+esc(t.name)+'</h2><p>'+esc(t.description||"")+" · "+esc(t.format||"")+'</p><div class="ahq-modal-list">'+html+"</div></div>";document.body.appendChild(m);m.querySelector(".ahq-close").onclick=()=>m.remove();m.querySelectorAll("[data-tp]").forEach(b=>b.onclick=async()=>{const r=await supabaseClient.from("tournament_players").update({status:b.dataset.status}).eq("id",b.dataset.tp);if(r.error)return toast("ما قدرناش نبدلو الحالة.");toast("تبدلات حالة اللاعب.");m.remove();openTournamentAdmin(id);loadAll()});
 }
-window.renderKing=async function(){if(!ownerOnly())return;shell();await loadAll()};
+window.adminHQRenderKing=async function(){if(!ownerOnly())return;shell();await loadAll()};
 window.adminHQRefresh=loadAll;
 })();
