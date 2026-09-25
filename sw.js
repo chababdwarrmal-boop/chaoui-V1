@@ -1,10 +1,10 @@
-const CACHE_NAME = "chaoui-v23-player-v2";
+const CACHE_NAME = "chaoui-v24-player-hq";
 
 const APP_FILES = [
   "./",
   "./index.html",
   "./style.css",
-  "./script.js?v=20260925-player2",
+  "./script.js?v=20260925-playerhq3",
   "./manifest.json",
   "./icon.svg",
   "./icon-192.png",
@@ -18,8 +18,7 @@ const APP_FILES = [
   "./matches-v2.css",
   "./elite-core-v2.js",
   "./elite-core-v2.css",
-  "./player-page-v2.js",
-  "./player-page-v2.css"
+  "./player-page-v2.css?v=20260925-playerhq3"
 ];
 
 async function transformAppAsset(request, response) {
@@ -27,7 +26,7 @@ async function transformAppAsset(request, response) {
   if (url.pathname.endsWith("/social.js")) {
     const source = await response.text();
     const injected = source + `
-\n(()=>{const s=document.createElement("script");s.src="tournament-v2.js?v=20260925-tournaments2";s.onload=()=>{const l=document.createElement("link");l.rel="stylesheet";l.href="tournament-v2.css?v=20260925-tournaments2";document.head.appendChild(l)};document.head.appendChild(s);setTimeout(()=>{const o=document.createElement("script");o.src="tournament-v2-observer.js?v=20260925-tournaments2";document.head.appendChild(o)},0);const e=document.createElement("script");e.src="elite-core-v2.js?v=20260925-elite2";e.onload=()=>{const c=document.createElement("link");c.rel="stylesheet";c.href="elite-core-v2.css?v=20260925-elite2";document.head.appendChild(c)};document.head.appendChild(e);const p=document.createElement("script");p.src="player-page-v2.js?v=20260925-player2";p.onload=()=>{const c=document.createElement("link");c.rel="stylesheet";c.href="player-page-v2.css?v=20260925-player2";document.head.appendChild(c)};document.head.appendChild(p)})();\n`;
+\n(()=>{const s=document.createElement("script");s.src="tournament-v2.js?v=20260925-tournaments2";s.onload=()=>{const l=document.createElement("link");l.rel="stylesheet";l.href="tournament-v2.css?v=20260925-tournaments2";document.head.appendChild(l)};document.head.appendChild(s);setTimeout(()=>{const o=document.createElement("script");o.src="tournament-v2-observer.js?v=20260925-tournaments2";document.head.appendChild(o)},0);const e=document.createElement("script");e.src="elite-core-v2.js?v=20260925-elite2";e.onload=()=>{const c=document.createElement("link");c.rel="stylesheet";c.href="elite-core-v2.css?v=20260925-elite2";document.head.appendChild(c)};document.head.appendChild(e);})();\n`;
     return new Response(injected, {status: response.status, headers: response.headers});
   }
   if (url.pathname.endsWith("/tournament-v2.js")) {
