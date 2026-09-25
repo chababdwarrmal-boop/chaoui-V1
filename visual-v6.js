@@ -22,7 +22,7 @@ settings:"<svg viewBox='0 0 24 24' fill='none'><path d='M12 8.5a3.5 3.5 0 1 0 0 
 function iconFor(page){return ICONS[page]||"<svg viewBox='0 0 24 24' fill='none'><circle cx='12' cy='12' r='8'/></svg>"}
 function decorate(){
  document.querySelectorAll("[data-page]").forEach(b=>{
-  const p=b.dataset.page;if(!ICONS[p]||b.dataset.v6icon)return;
+  const p=b.dataset.page;if(!ICONS[p]||b.dataset.v6icon||b.classList.contains("more-feature"))return;
   const first=b.firstElementChild;
   if(first && first.tagName==="SPAN" && /^[\p{Extended_Pictographic}\s]+$/u.test(first.textContent.trim())){
     first.className="v6-icon";
