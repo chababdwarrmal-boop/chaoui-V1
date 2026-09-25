@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v34-organizer-v11";
+const CACHE_NAME = "chaoui-v35-auth-v13";
 
 const APP_FILES = [
   "./",
@@ -28,11 +28,17 @@ const APP_FILES = [
   "./admin-hq-v9.js?v=20260925-admin10",
   "./admin-hq-v9.css?v=20260925-admin10",
   "./organizer-v11.js?v=20260925-v11",
-  "./organizer-v11.css?v=20260925-v11"
+  "./organizer-v11.css?v=20260925-v11",
+  "./auth-v13.js"
 ];
 
 async function transformAppAsset(request, response) {
   const url = new URL(request.url);
+  if (url.pathname.endsWith("/script.js")) {
+    const source = await response.text();
+    const injected = source + '\n(()=>{const s=document.createElement("script");s.src="auth-v13.js?v=20260925-v13";document.head.appendChild(s)})();\n';
+    return new Response(injected, {status: response.status, headers: response.headers});
+  }
   if (url.pathname.endsWith("/social.js")) {
     const source = await response.text();
     const injected = source + `
@@ -74,6 +80,12 @@ self.addEventListener("fetch", event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return transformed;
       })
-      .catch(() => caches.match(event.request))
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached && new URL(event.request.url).pathname.endsWith("/script.js")) {
+          return transformAppAsset(event.request, cached);
+        }
+        return cached;
+      })
   );
 });
