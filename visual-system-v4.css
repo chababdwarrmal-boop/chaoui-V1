@@ -1,0 +1,129 @@
+/* CHAoui Visual Identity V4 — blue primary, rich competitive accents */
+:root{
+  --bg:#050a12;
+  --bg-2:#09111d;
+  --card:#0d1725;
+  --card-2:#111d2d;
+  --card-3:#172438;
+  --text:#f4f8ff;
+  --muted:#91a3b7;
+  --muted-2:#60748a;
+  --fire:#168cff;
+  --fire-2:#36c7ff;
+  --gold:#f5c451;
+  --green:#43df9a;
+  --red:#ff667d;
+  --blue:#168cff;
+  --violet:#9b7cff;
+  --pink:#f276b8;
+  --teal:#39d8c1;
+  --orange:#ff9a5b;
+  --border:rgba(255,255,255,.075);
+  --border-fire:rgba(22,140,255,.30);
+  --shadow:0 22px 70px rgba(0,0,0,.38);
+}
+html{background:var(--bg)}
+body{
+  background:
+    radial-gradient(circle at 84% 2%,rgba(22,140,255,.12),transparent 25%),
+    radial-gradient(circle at 8% 35%,rgba(155,124,255,.07),transparent 22%),
+    radial-gradient(circle at 82% 75%,rgba(57,216,193,.045),transparent 25%),
+    var(--bg);
+}
+.app-header{
+  background:rgba(5,10,18,.82);
+  border-bottom-color:rgba(22,140,255,.12);
+}
+.brand-fire{
+  background:linear-gradient(145deg,rgba(22,140,255,.18),rgba(155,124,255,.10));
+  border-color:rgba(22,140,255,.26);
+  box-shadow:0 0 28px rgba(22,140,255,.08);
+}
+.avatar{background:linear-gradient(145deg,#168cff,#7b6cff)}
+.page-title span{color:var(--fire)}
+.primary-btn,.primary-small{
+  background:linear-gradient(135deg,#168cff,#4777ff 55%,#9b7cff);
+  box-shadow:0 12px 34px rgba(22,140,255,.18);
+}
+.primary-btn:hover,.primary-small:hover{box-shadow:0 15px 38px rgba(22,140,255,.25)}
+.secondary-btn:hover{border-color:rgba(155,124,255,.28)}
+.auth-form input:focus,.modal-input:focus{border-color:rgba(22,140,255,.55);box-shadow:0 0 0 3px rgba(22,140,255,.08)}
+.auth-switch button{color:var(--gold)}
+.role-card.active{background:linear-gradient(145deg,rgba(22,140,255,.14),rgba(155,124,255,.055));border-color:rgba(22,140,255,.30);box-shadow:0 12px 30px rgba(22,140,255,.09)}
+.bottom-nav{
+  background:rgba(7,14,24,.90)!important;
+  border-color:rgba(255,255,255,.09)!important;
+  box-shadow:0 20px 70px rgba(0,0,0,.38),0 0 0 1px rgba(22,140,255,.035);
+  backdrop-filter:blur(22px);
+}
+.bottom-nav .nav-item{position:relative;transition:transform .2s,color .2s}
+.bottom-nav .nav-item span{transition:.2s}
+.bottom-nav .nav-item:nth-child(1).active span{color:#4dc7ff;text-shadow:0 0 14px rgba(77,199,255,.45)}
+.bottom-nav .nav-item:nth-child(2) span{color:var(--gold)}
+.bottom-nav .nav-item:nth-child(3) span{color:#55d9c2}
+.bottom-nav .nav-item:nth-child(4) span{color:var(--violet)}
+.bottom-nav .nav-item:nth-child(5) span{color:var(--pink)}
+.bottom-nav .nav-item:nth-child(6) span{color:#a7b4c5}
+.bottom-nav .nav-item.active{color:#fff}
+.bottom-nav .nav-item.active:after{
+  content:"";position:absolute;bottom:3px;left:30%;right:30%;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,#168cff,#9b7cff);box-shadow:0 0 14px rgba(22,140,255,.38)
+}
+
+/* Tournament discovery: give each competition state its own restrained accent. */
+.tv2-tabs button.active{background:linear-gradient(135deg,rgba(22,140,255,.18),rgba(155,124,255,.08));border-color:rgba(22,140,255,.28)}
+.tv2-feature>div{border-color:rgba(245,196,81,.22);background:radial-gradient(circle at 86% 15%,rgba(245,196,81,.14),transparent 34%),linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018))}
+.tv2-feature-kicker{color:var(--gold)}
+.tv2-card{border-top:2px solid rgba(22,140,255,.22)}
+.tv2-card:nth-child(3n+2){border-top-color:rgba(155,124,255,.34)}
+.tv2-card:nth-child(3n+3){border-top-color:rgba(67,223,154,.30)}
+.tv2-card.is-live{border-color:rgba(255,102,125,.28);border-top-color:rgba(255,102,125,.55)}
+.tv2-card:nth-child(3n+2) .tv2-game-icon{background:rgba(155,124,255,.09);border-color:rgba(155,124,255,.18)}
+.tv2-card:nth-child(3n+3) .tv2-game-icon{background:rgba(67,223,154,.08);border-color:rgba(67,223,154,.18)}
+.tv2-progress span,.tv2-detail-progress>div span{background:linear-gradient(90deg,#168cff,#9b7cff)}
+.tv2-joined{color:var(--green)}
+.tv2-status.open{color:var(--green)}
+.tv2-status.live{color:var(--red)}
+.tv2-status.paused{color:var(--gold)}
+
+/* Home: four visual accents without turning it into a rainbow. */
+.home-hero-v3{
+  background:
+    radial-gradient(circle at 84% 12%,rgba(22,140,255,.18),transparent 28%),
+    radial-gradient(circle at 60% 95%,rgba(155,124,255,.10),transparent 28%),
+    linear-gradient(145deg,#0d2032,#07101c 75%);
+}
+.home-brand-mark{background:conic-gradient(from 210deg,rgba(22,140,255,.18),rgba(155,124,255,.14),rgba(67,223,154,.10),rgba(22,140,255,.18));border-color:rgba(255,255,255,.10)}
+.home-brand-mark img{filter:drop-shadow(0 0 16px rgba(22,140,255,.18))}
+.home-tournaments-v3 .tv2-card:nth-child(3n+2){box-shadow:inset 0 0 34px rgba(155,124,255,.035)}
+.home-tournaments-v3 .tv2-card:nth-child(3n+3){box-shadow:inset 0 0 34px rgba(67,223,154,.028)}
+.home-next-v3{border-color:rgba(57,216,193,.16);background:radial-gradient(circle at 86% 15%,rgba(57,216,193,.11),transparent 32%),linear-gradient(145deg,rgba(10,34,43,.92),rgba(4,14,24,.92))}
+.home-next-head>strong{color:var(--teal)}
+.home-match-player span{background:linear-gradient(145deg,#168cff,#4777ff)}
+.home-vs-v3 b{color:var(--gold)}
+.home-quick-v3 button:nth-child(1){border-color:rgba(57,216,193,.14)}
+.home-quick-v3 button:nth-child(2){border-color:rgba(245,196,81,.14)}
+.home-quick-v3 button:nth-child(3){border-color:rgba(155,124,255,.14)}
+.home-quick-v3 button:nth-child(1) span{color:var(--teal)}
+.home-quick-v3 button:nth-child(2) span{color:var(--gold)}
+.home-quick-v3 button:nth-child(3) span{color:var(--violet)}
+
+/* Player HQ: keep blue identity, use gold for rating and teal for performance. */
+.player-hq{background:radial-gradient(circle at 84% 0%,rgba(22,140,255,.16),transparent 30%),radial-gradient(circle at 8% 100%,rgba(155,124,255,.08),transparent 28%),linear-gradient(145deg,#0c1c2c,#06111d 72%)}
+.player-rating strong{color:#fff2c2;text-shadow:0 0 25px rgba(245,196,81,.14)}
+.player-rating small{color:var(--gold)}
+.player-form-dots i:first-child,.player-form-dots i:nth-child(2){color:var(--green);border-color:rgba(67,223,154,.14)}
+.player-form-dots i:nth-child(3){color:var(--red);border-color:rgba(255,102,125,.14)}
+.player-objective{border-color:rgba(155,124,255,.17)!important}
+.player-objective-copy>span{color:var(--violet)}
+
+/* Match Center semantic accents */
+.mv2-summary>div:nth-child(2) span{color:var(--gold)}
+.mv2-summary>div:nth-child(3) span{color:var(--red)}
+.mv2-summary>div:nth-child(4) span{color:var(--green)}
+.mv2-next-vs strong{color:var(--gold)}
+.mv2-next-bottom b{color:var(--teal)}
+
+@media(max-width:640px){
+  .bottom-nav .nav-item span{font-size:17px}
+}
