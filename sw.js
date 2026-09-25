@@ -80,6 +80,12 @@ self.addEventListener("fetch", event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return transformed;
       })
-      .catch(() => caches.match(event.request))
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached && new URL(event.request.url).pathname.endsWith("/script.js")) {
+          return transformAppAsset(event.request, cached);
+        }
+        return cached;
+      })
   );
 });
