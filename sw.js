@@ -12,7 +12,8 @@ const APP_FILES = [
   "./logo.png",
   "./universe.js?v=20260925-universe5",
   "./tournament-v2.js",
-  "./tournament-v2.css"
+  "./tournament-v2.css",
+  "./tournament-v2-observer.js"
 ];
 
 async function transformAppAsset(request, response) {
@@ -20,7 +21,7 @@ async function transformAppAsset(request, response) {
   if (url.pathname.endsWith("/social.js")) {
     const source = await response.text();
     const injected = source + `
-\n(()=>{const s=document.createElement("script");s.src="tournament-v2.js?v=20260925-tournaments2";s.onload=()=>{const l=document.createElement("link");l.rel="stylesheet";l.href="tournament-v2.css?v=20260925-tournaments2";document.head.appendChild(l)};document.head.appendChild(s)})();\n`;
+\n(()=>{const s=document.createElement("script");s.src="tournament-v2.js?v=20260925-tournaments2";s.onload=()=>{const l=document.createElement("link");l.rel="stylesheet";l.href="tournament-v2.css?v=20260925-tournaments2";document.head.appendChild(l)};document.head.appendChild(s);setTimeout(()=>{const o=document.createElement("script");o.src="tournament-v2-observer.js?v=20260925-tournaments2";document.head.appendChild(o)},0)})();\n`;
     return new Response(injected, {status: response.status, headers: response.headers});
   }
   if (url.pathname.endsWith("/tournament-v2.js")) {
