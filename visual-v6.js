@@ -1,4 +1,4 @@
-/* CHAoui Visual V6 — premium mobile icons, match cards and chat */
+/* CHAoui Visual V7 — single icon layer, match cards and chat */
 (()=>{"use strict";
 const ICONS={
 home:"<svg viewBox='0 0 24 24' fill='none'><path d='M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5v-9Z'/></svg>",
@@ -23,10 +23,17 @@ function iconFor(page){return ICONS[page]||"<svg viewBox='0 0 24 24' fill='none'
 function decorate(){
  document.querySelectorAll("[data-page]").forEach(b=>{
   const p=b.dataset.page;if(!ICONS[p]||b.dataset.v6icon)return;
-  const raw=[...b.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join(" ").trim();
-  if(raw && /^[\p{Extended_Pictographic}\s+]+$/u.test(raw)) b.dataset.v6OldIcon=raw;
-  const i=document.createElement("span");i.className="v6-icon";i.innerHTML=iconFor(p);
-  b.insertBefore(i,b.firstChild);b.dataset.v6icon="1";
+  const first=b.firstElementChild;
+  if(first && first.tagName==="SPAN" && /^[\p{Extended_Pictographic}\s]+$/u.test(first.textContent.trim())){
+    first.className="v6-icon";
+    first.innerHTML=iconFor(p);
+  }else{
+    const raw=[...b.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join(" ").trim();
+    if(raw && /^[\p{Extended_Pictographic}\s+]+$/u.test(raw)) b.dataset.v6OldIcon=raw;
+    const i=document.createElement("span");i.className="v6-icon";i.innerHTML=iconFor(p);
+    b.insertBefore(i,b.firstChild);
+  }
+  b.dataset.v6icon="1";
  });
  document.querySelectorAll(".home-quick-v3 button,.player-actions button").forEach(b=>{
   if(b.dataset.v6decor)return;
