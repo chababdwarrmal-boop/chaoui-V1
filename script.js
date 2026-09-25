@@ -4498,6 +4498,10 @@ async function deleteTournamentConfirmed(id) {
 
 async function renderKing() {
 
+  if (window.adminHQRenderKing) {
+    return window.adminHQRenderKing();
+  }
+
   const box =
     $("kingContent");
 
