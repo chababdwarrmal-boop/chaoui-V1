@@ -210,107 +210,64 @@
     </header>
 
     <!-- HOME -->
-    <section id="home" class="page active-page">
+    <section id="home" class="page active-page home-page-v3">
 
-      <div class="hero-card">
-
-        <div>
-          <span class="hero-label">
-            مرحباا 👋
-          </span>
-
-          <h1 id="homeName">
-            CHAOUI Player
-          </h1>
-
-          <p>
-            مستعد للمواجهة؟ ⚡
-          </p>
+      <section class="home-hero-v3">
+        <div class="home-hero-copy">
+          <span>CHAoui PRO</span>
+          <h1>مرحبا، <strong id="homeName">CHAOUI Player</strong></h1>
+          <p>المنافسة ديالك كتبدأ من هنا.</p>
+          <button type="button" class="home-hero-btn" data-page="tournaments">شوف البطولات <b>↗</b></button>
         </div>
-
-        <div class="hero-logo"><img src="logo.png" alt="CHAoui-Pro"></div>
-
-      </div>
-
-      <div class="section-head">
-
-        <h2>
-          البطولات
-        </h2>
-
-        <button type="button" data-page="tournaments">
-          الكل
-        </button>
-
-      </div>
-
-      <div
-        id="homeTournaments"
-        class="cards-grid"
-      ></div>
-
-      <div class="home-dashboard-grid">
-        <article class="home-stat-card home-stat-main">
-          <span class="home-card-kicker">YOUR PROGRESS</span>
-          <strong id="homeLevelValue">LV.1</strong>
-          <div class="home-xp-track"><span id="homeXPBar"></span></div>
-          <small id="homeXPText">0 XP</small>
-        </article>
-        <article class="home-stat-card"><span>🏆</span><strong id="homeWinsValue">0</strong><small>الانتصارات</small></article>
-        <article class="home-stat-card"><span>⚡</span><strong id="homePointsValue">0</strong><small>النقاط</small></article>
-        <article class="home-stat-card"><span>🪙</span><strong id="homeCoinsValue">0</strong><small>CHAoui Coins</small></article>
-      </div>
-
-      <section class="home-next-match" id="homeCommandCenter">
-        <div class="next-match-top">
-          <div><span class="home-card-kicker">NEXT MATCH</span><h2>المواجهة الجاية ⚔️</h2></div>
-          <div class="next-match-power"><small>POWER</small><strong id="homePowerValue">--</strong></div>
-        </div>
-        <div class="next-match-body">
-          <div class="next-match-player me"><span class="next-avatar" id="homeMyAvatar">C</span><strong id="homeMyName">أنت</strong><small>PLAYER</small></div>
-          <div class="next-match-vs"><span>VS</span><small id="homeMatchRound">MATCH</small></div>
-          <div class="next-match-player opponent"><span class="next-avatar" id="homeOpponentAvatar">?</span><strong id="homeOpponentName">المنافس</strong><small id="homeOpponentMeta">WAITING</small></div>
-        </div>
-        <div class="next-match-footer">
-          <div><span>الموعد</span><strong id="homeCommandText">جاري تجهيز الحالة...</strong><small id="homeMatchCountdown">--</small></div>
-          <button id="homeCommandAction" class="primary-small" type="button" data-page="matches">فتح المباراة ⚔️</button>
+        <div class="home-brand-mark">
+          <img src="logo.png" alt="CHAoui-Pro">
         </div>
       </section>
 
-      <div class="section-head home-section-head">
-        <div><span>FAST ACCESS</span><h2>اختصارات سريعة</h2></div>
-      </div>
-      <div class="quick-grid">
-        <button class="quick-card" data-page="matches"><span>⚔️</span><strong>مبارياتي</strong><small>المواجهات والنتائج</small></button>
-        <button class="quick-card" data-page="ranking"><span>📊</span><strong>الترتيب</strong><small>اللاعبين والنقاط</small></button>
-        <button class="quick-card" data-page="progression"><span>🎯</span><strong>التقدم</strong><small>XP والتحديات</small></button>
-        <button class="quick-card" data-page="search"><span>🔎</span><strong>اللاعبين</strong><small>قلب على منافسين</small></button>
-      </div>
+      <section class="home-section-v3">
+        <div class="home-heading-v3">
+          <div><span>COMPETE</span><h2>البطولات</h2></div>
+          <button type="button" data-page="tournaments">الكل</button>
+        </div>
+        <div id="homeTournaments" class="cards-grid home-tournaments-v3"></div>
+      </section>
 
-      <div class="home-lower-grid">
-        <section class="home-panel">
-          <div class="section-head compact"><div><span>LIVE FEED</span><h2>آخر المباريات</h2></div><button data-page="matches">عرض الكل</button></div>
-          <div id="homeRecentMatches" class="home-feed-list"></div>
-        </section>
-        <section class="home-panel">
-          <div class="section-head compact"><div><span>DAILY</span><h2>مكافأة اليوم</h2></div></div>
-          <div class="daily-home-card">
-            <div class="daily-icon">🪙</div>
-            <div><strong>Daily Coins</strong><p>دخل كل نهار وخد Coins + XP.</p></div>
-            <button id="homeDailyClaim" class="primary-small" type="button">خذها</button>
+      <section class="home-next-v3" id="homeCommandCenter">
+        <div class="home-next-head">
+          <div><span>NEXT MATCH</span><h2>المواجهة الجاية</h2></div>
+          <strong id="homePowerValue">--</strong>
+        </div>
+        <div class="home-match-v3">
+          <div class="home-match-player">
+            <span id="homeMyAvatar">C</span>
+            <strong id="homeMyName">أنت</strong>
           </div>
-        </section>
+          <div class="home-vs-v3"><b>VS</b><small id="homeMatchRound">MATCH</small></div>
+          <div class="home-match-player">
+            <span id="homeOpponentAvatar">?</span>
+            <strong id="homeOpponentName">المنافس</strong>
+          </div>
+        </div>
+        <div class="home-next-foot">
+          <div><span>الموعد</span><strong id="homeCommandText">جاري تجهيز الحالة...</strong><small id="homeMatchCountdown">--</small></div>
+          <button id="homeCommandAction" type="button" class="home-hero-btn" data-page="matches">فتح المباراة</button>
+        </div>
+      </section>
+
+      <section class="home-quick-v3">
+        <button type="button" data-page="matches"><span>⚔️</span><b>مبارياتي</b><small>المواجهات</small></button>
+        <button type="button" data-page="ranking"><span>🏆</span><b>الترتيب</b><small>التصنيف</small></button>
+        <button type="button" data-page="profile"><span>👤</span><b>الملف</b><small>Player HQ</small></button>
+      </section>
+
+      <!-- Compatibility hooks for existing home data loaders -->
+      <div class="home-legacy-hooks" aria-hidden="true">
+        <span id="homeLevelValue">LV.1</span><span id="homeXPBar"></span><span id="homeXPText">0 XP</span>
+        <span id="homeWinsValue">0</span><span id="homePointsValue">0</span><span id="homeCoinsValue">0</span>
+        <span id="homeMyAvatarLegacy"></span><span id="homeRecentMatches"></span>
+        <span id="homeFeatureGrid"></span><span id="homeDailyClaim"></span>
+        <span id="homeOrganizerPanel"></span><span id="homeOrganizerContent"></span>
       </div>
-
-      <section class="home-panel home-features-panel">
-        <div class="section-head compact"><div><span>UNLOCK MORE</span><h2>شنو كيتحل مع التقدم؟</h2></div><button data-page="progression">شوف الكل</button></div>
-        <div id="homeFeatureGrid" class="home-feature-grid"></div>
-      </section>
-
-      <section id="homeOrganizerPanel" class="home-panel organizer-home-panel" style="display:none">
-        <div class="section-head compact"><div><span>ORGANIZER</span><h2>لوحة المنظم</h2></div><button data-page="organizer">فتح اللوحة</button></div>
-        <div id="homeOrganizerContent" class="organizer-home-grid"></div>
-      </section>
 
     </section>
 
