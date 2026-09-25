@@ -102,7 +102,7 @@ function initMoreHub(){
    panel.innerHTML=`<div class="more-panel-head"><div><span class="more-panel-icon">${MORE_ICONS[key]}</span><div><small>CHAoui HUB</small><h2>${card.querySelector("b")?.textContent||""}</h2></div></div><button type="button" class="more-panel-close">×</button></div><div class="more-feature-list">${items.map(([page,title,desc])=>`<button type="button" class="more-feature" data-page="${page}"><span class="more-feature-icon"></span><span><b>${title}</b><small>${desc}</small></span><strong>‹</strong></button>`).join("")}</div>`;
    decorate();
    panel.querySelector(".more-panel-close").onclick=()=>{panel.hidden=true;root.querySelectorAll(".more-category").forEach(x=>x.classList.remove("active"))};
-   panel.querySelectorAll(".more-feature").forEach(btn=>btn.addEventListener("click",()=>btn.dispatchEvent(new MouseEvent("click",{bubbles:true}))));
+   panel.querySelectorAll(".more-feature").forEach(btn=>btn.addEventListener("click",()=>{if(typeof window.showPage==="function") window.showPage(btn.dataset.page)}));
    panel.querySelectorAll(".more-feature").forEach(btn=>{const p=btn.dataset.page;btn.querySelector(".more-feature-icon").innerHTML=iconFor(p)});
   });
  });
