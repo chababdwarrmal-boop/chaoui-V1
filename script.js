@@ -2455,6 +2455,74 @@ async function openRatingHistory() {
 }
 
 /* =========================================================
+   PLAYER HQ V3
+   ========================================================= */
+
+async function renderPlayerHQ(p) {
+  const name = p.display_name || p.username || "CHAOUI Player";
+  const wins = Number(p.wins || 0);
+  const losses = Number(p.losses || 0);
+  const draws = Number(p.draws || 0);
+  const played = wins + losses + draws;
+  const xp = Number(p.xp || 0);
+  const level = Number(p.level || 1);
+  const levelBase = 100;
+  const xpIntoLevel = xp % levelBase;
+  const xpPct = Math.min(100, Math.round((xpIntoLevel / levelBase) * 100));
+  const winrate = played ? Math.round(wins * 100 / played) : 0;
+  const streak = Number(p.current_streak || 0);
+
+  if ($("profileAvatar")) $("profileAvatar").textContent = getInitials(name);
+  if ($("profileName")) $("profileName").textContent = name;
+  if ($("profileUsername")) $("profileUsername").textContent = p.username ? "@" + p.username : "@player";
+  if ($("profileTitle")) $("profileTitle").textContent = p.title || "لاعب";
+  if ($("profileLevelBadge")) $("profileLevelBadge").textContent = "LV." + level;
+  if ($("ppsRating")) $("ppsRating").textContent = Number(p.rating || 0);
+  if ($("ppsLevel")) $("ppsLevel").textContent = level;
+  if ($("ppsXp")) $("ppsXp").textContent = xpIntoLevel + " / " + levelBase + " XP";
+  if ($("ppsXpBar")) $("ppsXpBar").style.width = xpPct + "%";
+  if ($("profileWinrate")) $("profileWinrate").textContent = winrate + "%";
+  if ($("profileWins")) $("profileWins").textContent = wins;
+  if ($("profilePoints")) $("profilePoints").textContent = Number(p.points || 0);
+  if ($("profileStreak")) $("profileStreak").textContent = streak > 0 ? "🔥 " + streak : "—";
+
+  const form = $("ppsForm");
+  if (form) form.textContent = played ? (wins + "W · " + losses + "L" + (draws ? " · " + draws + "D" : "")) : "مازال ما كايناش مباريات";
+
+  const dots = $("playerFormDots");
+  if (dots) {
+    dots.innerHTML = played
+      ? [wins > 0 ? "W" : "—", wins > 0 ? "W" : "—", losses > 0 ? "L" : "—", draws > 0 ? "D" : "—", streak > 0 ? "W" : "—"]
+          .map(v => "<i>" + v + "</i>").join("")
+      : "<i>—</i><i>—</i><i>—</i><i>—</i><i>—</i>";
+  }
+
+  if ($("ppsObjectiveTitle")) {
+    $("ppsObjectiveTitle").textContent = played
+      ? "كمل المنافسة وطلع فالتصنيف."
+      : "دخل لأول بطولة ديالك.";
+  }
+  if ($("ppsObjectiveText")) {
+    $("ppsObjectiveText").textContent = played
+      ? "كل مباراة كتأثر على السجل ديالك والتقدم ديالك."
+      : "اختار بطولة مفتوحة من صفحة البطولات وبدأ السجل التنافسي ديالك.";
+  }
+
+  try {
+    const { data: rows, error } = await supabaseClient
+      .from("profiles")
+      .select("id,rating")
+      .order("rating", { ascending: false });
+    if (!error && Array.isArray(rows)) {
+      const rank = rows.findIndex(row => row.id === p.id) + 1;
+      if ($("ppsRank")) $("ppsRank").textContent = rank > 0 ? "#" + rank : "#—";
+    }
+  } catch (error) {
+    console.warn("PLAYER RANK LOAD:", error);
+  }
+}
+
+/* =========================================================
    PROFILE
    ========================================================= */
 
@@ -2668,9 +2736,7 @@ async function renderProfile() {
   }
 
 
-  renderProfileFeatures(p);
-
-  renderProfileHistory();
+  renderPlayerHQ(p);
 
 }
 
