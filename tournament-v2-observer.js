@@ -1,0 +1,1 @@
+(()=>{const page=document.getElementById("tournaments");if(!page)return;const run=()=>{if(page.classList.contains("active-page")&&typeof window.renderTournaments==="function")window.renderTournaments()};new MutationObserver(run).observe(page,{attributes:true,attributeFilter:["class"]});run()})();
