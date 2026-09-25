@@ -1646,13 +1646,40 @@ async function renderHomeDashboard() {
             .maybeSingle();
           opponentName = opponent?.display_name || opponent?.username || opponentName;
         }
-        commandText.textContent = `المباراة الجاية ضد ${opponentName} · ${formatDate(nextMatch.scheduled_at)}`;
+        commandText.textContent = formatDate(nextMatch.scheduled_at);
+        set("homeMyName", p?.display_name || p?.username || "أنت");
+        set("homeMyAvatar", (p?.display_name || p?.username || "C").slice(0,1).toUpperCase());
+        set("homeOpponentName", opponentName);
+        set("homeOpponentAvatar", opponentName.slice(0,1).toUpperCase());
+        set("homeOpponentMeta", "OPPONENT");
+        set("homeMatchRound", nextMatch.round || "MATCH");
+        const countdown = $("homeMatchCountdown");
+        const target = new Date(nextMatch.scheduled_at).getTime();
+        const paintCountdown = () => {
+          const diff = target - Date.now();
+          if (!countdown) return;
+          if (diff <= 0) { countdown.textContent = "حان وقت المواجهة 🔥"; return; }
+          const days = Math.floor(diff / 86400000);
+          const hrs = Math.floor((diff % 86400000) / 3600000);
+          const mins = Math.floor((diff % 3600000) / 60000);
+          countdown.textContent = days ? `بعد ${days}d ${hrs}h` : `بعد ${hrs}h ${mins}min`;
+        };
+        paintCountdown();
+        if (window.__chaouiHomeCountdown) clearInterval(window.__chaouiHomeCountdown);
+        window.__chaouiHomeCountdown = setInterval(paintCountdown, 30000);
         if (commandAction) {
           commandAction.textContent = "فتح المباراة ⚔️";
           commandAction.dataset.page = "matches";
         }
       } else {
-        commandText.textContent = "ما عندك حتى مباراة مبرمجة دابا. قلب على بطولة جديدة وبدأ المنافسة.";
+        set("homeMyName", p?.display_name || p?.username || "أنت");
+        set("homeMyAvatar", (p?.display_name || p?.username || "C").slice(0,1).toUpperCase());
+        set("homeOpponentName", "ماكاينش خصم");
+        set("homeOpponentAvatar", "—");
+        set("homeOpponentMeta", "SEARCH");
+        set("homeMatchRound", "OPEN");
+        set("homeMatchCountdown", "اختار بطولة وبدأ المنافسة");
+        commandText.textContent = "ما عندك حتى مباراة مبرمجة دابا";
         if (commandAction) {
           commandAction.textContent = "شوف البطولات 🏆";
           commandAction.dataset.page = "tournaments";
