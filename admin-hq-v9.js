@@ -24,7 +24,7 @@ async function loadAll(){
 }
 function shell(){
  const root=$("king");if(!root)return;
- root.innerHTML='<div class="ahq-head"><div><span class="ahq-kicker">CHAOUI PRO • OWNER</span><h1>لوحة التحكم الكامل 👑</h1><p>كل أدوات الإدارة فمكان واحد — البطولات، اللاعبين، المباريات والمنصة.</p></div><div class="ahq-owner"><b>'+esc(currentProfile?.display_name||currentProfile?.username||"OWNER")+'</b><small>صلاحيات المالك مفعلة</small></div></div><div class="ahq-tabs" id="ahqTabs"></div><div id="ahqBody"></div>';
+ root.innerHTML='<div class="ahq-top"><div class="ahq-brand"><div class="ahq-logo">🏆</div><div><b>لوحة المنظم</b><small>eFootball 1VS1</small></div></div><div class="ahq-search">⌕ <span>بحث عن لاعب...</span></div><button class="ahq-logout" data-ahq-logout>↪ تسجيل الخروج</button></div><div class="ahq-nav" id="ahqTabs"></div><div class="ahq-hero"><div><span class="ahq-kicker">eFOOTBALL 1VS1 • OWNER</span><h1>التحكم الكامل 👑</h1><p>كل أدوات إدارة البطولة واللاعبين والمباريات والنتائج في مكان واحد.</p></div><div class="ahq-owner"><b>'+esc(currentProfile?.display_name||currentProfile?.username||"OWNER")+'</b><small>صلاحيات المالك مفعلة</small></div></div><div id="ahqBody"></div>';
 }
 function renderTabs(){
  const tabs=[["overview","نظرة عامة"],["players","اللاعبين"],["tournaments","البطولات"],["matches","المباريات والنتائج"],["groups","دور المجموعات والتأهل"],["requests","الطلبات والمشاكل"],["content","التواصل والمحتوى"],["economy","Coins / XP / المتجر"],["maintenance","الصيانة والإعدادات"]];
