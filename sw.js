@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v24-player-hq";
+const CACHE_NAME = "chaoui-v25-home-v3";
 
 const APP_FILES = [
   "./",
@@ -18,7 +18,8 @@ const APP_FILES = [
   "./matches-v2.css",
   "./elite-core-v2.js",
   "./elite-core-v2.css",
-  "./player-page-v2.css?v=20260925-playerhq3"
+  "./player-page-v2.css?v=20260925-playerhq3",
+  "./home-v3.css?v=20260925-home3"
 ];
 
 async function transformAppAsset(request, response) {
