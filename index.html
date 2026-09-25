@@ -16,6 +16,7 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="visual-system-v4.css?v=20260925-v4">
+  <link rel="stylesheet" href="visual-v6.css?v=20260925-v6">
   <link rel="stylesheet" href="home-v3.css?v=20260925-home3">
   <link rel="stylesheet" href="player-page-v2.css?v=20260925-playerhq3">
 </head>
@@ -1021,6 +1022,9 @@
         coreV5.onload = () => console.log("CHAoui Competitive Core V5 loaded");
         coreV5.onerror = () => console.warn("CHAoui Competitive Core V5 failed to load");
         document.head.appendChild(coreV5);
+        const visualV6 = document.createElement("script");
+        visualV6.src = "visual-v6.js?v=20260925-v6";
+        document.head.appendChild(visualV6);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
