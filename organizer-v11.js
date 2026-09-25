@@ -86,6 +86,5 @@ async function registrationForm(id){
 window.renderOrganizerV11=render;window.openOrganizerTournamentControl=openControl;window.openTournamentRegistration=registrationForm;
 if(window.showPage&&!window.__org11ShowWrapped){const old=window.showPage;window.__org11ShowWrapped=true;window.showPage=(p,o)=>{old(p,o);if(p==="organizer")setTimeout(render,30)}}
 if(!window.__org11JoinWrapped){window.__org11JoinWrapped=true;window.joinTournament=registrationForm}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-tv2-join]");if(b){e.preventDefault();registrationForm(b.dataset.tv2Join)}});
 setTimeout(()=>{if($("organizer")?.classList.contains("active-page"))render()},100);
 })();
