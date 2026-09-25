@@ -24,12 +24,12 @@ function decorate(){
  document.querySelectorAll("[data-page]").forEach(b=>{
   const p=b.dataset.page;if(!ICONS[p]||b.dataset.v6icon)return;
   const first=b.firstElementChild;
-  if(first && first.tagName==="SPAN" && /^[\\p{Extended_Pictographic}\\s]+$/u.test(first.textContent.trim())){
+  if(first && first.tagName==="SPAN" && /^[\p{Extended_Pictographic}\s]+$/u.test(first.textContent.trim())){
     first.className="v6-icon";
     first.innerHTML=iconFor(p);
   }else{
     const raw=[...b.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join(" ").trim();
-    if(raw && /^[\\p{Extended_Pictographic}\\s+]+$/u.test(raw)) b.dataset.v6OldIcon=raw;
+    if(raw && /^[\p{Extended_Pictographic}\s+]+$/u.test(raw)) b.dataset.v6OldIcon=raw;
     const i=document.createElement("span");i.className="v6-icon";i.innerHTML=iconFor(p);
     b.insertBefore(i,b.firstChild);
   }
