@@ -1,0 +1,5 @@
+/* CHAoui V19 shell coordinator */
+(()=>{"use strict";let started=false;
+function sync(){const p=window.currentProfile,a=document.getElementById("app");if(!a)return;const staff=p?.role==="owner"||p?.role==="organizer";document.body.classList.toggle("chaoui-clean-owner",staff);document.body.classList.toggle("chaoui-clean-player",!!p&&!staff);document.querySelector(".p15-top")?.classList.toggle("v19-hidden",staff);document.querySelector(".p15-bottom")?.classList.toggle("v19-hidden",staff)}
+function patch(){const old=window.showPage;if(typeof old!=="function"||old.__v19)return;const f=function(page,...args){const r=old.apply(this,[page,...args]);setTimeout(sync,30);return r};f.__v19=true;window.showPage=f}
+function boot(){if(started)return;if(!window.currentProfile){setTimeout(boot,300);return}started=true;patch();sync();setInterval(sync,1500)}boot()})();

@@ -17,14 +17,11 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="visual-system-v4.css?v=20260925-v4">
   <link rel="stylesheet" href="visual-v6.css?v=20260925-v6">
-  <link rel="stylesheet" href="home-v3.css?v=20260925-home3">
-  <link rel="stylesheet" href="player-page-v2.css?v=20260925-playerhq3">
-  <link rel="stylesheet" href="admin-hq-v9.css?v=20260925-admin10">
-  <link rel="stylesheet" href="organizer-v11.css?v=20260925-v11">
   <link rel="stylesheet" href="auth-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="player-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="owner-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
+  <link rel="stylesheet" href="clean-v19.css?v=20260926-v19">
 </head>
 
 <body>
@@ -1035,6 +1032,7 @@
             functionalV17.onload = () => console.log("CHAoui Functional Core V17 loaded");
             functionalV17.onerror = () => console.warn("CHAoui Functional Core V17 failed to load");
             document.head.appendChild(functionalV17);
+            const cleanV19=document.createElement("script"); cleanV19.src="clean-v19.js?v=20260926-v19"; document.head.appendChild(cleanV19);
           };
           auth15.onerror = () => console.warn("CHAoui Auth V15 failed to load");
           document.head.appendChild(auth15);
@@ -1095,7 +1093,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260926-v17", { updateViaCache: "none" })
+          .register("./sw.js?v=20260926-v19", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
