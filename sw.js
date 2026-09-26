@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v37-ux-v15";
+const CACHE_NAME = "chaoui-v38-ux-v15-auth";
 
 const APP_FILES = [
   "./",
@@ -30,6 +30,7 @@ const APP_FILES = [
   "./organizer-v11.js?v=20260925-v11",
   "./organizer-v11.css?v=20260925-v11",
   "./auth-v13.js",
+  "./auth-v15.js?v=20260926-v15",
   "./auth-v15.css?v=20260926-v15",
   "./player-v15.css?v=20260926-v15",
   "./owner-v15.css?v=20260926-v15",
