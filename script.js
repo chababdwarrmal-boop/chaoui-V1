@@ -366,7 +366,7 @@ function initSplash() {
 
   if (!splash) return;
 
-  const TOTAL_DURATION = 4200;
+  const TOTAL_DURATION = 7000;
   const SKIP_AFTER = 1200;
 
   const startedAt = Date.now();
