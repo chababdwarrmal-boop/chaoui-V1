@@ -17,7 +17,6 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="visual-system-v4.css?v=20260925-v4">
   <link rel="stylesheet" href="visual-v6.css?v=20260925-v6">
-  <link rel="stylesheet" href="auth-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="player-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="owner-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
@@ -1010,11 +1009,11 @@
         // V16: load the public auth shell and V15 UX layers explicitly.
         // This removes the dependency on the service worker to inject auth code.
         const auth13 = document.createElement("script");
-        auth13.src = "auth-v13.js?v=20260926-v16";
+        auth13.src = "auth-v13.js?v=20260926-v20";
         auth13.onload = () => {
           console.log("CHAoui Auth V14 loaded");
           const auth15 = document.createElement("script");
-          auth15.src = "auth-v15.js?v=20260926-v16";
+          auth15.src = "auth-v15.js?v=20260926-v20";
           auth15.onload = () => {
             console.log("CHAoui Auth V15 loaded");
             const player15 = document.createElement("script");
