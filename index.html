@@ -939,6 +939,16 @@
         }
       };
 
+      // V16 emergency fallback: the cinematic splash must never become a permanent overlay.
+      window.setTimeout(() => {
+        const s = document.getElementById("splash");
+        if (s && s.classList.contains("show")) {
+          s.classList.remove("show");
+          s.style.display = "none";
+          s.style.pointerEvents = "none";
+        }
+      }, 9000);
+
       // Never leave the user stuck on the splash if a CDN or script fails.
       window.setTimeout(() => {
         if (!window.CHAOUI_APP_LOADED) {
@@ -998,6 +1008,33 @@
         organizerHQ.onload = () => console.log("CHAoui Organizer HQ V11 loaded");
         organizerHQ.onerror = () => console.warn("CHAoui Organizer HQ V11 failed to load");
         document.head.appendChild(organizerHQ);
+
+        // V16: load the public auth shell and V15 UX layers explicitly.
+        // This removes the dependency on the service worker to inject auth code.
+        const auth13 = document.createElement("script");
+        auth13.src = "auth-v13.js?v=20260926-v16";
+        auth13.onload = () => {
+          console.log("CHAoui Auth V14 loaded");
+          const auth15 = document.createElement("script");
+          auth15.src = "auth-v15.js?v=20260926-v16";
+          auth15.onload = () => {
+            console.log("CHAoui Auth V15 loaded");
+            const player15 = document.createElement("script");
+            player15.src = "player-v15.js?v=20260926-v16";
+            player15.onload = () => console.log("CHAoui Player V15 loaded");
+            player15.onerror = () => console.warn("CHAoui Player V15 failed to load");
+            document.head.appendChild(player15);
+            const owner15 = document.createElement("script");
+            owner15.src = "owner-v15.js?v=20260926-v16";
+            owner15.onload = () => console.log("CHAoui Owner V15 loaded");
+            owner15.onerror = () => console.warn("CHAoui Owner V15 failed to load");
+            document.head.appendChild(owner15);
+          };
+          auth15.onerror = () => console.warn("CHAoui Auth V15 failed to load");
+          document.head.appendChild(auth15);
+        };
+        auth13.onerror = () => console.warn("CHAoui Auth V14 failed to load");
+        document.head.appendChild(auth13);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
@@ -1052,7 +1089,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260925-v11")
+          .register("./sw.js?v=20260926-v16", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })

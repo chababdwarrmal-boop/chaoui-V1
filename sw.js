@@ -1,4 +1,4 @@
-const CACHE_NAME = "chaoui-v39-ux-v15-auth";
+const CACHE_NAME = "chaoui-v40-blackscreen-v16";
 
 const APP_FILES = [
   "./",
@@ -30,21 +30,16 @@ const APP_FILES = [
   "./organizer-v11.js?v=20260925-v11",
   "./organizer-v11.css?v=20260925-v11",
   "./auth-v13.js",
-  "./auth-v15.js?v=20260926-v15",
-  "./auth-v15.css?v=20260926-v15",
-  "./player-v15.css?v=20260926-v15",
-  "./owner-v15.css?v=20260926-v15",
-  "./player-v15.js?v=20260926-v15",
-  "./owner-v15.js?v=20260926-v15"
+  "./auth-v15.js?v=20260926-v16",
+  "./auth-v15.css?v=20260926-v16",
+  "./player-v15.css?v=20260926-v16",
+  "./owner-v15.css?v=20260926-v16",
+  "./player-v15.js?v=20260926-v16",
+  "./owner-v15.js?v=20260926-v16"
 ];
 
 async function transformAppAsset(request, response) {
   const url = new URL(request.url);
-  if (url.pathname.endsWith("/script.js")) {
-    const source = await response.text();
-    const injected = source + '\n(()=>{const s=document.createElement("script");s.src="auth-v13.js?v=20260926-v14";document.head.appendChild(s)})();\n';
-    return new Response(injected, {status: response.status, headers: response.headers});
-  }
   if (url.pathname.endsWith("/social.js")) {
     const source = await response.text();
     const injected = source + `
