@@ -1,0 +1,19 @@
+/* CHAoui V19 clean foundation */
+:root{--chaoui-bg:#050607;--chaoui-gold:#f5c451;--chaoui-line:rgba(245,196,81,.16);--chaoui-text:#f5f5f5}
+html,body{background:var(--chaoui-bg)!important;color:var(--chaoui-text)!important}
+body{background:radial-gradient(circle at 50% -10%,rgba(245,196,81,.07),transparent 34%),var(--chaoui-bg)!important}
+.app-header,#bottomNav{display:none!important}.page{width:min(100%,1080px);padding:22px 16px 38px}
+.chaoui-player-v15 .app{padding-bottom:88px!important}.chaoui-player-v15 .p15-top,.chaoui-player-v15 .p15-bottom{z-index:900}
+.chaoui-player-v15 .p15-top{background:rgba(5,6,7,.94)!important;border-bottom:1px solid var(--chaoui-line)!important}
+.chaoui-player-v15 .p15-bottom{background:rgba(5,6,7,.97)!important;border-top:1px solid var(--chaoui-line)!important}
+.chaoui-player-v15 .p15-bottom button.active{color:var(--chaoui-gold)!important}
+.chaoui-owner-v15 .p15-top,.chaoui-owner-v15 .p15-bottom{display:none!important}.chaoui-owner-v15{padding:0!important}
+.chaoui-owner-v15 .o15-top{background:#050505!important;border-bottom:1px solid rgba(245,196,81,.22)!important}
+.chaoui-owner-v15 .o15-nav{background:#080706!important}.chaoui-owner-v15 .o15-nav button.active{color:#050505!important;background:var(--chaoui-gold)!important}
+.chaoui-owner-v15 .o15-btn.gold{background:var(--chaoui-gold)!important;color:#090704!important}
+.auth-v14 .hs-register{max-width:470px!important;padding:18px!important}.auth-v14 .hs-hero{padding:30px 16px 22px!important}.auth-v14 .hs-hero-logo{width:88px!important;height:88px!important}
+.auth-v14 .hs-section{padding-bottom:28px!important}.auth-v14 .hs-register .v15-steps{margin-bottom:9px}.auth-v14 .hs-register .v15-controls{margin-top:8px}
+.auth-v14 .hs-existing.open,.auth-v14 .hs-org-login.open{animation:chaouiPanelIn .2s ease-out}
+@keyframes chaouiPanelIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+@media(min-width:800px){.auth-v14 .hs-register,.auth-v14 .hs-organizer{max-width:560px}.page{padding-left:28px;padding-right:28px}}
+@media(max-width:650px){.page{padding:16px 12px 28px}.auth-v14 .hs-top{padding:0 12px!important}.auth-v14 .hs-register{border-radius:16px!important}}
