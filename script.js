@@ -24,6 +24,27 @@ let currentUser = null;
 let currentProfile = null;
 let currentPlayerPrivate = null;
 
+/* V18 compatibility bridge: V15/V17 modules use window.* while the core
+   state intentionally lives in top-level lexical variables. Keep both views
+   synchronized without duplicating state. */
+Object.defineProperties(window, {
+  currentUser: {
+    configurable: true,
+    get: () => currentUser,
+    set: value => { currentUser = value; }
+  },
+  currentProfile: {
+    configurable: true,
+    get: () => currentProfile,
+    set: value => { currentProfile = value; }
+  },
+  currentPlayerPrivate: {
+    configurable: true,
+    get: () => currentPlayerPrivate,
+    set: value => { currentPlayerPrivate = value; }
+  }
+});
+
 let selectedRole = "player";
 let currentTournamentFilter = "all";
 let currentRankingType = "rating";
