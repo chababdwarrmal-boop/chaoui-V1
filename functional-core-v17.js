@@ -106,9 +106,11 @@ function renderTournamentPanel(type,data){
   if(!current)return box.innerHTML='<h3>لا توجد بطولة</h3><p>سجل فبطولة باش تبان هنا المجموعة ديالك.</p>';
   box.innerHTML='<div class="v17-panel-head"><div><span>ACTIVE TOURNAMENT</span><h3>'+esc(current.name)+'</h3><p>'+esc(current.status||"—")+' · '+Number(current.current_players||0)+'/'+Number(current.capacity||0)+'</p></div><b>'+esc(current._membership?.status||"pending")+'</b></div><div class="v17-mini-grid"><div><span>الصيغة</span><b>'+esc(current.format||"—")+'</b></div><div><span>البداية</span><b>'+esc(current.start_at?new Date(current.start_at).toLocaleString("ar-MA"):"—")+'</b></div><div><span>اللعبة</span><b>'+esc(current.game||"eFootball")+'</b></div></div><button class="p15-action" data-page="tournaments">فتح البطولة كاملة</button>';
  }else if(type==="ranking"){
-  const top=[...(window.__chaouiOwner17?.players||[])].sort((a,b)=>Number(b.rating||0)-Number(a.rating||0)).slice(0,8);
   const me=window.currentProfile;
-  box.innerHTML='<h3>🏅 ترتيبك الحالي</h3><p>Rating '+Number(me?.rating||0)+' · Points '+Number(me?.points||0)+'</p><div class="v17-list">'+top.map((p,i)=>'<div><b>#'+(i+1)+' '+esc(p.display_name||p.username)+'</b><span>'+Number(p.rating||0)+'</span></div>').join("")+'</div>';
+  const rr=await supabaseClient.from("profiles").select("id,username,display_name,rating,points,wins,losses,draws").order("rating",{ascending:false}).limit(8);
+  const top=rr.data||[];
+  const myRank=me?.id?((await supabaseClient.from("profiles").select("id",{count:"exact",head:true}).gt("rating",Number(me.rating||0))).count||0)+1:null;
+  box.innerHTML='<h3>🏅 ترتيبك الحالي</h3><p>Rank #'+(myRank||"—")+' · Rating '+Number(me?.rating||0)+' · Points '+Number(me?.points||0)+'</p><div class="v17-list">'+top.map((p,i)=>'<div><b>#'+(i+1)+' '+esc(p.display_name||p.username)+'</b><span>'+Number(p.rating||0)+'</span></div>').join("")+'</div>';
  }else if(type==="stats"){
   const p=window.currentProfile||{};const matches=Number(p.wins||0)+Number(p.losses||0)+Number(p.draws||0),wr=matches?Math.round(Number(p.wins||0)/matches*100):0;
   box.innerHTML='<h3>📊 إحصائياتك</h3><div class="v17-mini-grid"><div><span>المباريات</span><b>'+matches+'</b></div><div><span>الفوز</span><b>'+Number(p.wins||0)+'</b></div><div><span>الخسارة</span><b>'+Number(p.losses||0)+'</b></div><div><span>Win Rate</span><b>'+wr+'%</b></div><div><span>Rating</span><b>'+Number(p.rating||0)+'</b></div><div><span>Points</span><b>'+Number(p.points||0)+'</b></div></div>';
