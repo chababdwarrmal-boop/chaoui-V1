@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="auth-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="player-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="owner-v15.css?v=20260926-v15">
+  <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
 </head>
 
 <body>
@@ -1029,6 +1030,11 @@
             owner15.onload = () => console.log("CHAoui Owner V15 loaded");
             owner15.onerror = () => console.warn("CHAoui Owner V15 failed to load");
             document.head.appendChild(owner15);
+            const functionalV17 = document.createElement("script");
+            functionalV17.src = "functional-core-v17.js?v=20260926-v17";
+            functionalV17.onload = () => console.log("CHAoui Functional Core V17 loaded");
+            functionalV17.onerror = () => console.warn("CHAoui Functional Core V17 failed to load");
+            document.head.appendChild(functionalV17);
           };
           auth15.onerror = () => console.warn("CHAoui Auth V15 failed to load");
           document.head.appendChild(auth15);

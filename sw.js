@@ -1,6 +1,8 @@
-const CACHE_NAME = "chaoui-v40-blackscreen-v16";
+const CACHE_NAME = "chaoui-v41-functional-v17";
 
 const APP_FILES = [
+  "./functional-core-v17.js?v=20260926-v17",
+  "./functional-core-v17.css?v=20260926-v17",
   "./",
   "./index.html",
   "./style.css",
