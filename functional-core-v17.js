@@ -27,7 +27,7 @@ async function playerManager(id){
  const o=window.__chaouiOwner17||await ownerLoad(),p=o?.players?.find(x=>x.id===id);if(!p)return;
  const m=modal('<span class="v17-kicker">PLAYER CONTROL</span><h2>'+esc(p.display_name||p.username||"Player")+'</h2><p class="v17-muted">@'+esc(p.username||"—")+' · Rating '+Number(p.rating||0)+' · Coins '+Number(p.coins||0)+'</p><div class="v17-actions"><button data-v17="premium">'+(p.premium?"إلغاء Premium":"تفعيل Premium")+'</button><button data-v17="coins">إضافة Coins</button><button data-v17="organizer">'+(p.role==="organizer"?"إرجاع Player":"ترقية Organizer")+'</button><button data-v17="copy">نسخ Player Code</button></div>');
  m.querySelector('[data-v17="premium"]').onclick=async()=>{const r=await supabaseClient.rpc("owner_set_account",{p_target:id,p_action:"premium",p_value:!p.premium});if(r.error)return toast("ما قدرناش نبدلو Premium.");toast("تبدل Premium ✓");m.remove();await ownerRefresh()};
- m.querySelector('[data-v17="organizer"]').onclick=async()=>{const next=p.role==="organizer"?"player":"organizer";const r=await supabaseClient.rpc("owner_set_account",{p_target:id,p_action:"role",p_value:next});if(r.error)return toast("ما قدرناش نبدلو الدور.");toast(next==="organizer"?"ترقى لـ Organizer ✓":"رجع Player ✓");m.remove();await ownerRefresh()};
+ m.querySelector('[data-v17="organizer"]').onclick=()=>{m.remove();window.openOrganizerAccessModal?.(id)};
  m.querySelector('[data-v17="coins"]').onclick=async()=>{const a=prompt("شحال من Coin؟","50");if(a===null)return;const n=Number(a);if(!Number.isInteger(n)||n===0)return toast("دخل رقم صحيح.");const r=await supabaseClient.rpc("owner_grant_coins",{p_target:id,p_amount:n,p_reason:"Owner reward",p_note:"من Owner Command Center"});if(r.error)return toast("وقع مشكل فـ Coins.");toast("تم تحديث Coins ✓");m.remove();await ownerRefresh()};
  m.querySelector('[data-v17="copy"]').onclick=async()=>{if(!p.player_code)return toast("هاد اللاعب ما عندوش Player Code.");await navigator.clipboard?.writeText(p.player_code);toast("تنسخ Player Code ✓")};
 }
@@ -71,9 +71,9 @@ async function ownerRenderExtras(){
  const body=$("o15Body");if(!body)return;
  const title=$("o15Title")?.textContent||"";
  if(title.includes("اللاعبون")){
-   body.querySelectorAll("[data-player]").forEach(b=>b.onclick=()=>playerManager(b.dataset.player));
-   const note=document.createElement("div");note.className="v17-owner-note";note.innerHTML="إدارة مباشرة: <b>Premium</b> · <b>Coins</b> · <b>Organizer</b> · Player Code";body.prepend(note);
- }
+  body.innerHTML='<div class="o15-card"><h2>👥 اللاعبين</h2><div class="v17-player-list">'+o.players.map(p=>'<article class="v17-player-row"><div><b>'+esc(p.display_name||p.username||"Player")+'</b><small>@'+esc(p.username||"—")+' · '+esc(p.role||"player")+' · Rating '+Number(p.rating||0)+' · 🪙 '+Number(p.coins||0)+'</small></div><button class="o15-btn gold" data-player="'+esc(p.id)+'">إدارة</button></article>').join("")+'</div></div>';
+  const note=document.createElement("div");note.className="v17-owner-note";note.innerHTML="إدارة مباشرة: <b>Premium</b> · <b>Coins</b> · <b>Organizer</b> · Player Code";body.prepend(note);
+ } 
  if(title.includes("الصيانة")){
    const card=body.querySelector(".o15-card");if(card&&!body.querySelector("[data-maint17]")){const s=o.settings||{};card.innerHTML='<h2>🛠️ الصيانة</h2><div class="v17-maint"><b>'+(s.maintenance?"🔴 التطبيق فالصيانة":"🟢 التطبيق مفتوح")+'</b><button class="o15-btn red" data-maint17>'+(s.maintenance?"إلغاء الصيانة":"تفعيل الصيانة")+'</button></div>'}
  }
