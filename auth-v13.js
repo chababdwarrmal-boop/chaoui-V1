@@ -1,116 +1,79 @@
-/* CHAoui Auth V14 — HappySeeds-inspired public tournament entry.
-   Visual direction: black/gold, tournament-first, registration card, separate organizer gate.
-   Existing Supabase auth/role checks are preserved.
-*/
-(()=>{"use strict";
-let booted=false;
-const $=id=>document.getElementById(id);
 
-function css(){
- if($("authV20Style"))return;
- const s=document.createElement("style");s.id="authV20Style";
- s.textContent=`
-#authScreen.auth-v14{position:fixed;inset:0;z-index:9999;display:block;overflow:auto;background:#050505;color:#eee}
-#authScreen.auth-v14 .auth-box{width:100%;min-height:100%;margin:0;padding:0;background:#050505;border:0;overflow:visible}
-.auth-v14 .v20-wrap{min-height:100dvh;display:flex;flex-direction:column}
-.auth-v14 .v20-top{height:62px;padding:0 18px;border-bottom:1px solid rgba(245,196,81,.18);display:flex;align-items:center;justify-content:space-between;background:#080808}
-.auth-v14 .v20-brand{display:flex;align-items:center;gap:9px}.auth-v14 .v20-brand img{width:38px;height:38px;object-fit:contain}.auth-v14 .v20-brand b{color:#f5c451;font-size:14px}.auth-v14 .v20-brand small{display:block;color:#777;font-size:8px}
-.auth-v14 .v20-content{width:min(940px,100%);margin:auto;padding:30px 16px 45px}
-.auth-v14 .v20-hero{text-align:center;margin-bottom:24px}.auth-v14 .v20-logo{width:76px;height:76px;margin:0 auto 12px;border:1px solid #6b511d;border-radius:22px;padding:7px;background:#0c0a07}.auth-v14 .v20-logo img{width:100%;height:100%;object-fit:contain}
-.auth-v14 .v20-hero h1{font-size:27px;margin:0}.auth-v14 .v20-hero h1 span{color:#f5c451}.auth-v14 .v20-hero p{color:#8e867c;font-size:11px;margin:7px 0}
-.auth-v14 .v20-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:650px;margin:auto}
-.auth-v14 .v20-card{border:1px solid #352b1d;background:linear-gradient(145deg,#100e0b,#090909);border-radius:18px;padding:20px;text-align:right;color:#fff;cursor:pointer;min-height:145px;transition:.18s}
-.auth-v14 .v20-card:hover{border-color:#b38a31;transform:translateY(-2px)}.auth-v14 .v20-card .ico{font-size:27px;margin-bottom:12px}.auth-v14 .v20-card b{display:block;font-size:15px}.auth-v14 .v20-card small{display:block;color:#888078;font-size:10px;margin-top:6px;line-height:1.6}.auth-v14 .v20-card.gold{border-color:#72581f}.auth-v14 .v20-card.gold b{color:#f5c451}
-.auth-v14 .v20-panel{display:none;max-width:520px;margin:18px auto 0;border:1px solid #40321e;background:#0c0a08;border-radius:18px;padding:18px}.auth-v14 .v20-panel.open{display:block}
-.auth-v14 .v20-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.auth-v14 .v20-panel-head h2{margin:0;font-size:17px}.auth-v14 .v20-close{border:1px solid #3a3022;background:#111;color:#aaa;border-radius:9px;padding:7px 10px;cursor:pointer}
-.auth-v14 .v20-label{display:block;color:#ddd;font-size:10px;font-weight:900;margin:11px 0 5px}.auth-v14 .v20-input{width:100%;box-sizing:border-box;background:#070707;border:1px solid #30281d;color:#fff;border-radius:10px;padding:12px;font:inherit}.auth-v14 .v20-input:focus{border-color:#f5c451;outline:none}
-.auth-v14 .v20-submit{width:100%;border:0;background:#f5c451;color:#080604;border-radius:11px;padding:13px;font-weight:950;margin-top:13px;cursor:pointer}.auth-v14 .v20-link{width:100%;border:1px solid #5c471d;background:transparent;color:#f5c451;border-radius:10px;padding:11px;margin-top:8px;cursor:pointer;font-weight:900}
-.auth-v14 .v20-register{display:block}.auth-v14 .v20-register.open{display:block}.auth-v14 .v20-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}.auth-v14 .v20-steps b{font-size:9px;color:#857b70;text-align:center;padding:7px;border:1px solid #28231c;border-radius:8px}.auth-v14 .v20-steps b.active{background:#f5c451;color:#080604;border-color:#f5c451}
-.auth-v14 .v20-msg{text-align:center;min-height:18px;color:#ff737b;font-size:10px;margin-top:10px}
-.auth-v14 .v20-footer{text-align:center;color:#665f57;font-size:9px;padding:15px;border-top:1px solid #171411}
-@media(max-width:650px){.auth-v14 .v20-content{padding:24px 12px 30px}.auth-v14 .v20-actions{grid-template-columns:1fr}.auth-v14 .v20-card{min-height:0;padding:17px}.auth-v14 .v20-hero h1{font-size:24px}}
-`;
+/* CHAoui V23 — registration-first entry */
+(()=>{"use strict";
+let ready=false;const $=id=>document.getElementById(id);const logo="chaoui-mark.svg";
+const msg=(t,type="error")=>{const x=$("v23AuthMsg");if(x){x.className="a23-message v23-alert "+type;x.textContent=t}};
+const slug=v=>String(v||"player").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,18)||"chaoui_player";
+const esc=v=>window.escapeHTML?window.escapeHTML(v??""):String(v??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function addStyle(){
+ if($("v23AuthStyle"))return;
+ const s=document.createElement("style");s.id="v23AuthStyle";
+ s.textContent=[
+ '#authScreen.auth-v23{position:fixed;inset:0;z-index:9999;display:block;overflow:auto;background:#05090f;color:#eef7ff}',
+ '#authScreen.auth-v23 .auth-box{width:100%;min-height:100%;margin:0;padding:0;border:0;background:transparent}',
+ '.auth-v23 .a23-shell{min-height:100dvh;background:radial-gradient(900px 500px at 5% -5%,rgba(28,228,255,.12),transparent 62%),radial-gradient(760px 480px at 100% 0,rgba(245,196,81,.07),transparent 60%),#05090f}',
+ '.auth-v23 .a23-head{height:68px;border-bottom:1px solid rgba(126,148,170,.14);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(5,9,15,.82);backdrop-filter:blur(14px);position:sticky;top:0;z-index:5}',
+ '.auth-v23 .a23-brand{display:flex;align-items:center;gap:10px}.auth-v23 .a23-brand img{width:42px;height:42px}.auth-v23 .a23-brand b{display:block;font-size:14px}.auth-v23 .a23-brand small{display:block;color:#71889e;font-size:8px;margin-top:2px}.auth-v23 .a23-head .owner{border:1px solid rgba(245,196,81,.22);background:rgba(245,196,81,.06);color:#f5c451;border-radius:10px;padding:9px 11px;font:inherit;font-size:9px;font-weight:900;cursor:pointer}',
+ '.auth-v23 .a23-main{width:min(1120px,100%);margin:auto;padding:36px 18px 50px}.auth-v23 .a23-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:18px;align-items:start}',
+ '.auth-v23 .a23-hero{padding:16px 8px}.auth-v23 .a23-kicker{display:inline-flex;padding:7px 10px;border-radius:999px;background:rgba(28,228,255,.07);border:1px solid rgba(28,228,255,.16);color:#1ce4ff;font-size:9px;font-weight:900;letter-spacing:1.1px}.auth-v23 h1{font-size:40px;line-height:1.1;margin:16px 0 8px}.auth-v23 h1 span{color:#f5c451}.auth-v23 .a23-sub{color:#8fa4b8;font-size:11px;line-height:1.9;max-width:560px}.auth-v23 .a23-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.auth-v23 .a23-badge{padding:7px 9px;border-radius:999px;background:#0a1522;border:1px solid rgba(126,148,170,.13);color:#b8c8d5;font-size:8px}',
+ '.auth-v23 .a23-showcase{margin-top:18px;display:grid;gap:9px}.auth-v23 .a23-show{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(126,148,170,.12);background:rgba(8,17,29,.70);border-radius:15px}.auth-v23 .a23-show i{font-style:normal;font-size:18px}.auth-v23 .a23-show b{font-size:10px}.auth-v23 .a23-show small{display:block;color:#72899d;font-size:8px;margin-top:3px;line-height:1.6}',
+ '.auth-v23 .a23-card{border:1px solid rgba(126,148,170,.14);background:linear-gradient(150deg,rgba(10,21,35,.96),rgba(6,13,22,.96));border-radius:22px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.32)}',
+ '.auth-v23 .a23-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}.auth-v23 .a23-card-head h2{margin:0;font-size:18px}.auth-v23 .a23-card-head p{margin:4px 0 0;color:#73899c;font-size:9px}',
+ '.auth-v23 .a23-openlist{display:grid;gap:7px;margin-bottom:12px}.auth-v23 .a23-tour{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid rgba(126,148,170,.11);border-radius:12px;background:#08131f;color:#eef7ff;width:100%;text-align:right;cursor:pointer}.auth-v23 .a23-tour.active{border-color:rgba(28,228,255,.28);box-shadow:0 0 0 2px rgba(28,228,255,.06)}.auth-v23 .a23-tour b{font-size:10px}.auth-v23 .a23-tour small{display:block;color:#72889b;font-size:8px;margin-top:3px}.auth-v23 .a23-tag{white-space:nowrap;font-size:8px;color:#f5c451}',
+ '.auth-v23 .a23-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.auth-v23 .a23-field{min-width:0}.auth-v23 .a23-field.full{grid-column:1/-1}.auth-v23 .a23-field label{display:block;font-size:9px;color:#bdcad5;font-weight:900;margin-bottom:5px}.auth-v23 .a23-field input,.auth-v23 .a23-field select{width:100%;box-sizing:border-box;background:#07111c;border:1px solid rgba(126,148,170,.15);color:#eef7ff;border-radius:10px;padding:11px;font:inherit;font-size:10px;outline:0}.auth-v23 .a23-field input:focus,.auth-v23 .a23-field select:focus{border-color:rgba(28,228,255,.4);box-shadow:0 0 0 3px rgba(28,228,255,.07)}',
+ '.auth-v23 .a23-check{display:flex;gap:7px;align-items:flex-start;grid-column:1/-1;color:#98adbf;font-size:8px;line-height:1.7}.auth-v23 .a23-check input{accent-color:#1ce4ff;margin-top:2px}',
+ '.auth-v23 .a23-submit{width:100%;margin-top:11px;border:0;border-radius:12px;padding:13px;background:linear-gradient(135deg,#1ce4ff,#168cff);color:#031018;font:inherit;font-size:10px;font-weight:950;cursor:pointer;box-shadow:0 12px 28px rgba(28,228,255,.16)}.auth-v23 .a23-submit:disabled{opacity:.55;cursor:wait}',
+ '.auth-v23 .a23-divider{display:flex;align-items:center;gap:9px;margin:13px 0;color:#55697b;font-size:8px}.auth-v23 .a23-divider:before,.auth-v23 .a23-divider:after{content:"";height:1px;background:rgba(126,148,170,.12);flex:1}',
+ '.auth-v23 .a23-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.auth-v23 .a23-action{border:1px solid rgba(126,148,170,.13);background:#091521;color:#dbe7ef;border-radius:11px;padding:11px;font:inherit;font-size:9px;cursor:pointer}.auth-v23 .a23-action.gold{color:#f5c451;border-color:rgba(245,196,81,.22);background:rgba(245,196,81,.05)}',
+ '.auth-v23 .a23-panel{display:none;margin-top:12px}.auth-v23 .a23-panel.open{display:block}.auth-v23 .a23-back{margin-bottom:10px;border:0;background:transparent;color:#7991a5;font:inherit;font-size:9px;cursor:pointer}.auth-v23 .a23-message{margin-top:10px;min-height:15px}.auth-v23 .a23-footer{text-align:center;padding:20px;color:#4f6172;font-size:8px}',
+ '@media(max-width:820px){.auth-v23 .a23-main{padding-top:20px}.auth-v23 .a23-grid{grid-template-columns:1fr}.auth-v23 .a23-hero{padding-top:0}.auth-v23 h1{font-size:31px}}',
+ '@media(max-width:560px){.auth-v23 .a23-head{padding:0 12px}.auth-v23 .a23-main{padding:18px 11px 35px}.auth-v23 .a23-fields{grid-template-columns:1fr}.auth-v23 .a23-field.full,.auth-v23 .a23-check{grid-column:auto}.auth-v23 .a23-actions{grid-template-columns:1fr}.auth-v23 .a23-card{padding:13px;border-radius:17px}.auth-v23 h1{font-size:27px}}'
+ ].join("");
  document.head.appendChild(s);
 }
-function msg(t,type="info"){const x=$("authMessage");if(x){x.textContent=t;x.className="hs-message "+type}}
-function slug(v){return String(v||"player").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,18)||"chaoui_player"}
+async function openTournaments(){
+ const host=$("v23TournamentList");if(!host||!window.supabaseClient)return;
+ const r=await supabaseClient.from("tournaments").select("id,name,status,format,game,current_players,capacity,start_at,entry_type").eq("status","open").order("created_at",{ascending:false}).limit(8);
+ const ts=r.data||[];
+ host.innerHTML=ts.length?ts.map((t,i)=>'<button type="button" class="a23-tour '+(i===0?"active":"")+'" data-tid="'+esc(t.id)+'"><span><b>'+esc(t.name)+'</b><small>'+esc(t.game||"eFootball")+' · '+esc(t.format||"1VS1")+' · '+Number(t.current_players||0)+'/'+Number(t.capacity||0)+'</small></span><span class="a23-tag">OPEN</span></button>').join(""):'<div class="a23-tour"><span><b>ما كايناش بطولة مفتوحة دابا</b><small>الحساب غادي يتخلق، والتسجيل تقدر تديرو من داخل صفحة البطولات.</small></span></div>';
+ host.querySelectorAll("[data-tid]").forEach(b=>b.onclick=()=>{host.querySelectorAll("[data-tid]").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("v23SelectedTournament").value=b.dataset.tid});
+ if(ts[0])$("v23SelectedTournament").value=ts[0].id;
+}
 function shell(){
  const box=document.querySelector("#authScreen .auth-box");if(!box)return;
- box.innerHTML=`
- <div class="v20-wrap">
-  <header class="v20-top"><div class="v20-brand"><img src="logo.png"><div><b>CHAoui PRO</b><small>eFootball 1VS1</small></div></div><span style="color:#6e675f;font-size:9px">TOURNAMENT PLATFORM</span></header>
-  <main class="v20-content">
-   <section class="v20-hero"><div class="v20-logo"><img src="logo.png"></div><h1>CHAoui <span>PRO</span></h1><p>اختار كيفاش بغيتي تدخل للمنصة.</p></section>
-   <section class="v20-actions">
-    <button class="v20-card" id="v20PlayerLogin" type="button"><div class="ico">👤</div><b>دخول اللاعب</b><small>دخل للحساب ديالك وتابع البطولات، المباريات والترتيب.</small></button>
-    <button class="v20-card gold" id="v20PlayerRegister" type="button"><div class="ico">🏆</div><b>إنشاء حساب / التسجيل</b><small>جديد هنا؟ أنشئ حسابك وسجل مشاركتك فالبطولة.</small></button>
-    <button class="v20-card gold" id="v20OrganizerLogin" type="button"><div class="ico">🛡️</div><b>دخول المنظم / Owner</b><small>لوحة خاصة بصاحب المنصة والمنظمين المصرح لهم فقط.</small></button>
-    <button class="v20-card" id="v20Forgot" type="button"><div class="ico">🔐</div><b>نسيت كلمة السر؟</b><small>استرجع الوصول للحساب ديالك بالإيميل.</small></button>
-   </section>
-   <section class="v20-panel" id="v20PlayerPanel">
-    <div class="v20-panel-head"><h2>👤 دخول اللاعب</h2><button class="v20-close" data-close="v20PlayerPanel">رجوع</button></div>
-    <label class="v20-label">البريد الإلكتروني</label><input id="v13LoginEmail" class="v20-input" type="email" placeholder="example@email.com">
-    <label class="v20-label">كلمة السر</label><input id="v13LoginPassword" class="v20-input" type="password" placeholder="كلمة السر">
-    <button id="v13PlayerLoginBtn" class="v20-submit" type="button">دخول اللاعب</button>
-    <button id="v20GoRegister" class="v20-link" type="button">ما عنديش حساب — إنشاء حساب</button>
-   </section>
-   <section class="v20-panel" id="v20OrgPanel">
-    <div class="v20-panel-head"><h2>🛡️ دخول المنظم / Owner</h2><button class="v20-close" data-close="v20OrgPanel">رجوع</button></div>
-    <label class="v20-label">البريد الإلكتروني</label><input id="v13OrgEmail" class="v20-input" type="email" placeholder="chaoui@gmail.com">
-    <label class="v20-label">الكود / كلمة السر</label><input id="v13OrgPassword" class="v20-input" type="password" placeholder="الكود ديالك">
-    <button id="v13OrgLoginBtn" class="v20-submit" type="button">دخول لوحة المنظم 🏆</button>
-   </section>
-   <section class="v20-panel" id="v20RegisterPanel">
-    <div class="v20-panel-head"><h2>🏆 إنشاء حساب</h2><button class="v20-close" data-close="v20RegisterPanel">رجوع</button></div>
-    <div class="v20-steps"><b class="active">1 المعلومات</b><b>2 المشاركة</b><b>3 القوانين</b><b>4 الحساب</b></div>
-    <div class="v20-register" id="v20RegisterFields">
-     <label class="v20-label">الاسم الكامل</label><input id="v13Name" class="v20-input" placeholder="الاسم واللقب">
-     <label class="v20-label">اسم اللاعب داخل eFootball</label><input id="v13Efootball" class="v20-input" placeholder="اسمك داخل اللعبة">
-     <label class="v20-label">رقم WhatsApp</label><input id="v13Whatsapp" class="v20-input" inputmode="tel" placeholder="06XXXXXXXX">
-     <label class="v20-label">الوقت المناسب</label><select id="v13Time" class="v20-input"><option>20:00 - 22:00</option><option>22:00 - 00:00</option><option>18:00 - 20:00</option><option>مرن</option></select>
-     <label class="v20-label">نوع المشاركة</label><select id="v20Type" class="v20-input"><option value="free">FREE — مجانية</option><option value="premium">PREMIUM — DH 10</option></select>
-     <label class="v20-label">الاتصال</label><select id="v20Conn" class="v20-input"><option value="wifi">WIFI</option><option value="conix">CONIX</option></select>
-     <label class="v20-label"><input id="v13Prior" type="checkbox"> سبق لي المشاركة</label>
-     <label class="v20-label"><input id="v13Commit" type="checkbox"> ملتزم بموعد المباراة</label>
-     <label class="v20-label"><input id="v13Rules" type="checkbox"> أوافق على قوانين البطولة</label>
-     <label class="v20-label">البريد الإلكتروني</label><input id="v13Email" class="v20-input" type="email" placeholder="example@email.com">
-     <label class="v20-label">كلمة السر</label><input id="v13Password" class="v20-input" type="password" placeholder="6 أحرف على الأقل">
-     <button id="v13Register" class="v20-submit" type="button">إنشاء الحساب والتسجيل 🏆</button>
-    </div>
-   </section>
-   <div id="authMessage" class="v20-msg"></div>
-  </main>
-  <footer class="v20-footer">CHAoui PRO · eFootball 1VS1</footer>
- </div>`;
+ box.innerHTML='<div class="a23-shell"><header class="a23-head"><div class="a23-brand"><img src="'+logo+'" alt="CHAoui PRO"><div><b>CHAoui PRO</b><small>eFootball Tournament Platform</small></div></div><button class="owner" id="v23OwnerOpen" type="button">🛡️ دخول Owner / المنظم</button></header><main class="a23-main"><div class="a23-grid"><section class="a23-hero"><span class="a23-kicker">⚡ TOURNAMENT FIRST</span><h1>دخل للمنافسة<br><span>وخلي اللعب يهضر.</span></h1><p class="a23-sub">التسجيل كيبدا من هنا. اختار البطولة المفتوحة، عمر معلوماتك، ومن بعد كتكمل طريقك: بطولة → مباراة → نتيجة → ترتيب.</p><div class="a23-badges"><span class="a23-badge">📱 خدام مزيان فالتليفون</span><span class="a23-badge">⚡ سريع وبسيط</span><span class="a23-badge">🔐 Supabase Auth</span></div><div class="a23-showcase"><div class="a23-show"><i>🏆</i><div><b>بطولة واضحة</b><small>تشوف الحالة وعدد المشاركين قبل التسجيل.</small></div></div><div class="a23-show"><i>⚔️</i><div><b>Match Room</b><small>كل مباراة عندها نتيجة، تأكيد ونزاع عند الحاجة.</small></div></div><div class="a23-show"><i>📈</i><div><b>ترتيب تنافسي</b><small>الـRating والـPoints والمركز ديالك فبلاصة وحدة.</small></div></div></div></section><section class="a23-card"><div class="a23-card-head"><div><h2>📝 سجل فالبداية</h2><p>عمر المعلومات مرة وحدة، ومن بعد دخل للحساب ديالك.</p></div><span class="a23-tag">STEP 01</span></div><div class="a23-openlist" id="v23TournamentList"></div><input type="hidden" id="v23SelectedTournament"><div class="a23-fields"><div class="a23-field"><label>الاسم الكامل</label><input id="v13Name" placeholder="الاسم واللقب" autocomplete="name"></div><div class="a23-field"><label>اسمك داخل eFootball</label><input id="v13Efootball" placeholder="مثال: Chaoui_Pro"></div><div class="a23-field"><label>WhatsApp</label><input id="v13Whatsapp" inputmode="tel" placeholder="06XXXXXXXX"></div><div class="a23-field"><label>الوقت المناسب</label><select id="v13Time"><option>20:00 - 22:00</option><option>22:00 - 00:00</option><option>18:00 - 20:00</option><option>مرن</option></select></div><div class="a23-field"><label>نوع الاتصال</label><select id="v20Conn"><option value="wifi">WIFI</option><option value="conix">CONIX</option></select></div><div class="a23-field"><label>سبق لي المشاركة؟</label><select id="v13Prior"><option value="false">لا</option><option value="true">نعم</option></select></div><div class="a23-field"><label>الإيميل</label><input id="v13Email" type="email" placeholder="example@email.com" autocomplete="email"></div><div class="a23-field"><label>كلمة السر</label><input id="v13Password" type="password" placeholder="6 أحرف على الأقل" autocomplete="new-password"></div><label class="a23-check"><input id="v13Commit" type="checkbox"><span>كنأكد باللي نقدر نلتزم بمواعيد المباريات.</span></label><label class="a23-check"><input id="v13Rules" type="checkbox"><span>قريت قوانين البطولة وكنوافق عليها.</span></label></div><button id="v13Register" class="a23-submit" type="button">إنشاء الحساب والتسجيل 🏆</button><div id="v23AuthMsg" class="a23-message"></div><div class="a23-divider">أو</div><div class="a23-actions"><button id="v23PlayerLoginOpen" class="a23-action" type="button">👤 عندي حساب — دخول اللاعب</button><button id="v23Forgot" class="a23-action" type="button">🔐 نسيت كلمة السر</button></div><section id="v23PlayerPanel" class="a23-panel"><button class="a23-back" data-close="player">← رجوع</button><div class="a23-fields"><div class="a23-field full"><label>الإيميل</label><input id="v13LoginEmail" type="email" autocomplete="email"></div><div class="a23-field full"><label>كلمة السر</label><input id="v13LoginPassword" type="password" autocomplete="current-password"></div></div><button id="v13PlayerLoginBtn" class="a23-submit" type="button">دخول اللاعب</button></section><section id="v23OrgPanel" class="a23-panel"><button class="a23-back" data-close="org">← رجوع</button><div class="a23-fields"><div class="a23-field full"><label>إيميل Owner / Organizer</label><input id="v13OrgEmail" type="email" placeholder="chaoui@gmail.com"></div><div class="a23-field full"><label>كلمة السر / الكود</label><input id="v13OrgPassword" type="password"></div></div><button id="v13OrgLoginBtn" class="a23-submit" type="button">دخول لوحة الإدارة</button></section></section></div></main><footer class="a23-footer">CHAoui PRO · eFootball Tournament Platform · 2026</footer></div>';
+ setTimeout(openTournaments,0);
 }
+function selectedJoinData(){return{tournamentId:$("v23SelectedTournament")?.value||"",name:$("v13Name")?.value.trim()||"",ef:$("v13Efootball")?.value.trim()||"",wa:$("v13Whatsapp")?.value.trim()||"",time:$("v13Time")?.value||"",conn:$("v20Conn")?.value||"wifi",prior:$("v13Prior")?.value==="true",commit:Boolean($("v13Commit")?.checked),rules:Boolean($("v13Rules")?.checked)}}
+function saveDraft(d){try{localStorage.setItem("chaoui_pending_registration",JSON.stringify(d))}catch{}}
+function readDraft(){try{return JSON.parse(localStorage.getItem("chaoui_pending_registration")||"null")}catch{return null}}
+function clearDraft(){try{localStorage.removeItem("chaoui_pending_registration")}catch{}}
+async function joinTournament(d){if(!d?.tournamentId||!window.supabaseClient)return null;const r=await supabaseClient.rpc("join_tournament_with_registration",{p_tournament_id:d.tournamentId,p_registration_name:d.name,p_registration_whatsapp:d.wa,p_registration_efootball_name:d.ef,p_registration_type:"free",p_preferred_time:d.time,p_connection_type:d.conn,p_prior_participation:d.prior,p_commitment_confirmed:d.commit,p_rules_accepted:d.rules,p_registration_note:null});if(r.error)throw r.error;return r.data}
 async function finishSignup(){
- const name=$("v13Name")?.value.trim(),ef=$("v13Efootball")?.value.trim(),wa=$("v13Whatsapp")?.value.trim(),email=$("v13Email")?.value.trim().toLowerCase(),pass=$("v13Password")?.value;
- const type=$("v20Type")?.value||"free",time=$("v13Time")?.value,conn=$("v20Conn")?.value||"wifi";
- if(!name||!ef||!wa||!email||!pass)return msg("عمر المعلومات المطلوبة كاملة.","error");
- if(pass.length<6)return msg("كلمة السر خاصها 6 أحرف على الأقل.","error");
- if(!$("v13Commit")?.checked||!$("v13Rules")?.checked)return msg("خاصك تأكد الالتزام وتقبل القوانين.","error");
- const b=$("v13Register");b.disabled=true;b.textContent="جاري إنشاء الحساب...";
- try{const username=slug(ef)+"_"+Math.random().toString(36).slice(2,6);const meta={username,display_name:name,efootball_name:ef,whatsapp:wa,registration_type:type,preferred_time:time,connection_type:conn,prior_participation:$("v13Prior").checked,commitment_confirmed:true,rules_accepted:true};const {data,error}=await supabaseClient.auth.signUp({email,password:pass,options:{data:meta}});if(error)throw error;if(!data?.user)throw new Error("ما قدرناش ننشئو الحساب.");currentUser=data.user;
- if(data.session){await supabaseClient.from("profiles").update({display_name:name,efootball_name:ef,username}).eq("id",data.user.id);await supabaseClient.from("player_private").upsert({id:data.user.id,whatsapp:wa});await loadProfile();if(!currentProfile)throw new Error("البروفايل ما تحمّلش.");showApp();showPage("home");showToast("مرحبا بك فـ CHAOUI 🔥")}
- else msg("الحساب تخلق بنجاح ✅ أكد الإيميل ديالك، ومن بعد دخل من «دخول اللاعب».","success");
- }catch(e){console.error(e);msg(String(e?.message||e||"تعذر التسجيل."),"error")}finally{b.disabled=false;b.textContent="إنشاء الحساب والتسجيل 🏆"}
+ const d=selectedJoinData(),email=$("v13Email")?.value.trim().toLowerCase(),pass=$("v13Password")?.value||"";
+ if(!d.name||!d.ef||!d.wa||!email||!pass)return msg("عمر المعلومات المطلوبة كاملة.");
+ if(pass.length<6)return msg("كلمة السر خاصها 6 أحرف على الأقل.");
+ if(!d.commit||!d.rules)return msg("أكد الالتزام وقبول القوانين قبل التسجيل.");
+ saveDraft(d);const b=$("v13Register");b.disabled=true;b.textContent="جاري التسجيل...";
+ try{
+  const username=slug(d.ef)+"_"+Math.random().toString(36).slice(2,6);
+  const meta={username,display_name:d.name,efootball_name:d.ef,whatsapp:d.wa,registration_type:"free",preferred_time:d.time,connection_type:d.conn,prior_participation:d.prior,commitment_confirmed:true,rules_accepted:true};
+  const {data,error}=await supabaseClient.auth.signUp({email,password:pass,options:{data:meta}});if(error)throw error;
+  if(!data?.user)throw new Error("ما قدرناش نخلقو الحساب.");
+  window.currentUser=data.user;
+  await supabaseClient.from("profiles").update({display_name:d.name,efootball_name:d.ef,username}).eq("id",data.user.id);
+  await supabaseClient.from("player_private").upsert({id:data.user.id,whatsapp:d.wa});
+  if(data.session){try{await joinTournament(d);clearDraft()}catch(e){console.warn(e)}await loadProfile();if(!window.currentProfile)throw new Error("البروفايل ما تحمّلش.");showApp();showPage("home");window.showToast?.("مرحبا بك فـ CHAoui 🔥")}else msg("الحساب تخلق ✅. أكد الإيميل ديالك، ومن بعد دخل من زر «دخول اللاعب» باش نكملو التسجيل.","success");
+ }catch(e){console.error(e);msg(String(e?.message||"تعذر التسجيل."));}finally{b.disabled=false;b.textContent="إنشاء الحساب والتسجيل 🏆"}
 }
+async function finishPending(){const d=readDraft();if(!d?.tournamentId)return;try{await joinTournament(d);clearDraft();window.showToast?.("تم إكمال التسجيل فالـبطولة ✓")}catch(e){console.warn(e)}}
 async function doLogin(kind){
- const email=$(kind==="org"?"v13OrgEmail":"v13LoginEmail")?.value.trim().toLowerCase(),pass=$(kind==="org"?"v13OrgPassword":"v13LoginPassword")?.value;
- if(!email||!pass)return msg("دخل الإيميل والكود/كلمة السر.","error");
+ const email=$(kind==="org"?"v13OrgEmail":"v13LoginEmail")?.value.trim().toLowerCase(),pass=$(kind==="org"?"v13OrgPassword":"v13LoginPassword")?.value||"";
+ if(!email||!pass)return msg("دخل الإيميل وكلمة السر.");
  const b=$(kind==="org"?"v13OrgLoginBtn":"v13PlayerLoginBtn");b.disabled=true;b.textContent="جاري الدخول...";
- try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password:pass});if(error)throw error;currentUser=data.user;const profile=await loadProfile();if(!profile)throw new Error("البروفايل ما لقايناهش.");
- if(kind==="org"&&!["owner","organizer"].includes(profile.role)){await supabaseClient.auth.signOut();currentUser=null;currentProfile=null;throw new Error("هاد الحساب ما عندوش صلاحية Owner أو Organizer.")}
- showApp();if(kind==="org"){showPage("organizer");setTimeout(()=>window.renderOrganizerV11?.(),60)}else showPage("home");showToast(kind==="org"?"مرحبا بالمنظم 🏆":"مرحبا بك فـ CHAOUI 🔥")
- }catch(e){console.error(e);msg(String(e?.message||"تعذر تسجيل الدخول."),"error")}finally{b.disabled=false;b.textContent=kind==="org"?"دخول لوحة المنظم 🏆":"دخول اللاعب"}
+ try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password:pass});if(error)throw error;window.currentUser=data.user;const prof=await loadProfile();if(!prof)throw new Error("البروفايل ما لقايناهش.");if(kind==="org"&&!["owner","organizer"].includes(prof.role)){await supabaseClient.auth.signOut();throw new Error("هاد الحساب ما عندوش صلاحية Owner أو Organizer.")}if(kind==="player")await finishPending();showApp();showPage(kind==="org"?"organizer":"home");window.showToast?.(kind==="org"?"مرحبا فلوحة الإدارة 🛡️":"مرحبا بك فـ CHAoui 🔥")}catch(e){console.error(e);msg(String(e?.message||"تعذر تسجيل الدخول."))}finally{b.disabled=false;b.textContent=kind==="org"?"دخول لوحة الإدارة":"دخول اللاعب"}
 }
-function setup(){
- if(booted)return;if(!$("authScreen")||!$("authScreen").querySelector(".auth-box"))return;booted=true;css();$("authScreen").classList.add("auth-v14");shell();
- const closeAll=()=>document.querySelectorAll(".v20-panel").forEach(x=>x.classList.remove("open"));
- const open=id=>{closeAll();$(id)?.classList.add("open");$(id)?.scrollIntoView({behavior:"smooth",block:"center"});};
- $("v20PlayerLogin").onclick=()=>open("v20PlayerPanel");$("v20OrganizerLogin").onclick=()=>open("v20OrgPanel");$("v20PlayerRegister").onclick=()=>open("v20RegisterPanel");$("v20Forgot").onclick=async()=>{const email=prompt("دخل الإيميل ديالك:");if(!email)return;const {error}=await supabaseClient.auth.resetPasswordForEmail(email.trim().toLowerCase(),{redirectTo:window.location.origin+window.location.pathname});msg(error?error.message:"تصيفط رابط تغيير كلمة السر للإيميل ديالك 📩",error?"error":"success")};
- $("v20GoRegister").onclick=()=>open("v20RegisterPanel");document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeAll);
- $("v13Register").onclick=finishSignup;$("v13PlayerLoginBtn").onclick=()=>doLogin("player");$("v13OrgLoginBtn").onclick=()=>doLogin("org");
-}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(setup,0),{once:true});else setTimeout(setup,0);
+function openPanel(which){$("v23PlayerPanel")?.classList.toggle("open",which==="player");$("v23OrgPanel")?.classList.toggle("open",which==="org");if(which==="org"||which==="player")setTimeout(()=>(which==="org"?$("v23OrgPanel"):$("v23PlayerPanel"))?.scrollIntoView({behavior:"smooth",block:"center"}),0)}
+function setup(){if(ready||!$("authScreen"))return;ready=true;addStyle();$("authScreen").classList.add("auth-v23");shell();$("v23PlayerLoginOpen").onclick=()=>openPanel("player");$("v23OwnerOpen").onclick=()=>openPanel("org");$("v13PlayerLoginBtn").onclick=()=>doLogin("player");$("v13OrgLoginBtn").onclick=()=>doLogin("org");$("v13Register").onclick=finishSignup;document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>openPanel(null));$("v23Forgot").onclick=async()=>{const email=prompt("دخل الإيميل ديالك:");if(!email)return;const r=await supabaseClient.auth.resetPasswordForEmail(email.trim().toLowerCase(),{redirectTo:window.location.origin+window.location.pathname});msg(r.error?r.error.message:"تصيفط رابط الاسترجاع للإيميل ديالك.","success")}}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setTimeout(setup,0);
 })();
