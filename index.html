@@ -471,7 +471,7 @@
 
       <div class="player-footer-actions">
         <button id="editProfileBtn" class="player-secondary" type="button">تعديل الملف</button>
-        <button type="button" class="player-secondary" data-page="wallet">🪙 المحفظة</button>
+        
       </div>
 
       <!-- Legacy hooks kept hidden so existing profile data loaders remain compatible. -->
@@ -499,28 +499,7 @@
 
     </section>
 
-    <!-- PREMIUM -->
-    <section id="premium" class="page">
-
-      <div class="premium-card">
-
-        <div class="premium-icon">
-          💎
-        </div>
-
-        <h1>
-          CHAOUI Premium
-        </h1>
-
-        <p>
-          مستوى Premium واحد بمميزات خاصة.
-        </p>
-
-        <div id="premiumContent"></div>
-
-      </div>
-
-    </section>
+    <!-- PREMIUM UI HIDDEN FROM PLAYER UI -->
 
     <!-- COMPLAINTS -->
     <section id="complaints" class="page">
@@ -585,16 +564,7 @@
     </section>
 
 
-    <!-- WALLET / SHOP -->
-    <section id="wallet" class="page">
-      <div class="page-title"><div><span>CHAoui ECONOMY</span><h1>🪙 المحفظة والمتجر</h1></div></div>
-      <div id="walletHero" class="wallet-hero"></div>
-      <div class="wallet-grid">
-        <section class="home-panel"><div class="section-head compact"><div><span>TRANSACTIONS</span><h2>آخر العمليات</h2></div></div><div id="coinLedgerList" class="home-feed-list"></div></section>
-        <section class="home-panel"><div class="section-head compact"><div><span>SHOP</span><h2>المتجر 🛒</h2></div></div><div id="walletShop" class="cards-grid"></div></section>
-      </div>
-      <section class="home-panel"><div class="section-head compact"><div><span>MYSTERY</span><h2>الصناديق السرية 🎁</h2></div><small>كتحلها بالـCoins</small></div><div id="mysteryBoxes" class="cards-grid"></div></section>
-    </section>
+    <!-- ECONOMY HIDDEN: coins/shop/mystery removed from player UI -->
 
     <!-- CHAT -->
     <section id="chat" class="page">
@@ -605,12 +575,7 @@
       </div>
     </section>
 
-    <!-- CLUBS -->
-    <section id="clubs" class="page">
-      <div class="page-title"><div><span>CHAoui CLUBS</span><h1>🏟️ الأندية</h1></div><button class="primary-small" type="button" onclick="openCreateClubModal()">+ نادي</button></div>
-      <div id="myClubCard" class="home-panel"></div>
-      <div class="section-head"><h2>الأندية المتاحة</h2></div><div id="clubsList" class="cards-grid"></div>
-    </section>
+    <!-- SECONDARY SOCIAL PAGES HIDDEN FROM PLAYER UI -->
 
     <!-- SEASON -->
     <section id="season" class="page">
@@ -619,11 +584,7 @@
       <div id="missionsList" class="cards-grid"></div>
     </section>
 
-    <!-- FEED -->
-    <section id="feed" class="page">
-      <div class="page-title"><div><span>CHAoui COMMUNITY</span><h1>🔥 النشاط</h1></div></div>
-      <div id="activityFeedList" class="activity-feed"></div>
-    </section>
+    <!-- ACTIVITY FEED HIDDEN FROM PLAYER UI -->
 
     <!-- ASSISTANT -->
     <section id="assistant" class="page">
@@ -705,7 +666,7 @@
           <span class="more-v8-kicker">CHAoui HUB</span>
           <h1>المزيد</h1>
         </div>
-        <span class="more-v8-count">4 أقسام</span>
+        <span class="more-v8-count">3 أقسام</span>
       </div>
 
       <div class="more-hub-v8">
@@ -719,12 +680,7 @@
           <span><b>المجتمع</b><small>الرسائل، الأندية والنشاط</small></span>
           <strong>4</strong>
         </button>
-        <button class="more-category" data-more-category="rewards" type="button">
-          <span class="more-category-icon more-gold">◆</span>
-          <span><b>المكافآت</b><small>Coins، Premium والأساطير</small></span>
-          <strong>3</strong>
-        </button>
-        <button class="more-category" data-more-category="support" type="button">
+            <button class="more-category" data-more-category="support" type="button">
           <span class="more-category-icon more-violet">✦</span>
           <span><b>المساعدة والإعدادات</b><small>الدعم، المساعد والإعدادات</small></span>
           <strong>3</strong>
