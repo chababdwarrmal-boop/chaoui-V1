@@ -16,11 +16,11 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="visual-system-v4.css?v=20260925-v4">
-  <link rel="stylesheet" href="visual-v6.css?v=20260925-v6">
+  <link rel="stylesheet" href="visual-v6.css?v=20260927-v22">
   <link rel="stylesheet" href="player-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="owner-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
-  <link rel="stylesheet" href="clean-v19.css?v=20260926-v19">
+  <link rel="stylesheet" href="clean-v19.css?v=20260927-v22">
 </head>
 
 <body>
@@ -949,7 +949,7 @@
         coreV5.onerror = () => console.warn("CHAoui Competitive Core V5 failed to load");
         document.head.appendChild(coreV5);
         const visualV6 = document.createElement("script");
-        visualV6.src = "visual-v6.js?v=20260925-v8";
+        visualV6.src = "visual-v6.js?v=20260927-v22";
         document.head.appendChild(visualV6);
         const adminHQ = document.createElement("script");
         adminHQ.src = "admin-hq-v9.js?v=20260925-admin10";
@@ -987,7 +987,7 @@
             functionalV17.onload = () => console.log("CHAoui Functional Core V17 loaded");
             functionalV17.onerror = () => console.warn("CHAoui Functional Core V17 failed to load");
             document.head.appendChild(functionalV17);
-            const cleanV19=document.createElement("script"); cleanV19.src="clean-v19.js?v=20260926-v19"; document.head.appendChild(cleanV19);
+            const cleanV19=document.createElement("script"); cleanV19.src="clean-v19.js?v=20260927-v22"; document.head.appendChild(cleanV19);
           };
           auth15.onerror = () => console.warn("CHAoui Auth V15 failed to load");
           document.head.appendChild(auth15);
@@ -1048,7 +1048,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260926-v19", { updateViaCache: "none" })
+          .register("./sw.js?v=20260927-v22", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
