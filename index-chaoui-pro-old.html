@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="CHAoui PRO — eFootball Tournament Platform">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <title>CHAoui-Pro | eFootball Tournament Platform</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="v30.css?v=20260927-v30">
+</head>
+
+<body>
+  <style id="chaoui-mobile-bailout">
+    html,body{min-width:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;background:#050505!important}
+    #authScreen{min-width:0!important;width:100%!important;min-height:100dvh!important}
+  </style>
+  <script>
+    (function(){
+      function revealAuth(){
+        try{
+          var s=document.getElementById("splash");
+          var a=document.getElementById("authScreen");
+          var app=document.getElementById("app");
+          if(s && !s.classList.contains("show")){
+            s.style.display="none";
+            s.style.visibility="hidden";
+            s.style.pointerEvents="none";
+          }
+          if(a && (!app || app.style.display!=="block")){
+            a.style.setProperty("display","flex","important");
+            a.style.setProperty("visibility","visible","important");
+            a.style.setProperty("opacity","1","important");
+          }
+        }catch(e){console.warn("CHAoui mobile bailout",e)}
+      }
+      document.addEventListener("DOMContentLoaded",function(){
+        setTimeout(revealAuth,1800);
+        setTimeout(revealAuth,4500);
+      },{once:true});
+    })();
+  </script>
+  <script>
+    (function(){
+      const KEY="chaoui-hard-reset-v27";
+      if(window.localStorage?.getItem(KEY)!=="1"){
+        const wipe=async()=>{
+          try{
+            if("serviceWorker" in navigator){
+              const regs=await navigator.serviceWorker.getRegistrations();
+              await Promise.all(regs.map(r=>r.unregister().catch(()=>false)));
+            }
+            if("caches" in window){
+              const keys=await caches.keys();
+              await Promise.all(keys.map(k=>caches.delete(k)));
+            }
+          }catch(e){console.warn("CHAoui cache reset",e)}
+          try{localStorage.setItem(KEY,"1")}catch(e){}
+          if(!sessionStorage.getItem(KEY)){
+            try{sessionStorage.setItem(KEY,"1")}catch(e){}
+            location.reload();
+          }
+        };
+        wipe();
+      }
+    })();
+  </script>
+
+  <!-- SPLASH -->
+  <section id="splash" class="splash" aria-hidden="true">
+    <div class="splash-glow"></div>
+    <div class="splash-content">
+      <div class="splash-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
+      <div class="splash-kicker">⚡ CHAOUI PRO</div>
+      <h1>CHAoui <span>PRO</span></h1>
+      <p id="splashMessage">هنا كتبدأ المنافسة الحقيقية.</p>
+      <div class="splash-live-line"><span></span> المنصة كتوجد ليك التجربة ديالك</div>
+      <div class="splash-loader">
+        <div id="splashProgress" class="splash-progress"></div>
+      </div>
+      <small>Preparing your experience...</small>
+      <button id="skipSplash" class="skip-splash" type="button" style="display:none"
+        onclick="(function(){try{var s=document.getElementById('splash'),a=document.getElementById('authScreen'),app=document.getElementById('app');if(s){s.classList.remove('show');s.style.cssText+=';display:none!important;visibility:hidden!important;pointer-events:none!important;'}if(a){a.style.cssText+=';display:flex!important;visibility:visible!important;opacity:1!important;position:fixed!important;inset:0!important;z-index:90000!important;overflow:auto!important;'}if(app)app.style.display='none';}catch(e){console.error(e)}})()">
+        تخطي
+      </button>
+    </div>
+  </section>
+
+  <!-- AUTH SCREEN -->
+  <section id="authScreen" class="auth-screen">
+    <div class="auth-box">
+
+      <div class="auth-brand">
+        <div class="auth-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
+        <h1>CHAOUI</h1>
+        <p>eFootball Tournament Platform</p>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="loginBox" class="auth-form">
+        <div class="auth-title">
+          <h2>مرحبا بعودتك 👋</h2>
+          <p>دخل للحساب ديالك</p>
+        </div>
+
+        <label>البريد الإلكتروني</label>
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="example@email.com"
+          autocomplete="email"
+        >
+
+        <label>كلمة السر</label>
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="كلمة السر"
+          autocomplete="current-password"
+        >
+
+        <button id="loginBtn" class="primary-btn" type="button">
+          دخول
+        </button>
+
+        <button id="resetPasswordBtn" class="auth-reset-btn" type="button">
+          نسيت كلمة السر؟
+        </button>
+
+        <p class="auth-switch">
+          ماعندكش حساب؟
+          <button id="showRegister" type="button">
+            إنشاء حساب
+          </button>
+        </p>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="registerBox" class="auth-form" style="display:none">
+        <div class="auth-title">
+          <h2>إنشاء حساب 🚀</h2>
+          <p>دخل لعالم CHAOUI</p>
+        </div>
+
+        <label>اسم المستخدم</label>
+        <input
+          id="registerUsername"
+          type="text"
+          placeholder="مثال: chaoui_player"
+          autocomplete="username"
+        >
+
+        <label>الاسم الظاهر</label>
+        <input
+          id="registerDisplayName"
+          type="text"
+          placeholder="الاسم ديالك"
+        >
+
+        <label>البريد الإلكتروني</label>
+        <input
+          id="registerEmail"
+          type="email"
+          placeholder="example@email.com"
+          autocomplete="email"
+        >
+
+        <label>كلمة السر</label>
+        <input
+          id="registerPassword"
+          type="password"
+          placeholder="6 حروف على الأقل"
+          autocomplete="new-password"
+        >
+
+        <button id="registerBtn" class="primary-btn" type="button">
+          إنشاء الحساب
+        </button>
+
+        <p class="auth-switch">
+          عندك حساب؟
+          <button id="showLogin" type="button">
+            تسجيل الدخول
+          </button>
+        </p>
+      </div>
+
+      <div id="authMessage" class="auth-message"></div>
+
+    </div>
+  </section>
+
+  <!-- MAIN APP -->
+  <main id="app" class="app" style="display:none">
+
+    <!-- HEADER -->
+    <header class="app-header">
+
+      <div class="brand">
+        <div class="brand-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
+
+        <div>
+          <strong>CHAOUI</strong>
+          <small>PRO TOURNAMENTS</small>
+        </div>
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          id="headerBackBtn"
+          class="header-icon-btn"
+          type="button"
+          title="رجوع"
+        >
+          ⟵
+        </button>
+
+        <button
+          id="headerHomeBtn"
+          class="header-icon-btn"
+          type="button"
+          title="الرئيسية"
+        >
+          ⌂
+        </button>
+
+        <button
+          id="headerLogoutBtn"
+          class="header-icon-btn"
+          type="button"
+          title="خروج"
+        >
+          🚪
+        </button>
+
+      </div>
+
+      <div class="header-user">
+
+        <div id="headerAvatar" class="avatar">
+          C
+        </div>
+
+        <div>
+          <strong id="headerName">
+            CHAOUI Player
+          </strong>
+
+          <small id="headerRole">
+            لاعب
+          </small>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- HOME -->
+    <section id="home" class="page active-page home-page-v3">
+
+      <section class="home-hero-v3">
+        <div class="home-hero-copy">
+          <span>CHAoui PRO</span>
+          <h1>مرحبا، <strong id="homeName">CHAOUI Player</strong></h1>
+          <p>المنافسة ديالك كتبدأ من هنا.</p>
+          <button type="button" class="home-hero-btn" data-page="tournaments">شوف البطولات <b>↗</b></button>
+        </div>
+        <div class="home-brand-mark">
+          <img src="chaoui-mark.svg" alt="CHAoui-Pro">
+        </div>
+      </section>
+
+      <section class="home-section-v3">
+        <div class="home-heading-v3">
+          <div><span>COMPETE</span><h2>البطولات</h2></div>
+          <button type="button" data-page="tournaments">الكل</button>
+        </div>
+        <div id="homeTournaments" class="cards-grid home-tournaments-v3"></div>
+      </section>
+
+      <section class="home-next-v3" id="homeCommandCenter">
+        <div class="home-next-head">
+          <div><span>NEXT MATCH</span><h2>المواجهة الجاية</h2></div>
+          <strong id="homePowerValue">--</strong>
+        </div>
+        <div class="home-match-v3">
+          <div class="home-match-player">
+            <span id="homeMyAvatar">C</span>
+            <strong id="homeMyName">أنت</strong>
+          </div>
+          <div class="home-vs-v3"><b>VS</b><small id="homeMatchRound">MATCH</small></div>
+          <div class="home-match-player">
+            <span id="homeOpponentAvatar">?</span>
+            <strong id="homeOpponentName">المنافس</strong>
+          </div>
+        </div>
+        <div class="home-next-foot">
+          <div><span>الموعد</span><strong id="homeCommandText">جاري تجهيز الحالة...</strong><small id="homeMatchCountdown">--</small></div>
+          <button id="homeCommandAction" type="button" class="home-hero-btn" data-page="matches">فتح المباراة</button>
+        </div>
+      </section>
+
+      <section class="home-quick-v3">
+        <button type="button" data-page="matches"><span>⚔️</span><b>مبارياتي</b><small>المواجهات</small></button>
+        <button type="button" data-page="ranking"><span>🏆</span><b>الترتيب</b><small>التصنيف</small></button>
+        <button type="button" data-page="profile"><span>👤</span><b>الملف</b><small>Player HQ</small></button>
+      </section>
+
+      <!-- Compatibility hooks for existing home data loaders -->
+      <div class="home-legacy-hooks" aria-hidden="true">
+        <span id="homeLevelValue">LV.1</span><span id="homeXPBar"></span><span id="homeXPText">0 XP</span>
+        <span id="homeWinsValue">0</span><span id="homePointsValue">0</span><span id="homeCoinsValue">0</span>
+        <span id="homeMyAvatarLegacy"></span><span id="homeRecentMatches"></span>
+        <span id="homeFeatureGrid"></span><span id="homeDailyClaim"></span>
+        <span id="homeOrganizerPanel"></span><span id="homeOrganizerContent"></span>
+      </div>
+
+    </section>
+
+    <!-- TOURNAMENTS -->
+    <section id="tournaments" class="page">
+
+      <div class="page-title">
+
+        <div>
+          <span>CHAoui-Pro</span>
+          <h1>البطولات</h1>
+        </div>
+
+        <button
+          id="createTournamentBtn"
+          class="primary-small"
+          type="button"
+        >
+          + بطولة
+        </button>
+
+      </div>
+
+      <div class="filter-tabs">
+
+        <button
+          class="active"
+          data-filter="all"
+        >
+          الكل
+        </button>
+
+        <button data-filter="open">
+          مفتوحة
+        </button>
+
+        <button data-filter="live">
+          مباشرة
+        </button>
+
+        <button data-filter="done">
+          منتهية
+        </button>
+
+      </div>
+
+      <div
+        id="tournamentsList"
+        class="cards-grid"
+      ></div>
+
+    </section>
+
+    <!-- MATCHES -->
+    <section id="matches" class="page">
+
+      <div class="page-title">
+
+        <div>
+          <span>eFootball</span>
+          <h1>مبارياتي</h1>
+        </div>
+
+      </div>
+
+      <div class="stats-strip">
+
+        <div>
+          <strong id="matchWins">0</strong>
+          <span>فوز</span>
+        </div>
+
+        <div>
+          <strong id="matchLosses">0</strong>
+          <span>خسارة</span>
+        </div>
+
+        <div>
+          <strong id="matchWinrate">0%</strong>
+          <span>Win Rate</span>
+        </div>
+
+      </div>
+
+      <div
+        id="matchesList"
+        class="match-list"
+      ></div>
+
+    </section>
+
+    <!-- RANKING -->
+    <section id="ranking" class="page">
+
+      <div class="page-title">
+
+        <div>
+          <span>CHAOUI</span>
+          <h1>الترتيب</h1>
+        </div>
+
+      </div>
+
+      <div class="ranking-tabs">
+
+        <button
+          class="active"
+          data-ranking="rating"
+        >
+          Rating
+        </button>
+
+        <button data-ranking="points">
+          Points
+        </button>
+
+        <button data-ranking="wins">
+          Wins
+        </button>
+
+      </div>
+
+      <div
+        id="rankingList"
+        class="ranking-list"
+      ></div>
+
+    </section>
+
+    <!-- PROFILE / PLAYER HQ -->
+    <section id="profile" class="page player-page">
+
+      <div class="player-hq">
+
+        <div class="player-hq-glow"></div>
+
+        <div class="player-hq-top">
+          <div class="player-identity">
+            <div id="profileAvatar" class="player-avatar">C</div>
+            <div class="player-identity-copy">
+              <span class="player-kicker">CHAOUI PLAYER</span>
+              <h1 id="profileName">CHAOUI Player</h1>
+              <p id="profileUsername">@chaoui_player</p>
+              <div class="player-badges">
+                <span id="profileTitle">لاعب</span>
+                <span id="profileLevelBadge">LV.1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="player-rating">
+            <span>RATING</span>
+            <strong id="ppsRating">0</strong>
+            <small id="ppsRank">#—</small>
+          </div>
+        </div>
+
+        <div class="player-xp">
+          <div><span>LEVEL <b id="ppsLevel">1</b></span><strong id="ppsXp">0 / 100 XP</strong></div>
+          <div class="player-xp-track"><span id="ppsXpBar"></span></div>
+        </div>
+
+        <div class="player-stats">
+          <article><span>WIN RATE</span><strong id="profileWinrate">0%</strong></article>
+          <article><span>WINS</span><strong id="profileWins">0</strong></article>
+          <article><span>POINTS</span><strong id="profilePoints">0</strong></article>
+          <article><span>STREAK</span><strong id="profileStreak">🔥 0</strong></article>
+        </div>
+
+      </div>
+
+      <section class="player-form-panel">
+        <div class="player-section-title">
+          <div><span>PERFORMANCE</span><h2>الفورما ديالك</h2></div>
+          <strong id="ppsForm">—</strong>
+        </div>
+        <div id="playerFormDots" class="player-form-dots">
+          <i>—</i><i>—</i><i>—</i><i>—</i><i>—</i>
+        </div>
+      </section>
+
+      <section class="player-objective" id="ppsNext">
+        <div class="player-objective-copy">
+          <span>YOUR NEXT MOVE</span>
+          <h2 id="ppsObjectiveTitle">دخل للبطولات وخلي المنافسة تبدأ.</h2>
+          <p id="ppsObjectiveText">قلب على البطولة المناسبة وسجل مباشرة من صفحة البطولات.</p>
+        </div>
+        <button type="button" class="player-primary" data-page="tournaments">شوف البطولات <span>↗</span></button>
+      </section>
+
+      <div class="player-actions">
+        <button type="button" data-page="matches"><span>⚔️</span><strong>مبارياتي</strong><small>النتائج والمواجهات</small></button>
+        <button type="button" data-page="ranking"><span>🏆</span><strong>الترتيب</strong><small>المركز والتصنيف</small></button>
+        <button type="button" data-page="progression"><span>📈</span><strong>التقدم</strong><small>XP والإنجازات</small></button>
+      </div>
+
+      <div class="player-footer-actions">
+        <button id="editProfileBtn" class="player-secondary" type="button">تعديل الملف</button>
+        
+      </div>
+
+      <!-- Legacy hooks kept hidden so existing profile data loaders remain compatible. -->
+      <div class="player-legacy-hooks" aria-hidden="true">
+        <span id="profileXPText"></span><span id="profileXPBar"></span>
+        <span id="profileLosses"></span><span id="profileDraws"></span><span id="profileGoals"></span>
+        <span id="profileEfootball"></span><span id="profilePlayerCode"></span><span id="profileCoinsValue"></span>
+        <span id="profileDetails"></span><span id="profileFeatures"></span>
+        <span id="profileTournamentHistory"></span><span id="profileMatchHistory"></span>
+      </div>
+
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section id="notifications" class="page">
+
+      <div class="page-title">
+        <h1>الإشعارات 🔔</h1>
+      </div>
+
+      <div
+        id="notificationsList"
+        class="notification-list"
+      ></div>
+
+    </section>
+
+    <!-- PREMIUM UI HIDDEN FROM PLAYER UI -->
+
+    <!-- COMPLAINTS -->
+    <section id="complaints" class="page">
+
+      <div class="page-title">
+
+        <div>
+          <span>Support</span>
+          <h1>مركز الشكايات</h1>
+        </div>
+
+        <button
+          id="newComplaintBtn"
+          class="primary-small"
+          type="button"
+        >
+          + شكاية
+        </button>
+
+      </div>
+
+      <div
+        id="complaintsList"
+        class="ticket-list"
+      ></div>
+
+    </section>
+
+    <!-- HALL OF FAME -->
+    <section id="hall" class="page">
+
+      <div class="page-title">
+
+        <div>
+          <span>CHAOUI LEGENDS</span>
+          <h1>قاعة الأساطير 👑</h1>
+        </div>
+
+      </div>
+
+      <div
+        id="hallList"
+        class="hall-list"
+      ></div>
+
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="progression" class="page">
+      <div class="page-title"><div><span>CHAOUI PRO</span><h1>التقدم والمكافآت</h1></div></div>
+      <div id="progressionSummary" class="stats-strip"></div>
+      <div class="section-head"><h2>الإنجازات 🏆</h2></div>
+      <div id="achievementsList" class="cards-grid"></div>
+      <div class="section-head"><h2>التحديات 🎯</h2></div>
+      <div id="challengesList" class="cards-grid"></div>
+    </section>
+
+    <section id="search" class="page">
+      <div class="page-title"><div><span>PLAYERS</span><h1>البحث عن اللاعبين</h1></div></div>
+      <input id="playerSearchInput" class="modal-input" placeholder="Username، الاسم أو اسم eFootball" autocomplete="off">
+      <div id="playerSearchResults" class="cards-grid" style="margin-top:12px"></div>
+    </section>
+
+
+    <!-- ECONOMY HIDDEN: coins/shop/mystery removed from player UI -->
+
+    <!-- CHAT -->
+    <section id="chat" class="page">
+      <div class="page-title"><div><span>CHAoui MESSENGER</span><h1>💬 الرسائل</h1></div></div>
+      <div class="chat-layout">
+        <aside class="chat-sidebar"><div class="chat-sidebar-head"><strong>المحادثات</strong><button class="primary-small" type="button" onclick="openNewChatModal()">+ شات</button></div><div id="conversationList" class="conversation-list"></div></aside>
+        <section class="chat-room"><div id="chatRoomHeader" class="chat-room-header"><span>اختار محادثة</span></div><div id="chatMessages" class="chat-messages"><div class="empty-card">اختار لاعب أو محادثة باش تبدا.</div></div><form id="chatComposer" class="chat-composer"><input id="chatMessageInput" placeholder="كتب رسالة..." maxlength="2000" autocomplete="off"><button type="submit">إرسال ➤</button></form></section>
+      </div>
+    </section>
+
+    <!-- SECONDARY SOCIAL PAGES HIDDEN FROM PLAYER UI -->
+
+    <!-- SEASON -->
+    <section id="season" class="page">
+      <div class="page-title"><div><span>CHAoui SEASON</span><h1>📅 الموسم والتحديات</h1></div></div>
+      <div id="seasonHero" class="season-hero"></div>
+      <div id="missionsList" class="cards-grid"></div>
+    </section>
+
+    <!-- ACTIVITY FEED HIDDEN FROM PLAYER UI -->
+
+    <!-- ASSISTANT -->
+    <section id="assistant" class="page">
+      <div class="page-title"><div><span>CHAoui ASSISTANT</span><h1>🤖 المساعد</h1></div></div>
+      <div class="assistant-shell"><div id="assistantMessages" class="assistant-messages"></div><div class="assistant-suggestions"><button type="button" onclick="askChaoui('شنو عندي اليوم؟')">شنو عندي اليوم؟</button><button type="button" onclick="askChaoui('شحال خاصني للـLevel الجاي؟')">شحال باقي للـLevel؟</button><button type="button" onclick="askChaoui('شنو نقدر نشري بالـCoins؟')">شنو نشري بالـCoins؟</button></div><form id="assistantForm" class="chat-composer"><input id="assistantInput" placeholder="سول CHAoui..." maxlength="500"><button type="submit">سول ➤</button></form></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="page">
+
+      <div class="page-title">
+        <h1>الإعدادات ⚙️</h1>
+      </div>
+
+      <div class="settings-list">
+
+        <button
+          class="setting-item"
+          id="onlineToggleBtn"
+          type="button"
+        >
+          <span>🟢 الحالة</span>
+          <small id="onlineStatus">
+            Online
+          </small>
+        </button>
+
+        <button
+          class="setting-item"
+          data-page="security"
+          type="button"
+        >
+          <span>🔐 الأمان</span>
+          <small>
+            الحساب والحماية
+          </small>
+        </button>
+
+        <button
+          class="setting-item"
+          id="logoutBtn"
+          type="button"
+        >
+          <span>🚪 تسجيل الخروج</span>
+          <small>
+            خروج من الحساب
+          </small>
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- SECURITY -->
+    <section id="security" class="page">
+
+      <div class="page-title">
+        <h1>الأمان 🔐</h1>
+      </div>
+
+      <div class="info-card">
+
+        <h3>
+          حسابك محمي
+        </h3>
+
+        <p>
+          المصادقة وإدارة الجلسة كتدار عبر Supabase.
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- MORE -->
+    <section id="more" class="page">
+      <div class="page-title more-v8-title">
+        <div>
+          <span class="more-v8-kicker">CHAoui HUB</span>
+          <h1>المزيد</h1>
+        </div>
+        <span class="more-v8-count">3 أقسام</span>
+      </div>
+
+      <div class="more-hub-v8">
+        <button class="more-category" data-more-category="player" type="button">
+          <span class="more-category-icon more-blue">♙</span>
+          <span><b>اللاعب</b><small>حسابك، تقدمك والموسم</small></span>
+          <strong>4</strong>
+        </button>
+        <button class="more-category" data-more-category="community" type="button">
+          <span class="more-category-icon more-pink">◉</span>
+          <span><b>المجتمع</b><small>الرسائل، الأندية والنشاط</small></span>
+          <strong>4</strong>
+        </button>
+            <button class="more-category" data-more-category="support" type="button">
+          <span class="more-category-icon more-violet">✦</span>
+          <span><b>المساعدة والإعدادات</b><small>الدعم، المساعد والإعدادات</small></span>
+          <strong>3</strong>
+        </button>
+      </div>
+
+      <div id="moreHubV8Panel" class="more-hub-v8-panel" hidden></div>
+
+      <div id="organizerShortcut" class="organizer-shortcut" style="display:none">
+        <button id="openOrganizerPanel" type="button">
+          🏆
+          <span>صفحة المنظم</span>
+        </button>
+      </div>
+
+      <div id="kingShortcut" class="king-shortcut" style="display:none">
+        <button id="openKingPanel" type="button">
+          👑
+          <span>KING PANEL</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ORGANIZER -->
+    <section id="organizer" class="page">
+
+      <div class="page-title">
+
+        <div>
+          <span>ORGANIZER</span>
+          <h1>لوحة المنظم 🏆</h1>
+        </div>
+
+      </div>
+
+      <div id="organizerPlanCard" class="organizer-plan-card"></div>
+
+      <div class="dashboard-grid">
+
+        <button id="organizerCreate">
+          ➕
+          <span>إنشاء بطولة</span>
+        </button>
+
+        <button id="organizerTournaments">
+          🏆
+          <span>بطولاتي</span>
+        </button>
+
+        <button id="organizerMatches">
+          ⚔️
+          <span>المباريات</span>
+        </button>
+
+        <button id="organizerComplaints">
+          🎫
+          <span>الشكايات</span>
+        </button>
+
+        <button data-page="ranking">
+          📊
+          <span>الترتيب</span>
+        </button>
+
+        <button data-page="search">
+          🔎
+          <span>البحث عن لاعب</span>
+        </button>
+
+        <button data-page="progression">
+          🎯
+          <span>التقدم والمكافآت</span>
+        </button>
+
+        <button data-page="chat">💬<span>تواصل</span></button>
+        <button data-page="clubs">🏟️<span>الأندية</span></button>
+
+        <button data-page="settings">
+          ⚙️
+          <span>الإعدادات</span>
+        </button>
+
+      </div>
+
+      <div
+        id="organizerStats"
+        class="dashboard-stats"
+      ></div>
+
+      <div class="section-head">
+        <h2>بطولاتي 🏆</h2>
+      </div>
+
+      <div
+        id="organizerTournamentsList"
+        class="cards-grid"
+      ></div>
+
+    </section>
+
+    <!-- KING -->
+    <section id="king" class="page">
+
+      <div class="king-header">
+
+        <span>
+          👑 KING ACCESS
+        </span>
+
+        <h1>
+          لوحة التحكم الرئيسية
+        </h1>
+
+        <p>
+          التحكم الكامل في منصة CHAOUI
+        </p>
+
+      </div>
+
+      <div
+        id="kingContent"
+        class="king-grid"
+      ></div>
+
+      <div class="section-head">
+        <h2>إدارة اللاعبين 👥</h2>
+      </div>
+
+      <input
+        id="kingPlayerSearch"
+        class="modal-input"
+        placeholder="بحث بـ Username..."
+      >
+
+      <div
+        id="kingPlayersList"
+        class="cards-grid"
+        style="margin-top:12px"
+      ></div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <nav id="bottomNav" class="bottom-nav" aria-label="التنقل الرئيسي">
+
+      <button class="nav-item active" data-page="home">
+        <span>⌂</span>
+        <small>الرئيسية</small>
+      </button>
+
+      <button class="nav-item" data-page="tournaments">
+        <span>🏆</span>
+        <small>البطولات</small>
+      </button>
+
+      <button class="nav-item" data-page="matches">
+        <span>⚔️</span>
+        <small>مبارياتي</small>
+      </button>
+
+      <button class="nav-item" data-page="ranking">
+        <span>📊</span>
+        <small>الترتيب</small>
+      </button>
+
+      <button class="nav-item nav-item-chat" data-page="chat">
+        <span>💬</span>
+        <small>الرسائل</small>
+      </button>
+
+      <button class="nav-item nav-item-more" data-page="more">
+        <span>☰</span>
+        <small>المزيد</small>
+      </button>
+
+    </nav>
+
+  </main>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal">
+
+    <div
+      id="modalContent"
+      class="modal-content"
+    ></div>
+
+  </div>
+
+  <!-- CHAoui boot loader: load Supabase first, then the app, with cache-busting and visible failure feedback. -->
+  <script>
+    (function () {
+      const splash = document.getElementById("splash");
+      const auth = document.getElementById("authScreen");
+
+      const showAuthSafely = (message) => {
+        if (splash) {
+          splash.classList.remove("show");
+          splash.style.display = "none";
+        }
+        if (auth) auth.style.display = "flex";
+
+        if (message) {
+          const box = document.getElementById("authMessage");
+          if (box) {
+            box.textContent = message;
+            box.className = "auth-message error";
+          }
+        }
+      };
+
+      // V16 emergency fallback: the cinematic splash must never become a permanent overlay.
+      window.setTimeout(() => {
+        const s = document.getElementById("splash");
+        if (s && s.classList.contains("show")) {
+          s.classList.remove("show");
+          s.style.display = "none";
+          s.style.pointerEvents = "none";
+        }
+      }, 9000);
+
+      // Never leave the user stuck on the splash if a CDN or script fails.
+      window.setTimeout(() => {
+        if (!window.CHAOUI_APP_LOADED) {
+          showAuthSafely("تعذر تحميل محرك التطبيق. عاود تحديث الصفحة، وإذا بقات نفس المشكلة غادي نصلحوها من السيرفر.");
+        }
+      }, 12000);
+
+      const sources = [
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+        "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+      ];
+
+      let index = 0;
+
+      function loadApp() {
+        if (!window.supabase) {
+          console.error("Supabase SDK is unavailable.");
+          showAuthSafely("ما قدرناش نحمّلو خدمة تسجيل الدخول. عاود تحديث الصفحة.");
+          return;
+        }
+
+        const app = document.createElement("script");
+        app.src = "script.js?v=20260927-v30";
+        app.onload = () => {
+          window.CHAOUI_APP_LOADED = true;
+          console.log("CHAoui core loaded");
+          const auth = document.createElement("script");
+          auth.src = "auth-v30.js?v=20260927-v30";
+          auth.onload = () => {
+            console.log("CHAoui Auth V30 loaded");
+            const runtime = document.createElement("script");
+            runtime.src = "v30.js?v=20260927-v30";
+            runtime.onload = () => console.log("CHAoui V30 runtime loaded");
+            runtime.onerror = () => console.warn("CHAoui V30 runtime failed");
+            document.head.appendChild(runtime);
+          };
+          auth.onerror = () => console.warn("CHAoui Auth V30 failed");
+          document.head.appendChild(auth);
+        };
+        app.onerror = () => {
+          console.error("CHAoui script failed to load.");
+          showAuthSafely("ملف التطبيق ما تحمّلش. عاود تحديث الصفحة.");
+        };
+        document.head.appendChild(app);
+      }
+
+      function loadNextSupabase() {
+        if (window.supabase) {
+          loadApp();
+          return;
+        }
+
+        if (index >= sources.length) {
+          console.error("All Supabase CDN sources failed.");
+          showAuthSafely("خدمة تسجيل الدخول ما تحمّلاتش. عاود تحديث الصفحة.");
+          return;
+        }
+
+        const src = sources[index++];
+        const tag = document.createElement("script");
+        let done = false;
+
+        const timer = window.setTimeout(() => finish(false), 8000);
+
+        function finish(ok) {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          if (ok && window.supabase) {
+            loadApp();
+          } else {
+            tag.remove();
+            loadNextSupabase();
+          }
+        }
+
+        tag.onload = () => finish(true);
+        tag.onerror = () => finish(false);
+        tag.src = src;
+        document.head.appendChild(tag);
+      }
+
+      loadNextSupabase();
+    })();
+  </script>
+
+  <!-- PWA SERVICE WORKER -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+
+        navigator.serviceWorker
+          .register("./sw.js?v=20260927-v30", { updateViaCache: "none" })
+          .then(() => {
+            console.log("CHAOUI PWA ready 🔥");
+          })
+          .catch((error) => {
+            console.error("PWA error:", error);
+          });
+
+      });
+    }
+  </script>
+
+</body>
+</html>
