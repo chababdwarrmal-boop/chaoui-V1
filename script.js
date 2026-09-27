@@ -519,7 +519,22 @@ async function resetPassword() {
 }
 
 async function handlePasswordRecovery() {
-  const password = window.prompt("دخل كلمة السر الجديدة (6 أحرف على الأقل):");
+  for (let i=0;i<20 && !$("v23RecoveryPanel");i++) {
+    await new Promise(resolve=>setTimeout(resolve,150));
+  }
+
+  const v23Panel=$("v23RecoveryPanel");
+  const v23Input=$("v23NewPassword");
+  if (v23Panel && v23Input) {
+    const auth=$("authScreen"),app=$("app");
+    if(auth)auth.style.display="block";
+    if(app)app.style.display="none";
+    v23Panel.classList.add("open");
+    v23Panel.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+
+  const password=window.prompt("دخل كلمة السر الجديدة (6 أحرف على الأقل):");
   if (!password) return;
   if (password.length < 6) {
     showMessage("كلمة السر خاصها تكون 6 أحرف على الأقل.", "error");
