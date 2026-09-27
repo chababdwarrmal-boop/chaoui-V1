@@ -17,10 +17,9 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="visual-system-v4.css?v=20260925-v4">
   <link rel="stylesheet" href="visual-v6.css?v=20260927-v22">
-  <link rel="stylesheet" href="player-v15.css?v=20260926-v15">
-  <link rel="stylesheet" href="owner-v15.css?v=20260926-v15">
   <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
   <link rel="stylesheet" href="clean-v19.css?v=20260927-v22">
+  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v23">
 </head>
 
 <body>
@@ -29,7 +28,7 @@
   <section id="splash" class="splash show">
     <div class="splash-glow"></div>
     <div class="splash-content">
-      <div class="splash-logo"><img src="logo.png" alt="CHAoui-Pro"></div>
+      <div class="splash-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
       <div class="splash-kicker">⚡ CHAOUI PRO</div>
       <h1>CHAoui <span>PRO</span></h1>
       <p id="splashMessage">هنا كتبدأ المنافسة الحقيقية.</p>
@@ -49,7 +48,7 @@
     <div class="auth-box">
 
       <div class="auth-brand">
-        <div class="auth-logo"><img src="logo.png" alt="CHAoui-Pro"></div>
+        <div class="auth-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
         <h1>CHAOUI</h1>
         <p>eFootball Tournament Platform</p>
       </div>
@@ -155,7 +154,7 @@
     <header class="app-header">
 
       <div class="brand">
-        <div class="brand-logo"><img src="logo.png" alt="CHAoui-Pro"></div>
+        <div class="brand-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
 
         <div>
           <strong>CHAOUI</strong>
@@ -225,7 +224,7 @@
           <button type="button" class="home-hero-btn" data-page="tournaments">شوف البطولات <b>↗</b></button>
         </div>
         <div class="home-brand-mark">
-          <img src="logo.png" alt="CHAoui-Pro">
+          <img src="chaoui-mark.svg" alt="CHAoui-Pro">
         </div>
       </section>
 
@@ -965,34 +964,24 @@
         // V16: load the public auth shell and V15 UX layers explicitly.
         // This removes the dependency on the service worker to inject auth code.
         const auth13 = document.createElement("script");
-        auth13.src = "auth-v13.js?v=20260926-v20";
+        auth13.src = "auth-v13.js?v=20260927-v23";
         auth13.onload = () => {
-          console.log("CHAoui Auth V14 loaded");
-          const auth15 = document.createElement("script");
-          auth15.src = "auth-v15.js?v=20260926-v20";
-          auth15.onload = () => {
-            console.log("CHAoui Auth V15 loaded");
-            const player15 = document.createElement("script");
-            player15.src = "player-v15.js?v=20260926-v16";
-            player15.onload = () => console.log("CHAoui Player V15 loaded");
-            player15.onerror = () => console.warn("CHAoui Player V15 failed to load");
-            document.head.appendChild(player15);
-            const owner15 = document.createElement("script");
-            owner15.src = "owner-v15.js?v=20260926-v16";
-            owner15.onload = () => console.log("CHAoui Owner V15 loaded");
-            owner15.onerror = () => console.warn("CHAoui Owner V15 failed to load");
-            document.head.appendChild(owner15);
-            const functionalV17 = document.createElement("script");
-            functionalV17.src = "functional-core-v17.js?v=20260926-v17";
-            functionalV17.onload = () => console.log("CHAoui Functional Core V17 loaded");
-            functionalV17.onerror = () => console.warn("CHAoui Functional Core V17 failed to load");
-            document.head.appendChild(functionalV17);
-            const cleanV19=document.createElement("script"); cleanV19.src="clean-v19.js?v=20260927-v22"; document.head.appendChild(cleanV19);
-          };
-          auth15.onerror = () => console.warn("CHAoui Auth V15 failed to load");
-          document.head.appendChild(auth15);
+          console.log("CHAoui Auth V23 loaded");
+          const functionalV17 = document.createElement("script");
+          functionalV17.src = "functional-core-v17.js?v=20260926-v17";
+          functionalV17.onload = () => console.log("CHAoui Functional Core loaded");
+          functionalV17.onerror = () => console.warn("CHAoui Functional Core failed");
+          document.head.appendChild(functionalV17);
+          const cleanV19=document.createElement("script");
+          cleanV19.src="clean-v19.js?v=20260927-v22";
+          document.head.appendChild(cleanV19);
+          const v23=document.createElement("script");
+          v23.src="v23-redesign.js?v=20260927-v23";
+          v23.onload=()=>console.log("CHAoui V23 redesign loaded");
+          v23.onerror=()=>console.warn("CHAoui V23 redesign failed to load");
+          document.head.appendChild(v23);
         };
-        auth13.onerror = () => console.warn("CHAoui Auth V14 failed to load");
+        auth13.onerror = () => console.warn("CHAoui Auth V23 failed to load");
         document.head.appendChild(auth13);
         };
         app.onerror = () => {
@@ -1048,7 +1037,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260927-v22", { updateViaCache: "none" })
+          .register("./sw.js?v=20260927-v23", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
