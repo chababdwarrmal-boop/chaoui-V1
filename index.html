@@ -16,7 +16,7 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v29">
+  <link rel="stylesheet" href="v30.css?v=20260927-v30">
 </head>
 
 <body>
@@ -76,7 +76,7 @@
   </script>
 
   <!-- SPLASH -->
-  <section id="splash" class="splash show">
+  <section id="splash" class="splash" aria-hidden="true">
     <div class="splash-glow"></div>
     <div class="splash-content">
       <div class="splash-logo"><img src="chaoui-mark.svg" alt="CHAoui-Pro"></div>
@@ -975,22 +975,22 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260927-v29";
+        app.src = "script.js?v=20260927-v30";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
           console.log("CHAoui core loaded");
-          const auth13 = document.createElement("script");
-          auth13.src = "auth-v13.js?v=20260927-v29";
-          auth13.onload = () => {
-            console.log("CHAoui Auth V26 loaded");
-            const v23 = document.createElement("script");
-            v23.src = "v23-redesign.js?v=20260927-v29";
-            v23.onload = () => console.log("CHAoui V26 runtime loaded");
-            v23.onerror = () => console.warn("CHAoui V26 runtime failed");
-            document.head.appendChild(v23);
+          const auth = document.createElement("script");
+          auth.src = "auth-v30.js?v=20260927-v30";
+          auth.onload = () => {
+            console.log("CHAoui Auth V30 loaded");
+            const runtime = document.createElement("script");
+            runtime.src = "v30.js?v=20260927-v30";
+            runtime.onload = () => console.log("CHAoui V30 runtime loaded");
+            runtime.onerror = () => console.warn("CHAoui V30 runtime failed");
+            document.head.appendChild(runtime);
           };
-          auth13.onerror = () => console.warn("CHAoui Auth V26 failed to load");
-          document.head.appendChild(auth13);
+          auth.onerror = () => console.warn("CHAoui Auth V30 failed");
+          document.head.appendChild(auth);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
@@ -1045,7 +1045,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260927-v29", { updateViaCache: "none" })
+          .register("./sw.js?v=20260927-v30", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
