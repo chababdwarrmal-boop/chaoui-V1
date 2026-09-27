@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="visual-v6.css?v=20260927-v22">
   <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
   <link rel="stylesheet" href="clean-v19.css?v=20260927-v22">
-  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v23">
+  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v25">
 </head>
 
 <body>
@@ -964,7 +964,7 @@
         // V16: load the public auth shell and V15 UX layers explicitly.
         // This removes the dependency on the service worker to inject auth code.
         const auth13 = document.createElement("script");
-        auth13.src = "auth-v13.js?v=20260927-v23";
+        auth13.src = "auth-v13.js?v=20260927-v25";
         auth13.onload = () => {
           console.log("CHAoui Auth V23 loaded");
           const functionalV17 = document.createElement("script");
@@ -976,7 +976,7 @@
           cleanV19.src="clean-v19.js?v=20260927-v22";
           document.head.appendChild(cleanV19);
           const v23=document.createElement("script");
-          v23.src="v23-redesign.js?v=20260927-v23";
+          v23.src="v23-redesign.js?v=20260927-v25";
           v23.onload=()=>console.log("CHAoui V23 redesign loaded");
           v23.onerror=()=>console.warn("CHAoui V23 redesign failed to load");
           document.head.appendChild(v23);
@@ -1037,7 +1037,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260927-v23", { updateViaCache: "none" })
+          .register("./sw.js?v=20260927-v25", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
