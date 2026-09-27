@@ -63,7 +63,15 @@ async function finishSignup(){
   window.currentUser=data.user;
   await supabaseClient.from("profiles").update({display_name:d.name,efootball_name:d.ef,username}).eq("id",data.user.id);
   await supabaseClient.from("player_private").upsert({id:data.user.id,whatsapp:d.wa});
-  if(data.session){try{await joinTournament(d);clearDraft()}catch(e){console.warn(e)}await loadProfile();if(!window.currentProfile)throw new Error("البروفايل ما تحمّلش.");showApp();showPage("home");window.showToast?.("مرحبا بك فـ CHAoui 🔥")}else msg("الحساب تخلق ✅. أكد الإيميل ديالك، ومن بعد دخل من زر «دخول اللاعب» باش نكملو التسجيل.","success");
+  if(data.session){
+   let joinStatus=null,joinError=null;
+   if(d.tournamentId){try{joinStatus=await joinTournament(d);clearDraft()}catch(e){joinError=e;console.warn(e)}}
+   await loadProfile();if(!window.currentProfile)throw new Error("البروفايل ما تحمّلش.");
+   showApp();showPage("home");
+   if(joinError)window.showToast?.("الحساب تخلق، ولكن التسجيل فالبطولة ما تكملش. دخل للبطولات وحاول من جديد.");
+   else if(joinStatus)window.showToast?.("تخلق الحساب وتبعث طلب التسجيل ✓");
+   else window.showToast?.("مرحبا بك فـ CHAoui 🔥");
+ }else msg("الحساب تخلق ✅. أكد الإيميل ديالك، ومن بعد دخل من زر «دخول اللاعب» باش نكملو التسجيل.","success");
  }catch(e){console.error(e);msg(String(e?.message||"تعذر التسجيل."));}finally{b.disabled=false;b.textContent="إنشاء الحساب والتسجيل 🏆"}
 }
 async function finishPending(){const d=readDraft();if(!d?.tournamentId)return;try{await joinTournament(d);clearDraft();window.showToast?.("تم إكمال التسجيل فالـبطولة ✓")}catch(e){console.warn(e)}}
