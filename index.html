@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="visual-v6.css?v=20260927-v22">
   <link rel="stylesheet" href="functional-core-v17.css?v=20260926-v17">
   <link rel="stylesheet" href="clean-v19.css?v=20260927-v22">
-  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v25">
+  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v26">
 </head>
 
 <body>
@@ -923,66 +923,22 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260925-playerhq3";
+        app.src = "script.js?v=20260927-v26";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
-          console.log("CHAoui app loaded");
-          const universe = document.createElement("script");
-          universe.src = "universe.js?v=20260925-universe5";
-          universe.onload = () => console.log("CHAoui Universe loaded");
-          universe.onerror = () => console.warn("CHAoui Universe failed to load");
-          document.head.appendChild(universe);
-          const social = document.createElement("script");
-          social.src = "social.js?v=20260925-chat2";
-          social.onload = () => console.log("CHAoui Social loaded");
-          social.onerror = () => console.warn("CHAoui Social failed to load");
-          document.head.appendChild(social);
-          const matchesV2 = document.createElement("script");
-          matchesV2.src = "matches-v2.js?v=20260925-matches2";
-          matchesV2.onload = () => console.log("CHAoui Match Center V2 loaded");
-          matchesV2.onerror = () => console.warn("CHAoui Match Center V2 failed to load");
-          document.head.appendChild(matchesV2);
-        const coreV5 = document.createElement("script");
-        coreV5.src = "competitive-core-v5.js?v=20260925-core5";
-        coreV5.onload = () => console.log("CHAoui Competitive Core V5 loaded");
-        coreV5.onerror = () => console.warn("CHAoui Competitive Core V5 failed to load");
-        document.head.appendChild(coreV5);
-        const visualV6 = document.createElement("script");
-        visualV6.src = "visual-v6.js?v=20260927-v22";
-        document.head.appendChild(visualV6);
-        const adminHQ = document.createElement("script");
-        adminHQ.src = "admin-hq-v9.js?v=20260925-admin10";
-        adminHQ.onload = () => console.log("CHAoui Admin HQ V9 loaded");
-        adminHQ.onerror = () => console.warn("CHAoui Admin HQ V9 failed to load");
-        document.head.appendChild(adminHQ);
-        const organizerHQ = document.createElement("script");
-        organizerHQ.src = "organizer-v11.js?v=20260925-v11";
-        organizerHQ.onload = () => console.log("CHAoui Organizer HQ V11 loaded");
-        organizerHQ.onerror = () => console.warn("CHAoui Organizer HQ V11 failed to load");
-        document.head.appendChild(organizerHQ);
-
-        // V16: load the public auth shell and V15 UX layers explicitly.
-        // This removes the dependency on the service worker to inject auth code.
-        const auth13 = document.createElement("script");
-        auth13.src = "auth-v13.js?v=20260927-v25";
-        auth13.onload = () => {
-          console.log("CHAoui Auth V23 loaded");
-          const functionalV17 = document.createElement("script");
-          functionalV17.src = "functional-core-v17.js?v=20260926-v17";
-          functionalV17.onload = () => console.log("CHAoui Functional Core loaded");
-          functionalV17.onerror = () => console.warn("CHAoui Functional Core failed");
-          document.head.appendChild(functionalV17);
-          const cleanV19=document.createElement("script");
-          cleanV19.src="clean-v19.js?v=20260927-v22";
-          document.head.appendChild(cleanV19);
-          const v23=document.createElement("script");
-          v23.src="v23-redesign.js?v=20260927-v25";
-          v23.onload=()=>console.log("CHAoui V23 redesign loaded");
-          v23.onerror=()=>console.warn("CHAoui V23 redesign failed to load");
-          document.head.appendChild(v23);
-        };
-        auth13.onerror = () => console.warn("CHAoui Auth V23 failed to load");
-        document.head.appendChild(auth13);
+          console.log("CHAoui core loaded");
+          const auth13 = document.createElement("script");
+          auth13.src = "auth-v13.js?v=20260927-v26";
+          auth13.onload = () => {
+            console.log("CHAoui Auth V26 loaded");
+            const v23 = document.createElement("script");
+            v23.src = "v23-redesign.js?v=20260927-v26";
+            v23.onload = () => console.log("CHAoui V26 runtime loaded");
+            v23.onerror = () => console.warn("CHAoui V26 runtime failed");
+            document.head.appendChild(v23);
+          };
+          auth13.onerror = () => console.warn("CHAoui Auth V26 failed to load");
+          document.head.appendChild(auth13);
         };
         app.onerror = () => {
           console.error("CHAoui script failed to load.");
@@ -1037,7 +993,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260927-v25", { updateViaCache: "none" })
+          .register("./sw.js?v=20260927-v26", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
