@@ -88,6 +88,6 @@ function setup(){if(ready||!$("authScreen"))return;ready=true;addStyle();$("auth
  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>openPanel(null));
  $("v23Forgot").onclick=async()=>{const email=prompt("دخل الإيميل ديالك:");if(!email)return;const r=await supabaseClient.auth.resetPasswordForEmail(email.trim().toLowerCase(),{redirectTo:window.location.origin+window.location.pathname});msg(r.error?r.error.message:"تصيفط رابط الاسترجاع للإيميل ديالك.","success")};
  $("v23RecoveryBtn").onclick=async()=>{const pass=$("v23NewPassword")?.value||"";if(pass.length<6)return msg("كلمة السر الجديدة خاصها 6 أحرف على الأقل.");const r=await supabaseClient.auth.updateUser({password:pass});if(r.error)return msg(r.error.message);msg("تبدلات كلمة السر بنجاح ✅ دابا تقدر تدخل.","success");await supabaseClient.auth.signOut();$("v23RecoveryPanel")?.classList.remove("open");$("v23PlayerPanel")?.classList.add("open")};
- try{supabaseClient.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){$("v23PlayerPanel")?.classList.remove("open");$("v23OrgPanel")?.classList.remove("open");$("v23RecoveryPanel")?.classList.add("open");$("v23RecoveryPanel")?.scrollIntoView({behavior:"smooth",block:"center"})}})}catch(e){console.warn("recovery listener",e)}}
+}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});else setTimeout(setup,0);
 })();
