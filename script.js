@@ -1087,65 +1087,17 @@ async function loadPlayerPrivate() {
    ========================================================= */
 
 function showApp() {
-
-  const auth =
-    $("authScreen");
-
-  const app =
-    $("app");
-
-
-  if (auth) {
-    auth.style.display = "none";
+  const auth=$("authScreen");
+  const app=$("app");
+  if(auth){auth.style.display="none";}
+  if(app){
+    app.style.display="block";
+    app.classList.remove("chaoui-player-v15","chaoui-owner-v15");
   }
-
-
-  if (app) {
-    app.style.display = "block";
-  }
-
-
   renderCurrentUser();
-
   updateRoleAccess();
-
-
-  pageHistory = [];
-
-  currentPageId =
-    "home";
-
-
-  showPage(
-    "home",
-    {
-      fromBack: true
-    }
-  );
-
-  renderHomeTournaments();
-  renderHomeDashboard();
-
-  renderTournaments();
-
-  renderMatches();
-
-  renderRanking();
-
-  renderProfile();
-
-  renderNotifications();
-
-  renderPremium();
-
-  renderComplaints();
-
-  renderHall();
-
-  renderOrganizer();
-
-  renderKing();
-
+  pageHistory=[];
+  currentPageId="home";
 }
 
 
@@ -1314,146 +1266,28 @@ function updateRoleAccess() {
    ========================================================= */
 
 function showPage(pageId, opts = {}) {
-
-  const fromBack =
-    opts.fromBack === true;
-
-
-  if (
-    !fromBack &&
-    pageId !== currentPageId
-  ) {
-
-    pageHistory.push(
-      currentPageId
-    );
-
-  }
-
-
-  currentPageId =
-    pageId;
-
-
-  document
-    .querySelectorAll(".page")
-    .forEach(page => {
-
-      page.classList.remove(
-        "active-page"
-      );
-
-    });
-
-
-  const page =
-    $(pageId);
-
-
-  if (!page) {
-    return;
-  }
-
-
-  page.classList.add(
-    "active-page"
-  );
-
-
-  document
-    .querySelectorAll(".nav-item")
-    .forEach(item => {
-
-      item.classList.toggle(
-        "active",
-        item.dataset.page === pageId
-      );
-
-    });
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-
+  const fromBack=opts.fromBack===true;
+  if(!fromBack && pageId!==currentPageId){pageHistory.push(currentPageId);}
+  currentPageId=pageId;
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active-page"));
+  const page=$(pageId);
+  if(!page)return;
+  page.classList.add("active-page");
+  document.querySelectorAll(".nav-item").forEach(item=>item.classList.toggle("active",item.dataset.page===pageId));
+  window.scrollTo({top:0,behavior:"smooth"});
   updateHeaderNav();
 
-
-  if (pageId === "home") {
-    renderHomeTournaments();
-    renderHomeDashboard();
-  }
-
-  if (pageId === "tournaments") {
-    renderTournaments();
-  }
-
-  if (pageId === "matches") {
-    renderMatches();
-  }
-
-  if (pageId === "ranking") {
-    renderRanking();
-  }
-
-  if (pageId === "profile") {
-    renderProfile();
-  }
-
-  if (pageId === "notifications") {
-    renderNotifications();
-  }
-
-  if (pageId === "complaints") {
-    renderComplaints();
-  }
-
-  if (pageId === "hall") {
-    renderHall();
-  }
-
-  if (pageId === "progression") {
-    renderProgression();
-  }
-
-  if (pageId === "search") {
-    renderPlayerSearch();
-  }
-
-  if (pageId === "organizer") {
-    renderOrganizer();
-  }
-
-  if (pageId === "king") {
-    renderKing();
-  }
-
-  if (pageId === "wallet") {
-    renderWallet();
-  }
-
-  if (pageId === "chat") {
-    renderConversations();
-  }
-
-  if (pageId === "clubs") {
-    renderClubs();
-  }
-
-  if (pageId === "season") {
-    renderSeason();
-  }
-
-  if (pageId === "feed") {
-    renderActivityFeed();
-  }
-
-  if (pageId === "assistant") {
-    initAssistant();
-  }
-
+  // Keep legacy utility/support pages functional; V26 owns the competitive core pages.
+  if(pageId==="notifications") renderNotifications();
+  else if(pageId==="complaints") renderComplaints();
+  else if(pageId==="progression") renderProgression();
+  else if(pageId==="search") renderPlayerSearch();
+  else if(pageId==="wallet") renderWallet();
+  else if(pageId==="chat") renderConversations();
+  else if(pageId==="clubs") renderClubs();
+  else if(pageId==="season") renderSeason();
+  else if(pageId==="feed") renderActivityFeed();
+  else if(pageId==="assistant") initAssistant();
 }
 
 
