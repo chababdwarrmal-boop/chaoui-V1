@@ -424,11 +424,27 @@ function initSplash() {
 
     finished = true;
 
+    // Never reveal an empty background when the splash is skipped.
+    const auth = $("authScreen");
+    const app = $("app");
+    if (app && app.style.display !== "block" && auth) {
+      auth.style.display = "flex";
+      auth.style.visibility = "visible";
+      auth.style.opacity = "1";
+    }
+
     splash.classList.remove("show");
 
     setTimeout(() => {
 
       splash.style.display = "none";
+
+      // Safety net: if no session has opened the app yet, keep the auth screen visible.
+      if (app && app.style.display !== "block" && auth) {
+        auth.style.display = "flex";
+        auth.style.visibility = "visible";
+        auth.style.opacity = "1";
+      }
 
     }, 700);
 
