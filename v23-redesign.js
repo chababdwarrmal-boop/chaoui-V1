@@ -168,7 +168,19 @@ function ownerShell(){
  host.className="page v23-owner-shell active-page";host.style.display="block";
  const role=window.currentProfile?.role==="owner"?"OWNER":"ORGANIZER";
  const nav=[["overview","⌂","الرئيسية"],["registrations","📝","التسجيلات"],["tournaments","🏆","البطولات"],["players","👥","اللاعبون"],["matches","⚔","المباريات"],["issues","⚠","المشكلات"],["settings","⚙","الإعدادات"]];
- host.innerHTML='<div class="v23-owner-grid"><aside class="v23-owner-sidebar"><div class="v23-owner-brand"><img src="'+logo+'"><div><b>CHAoui PRO</b><small>'+role+' COMMAND CENTER</small></div></div><div class="v23-owner-nav">'+nav.map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+'</span>'+x[2]+"</button>").join("")+'</div><button class="v23-btn danger" id="v23OwnerLogout" style="width:100%;margin-top:12px">تسجيل الخروج</button></aside><main class="v23-owner-main"><div class="v23-owner-top"><div><h1>'+esc(ownerTab==="overview"?"مركز القيادة":nav.find(x=>x[0]===ownerTab)?.[2]||"لوحة الإدارة")+'</h1><p>إدارة البطولة واللاعبين والمباريات من مكان واحد.</p></div><span class="v23-owner-badge">'+role+"</span></div><div id="v23OwnerBody"></div></main></div>"+'<nav class="v23-owner-nav-mobile">'+nav.slice(0,5).map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+' </span><b>'+x[2]+"</b></button>").join("")+"</nav>";
+ const navHtml=nav.map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+"</span>"+x[2]+"</button>").join("");
+ const mobileHtml=nav.slice(0,5).map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+"</span><b>"+x[2]+"</b></button>").join("");
+ host.innerHTML=`<div class="v23-owner-grid">
+   <aside class="v23-owner-sidebar">
+     <div class="v23-owner-brand"><img src="${logo}" alt="CHAoui PRO"><div><b>CHAoui PRO</b><small>${role} COMMAND CENTER</small></div></div>
+     <div class="v23-owner-nav">${navHtml}</div>
+     <button class="v23-btn danger" id="v23OwnerLogout" type="button" style="width:100%;margin-top:12px">تسجيل الخروج</button>
+   </aside>
+   <main class="v23-owner-main">
+     <div class="v23-owner-top"><div><h1>${esc(ownerTab==="overview"?"مركز القيادة":nav.find(x=>x[0]===ownerTab)?.[2]||"لوحة الإدارة")}</h1><p>إدارة البطولة واللاعبين والمباريات من مكان واحد.</p></div><span class="v23-owner-badge">${role}</span></div>
+     <div id="v23OwnerBody"></div>
+   </main>
+ </div><nav class="v23-owner-nav-mobile">${mobileHtml}</nav>`;
  bindOwnerNav(host);
 }
 function bindOwnerNav(host){host.querySelectorAll("[data-otab]").forEach(b=>b.onclick=async()=>{ownerTab=b.dataset.otab;await renderOwner()});$("v23OwnerLogout")?.addEventListener("click",()=>window.logoutUser?.())}
