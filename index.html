@@ -16,10 +16,35 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v26">
+  <link rel="stylesheet" href="v23-redesign.css?v=20260927-v27">
 </head>
 
 <body>
+  <script>
+    (function(){
+      const KEY="chaoui-hard-reset-v27";
+      if(window.localStorage?.getItem(KEY)!=="1"){
+        const wipe=async()=>{
+          try{
+            if("serviceWorker" in navigator){
+              const regs=await navigator.serviceWorker.getRegistrations();
+              await Promise.all(regs.map(r=>r.unregister().catch(()=>false)));
+            }
+            if("caches" in window){
+              const keys=await caches.keys();
+              await Promise.all(keys.map(k=>caches.delete(k)));
+            }
+          }catch(e){console.warn("CHAoui cache reset",e)}
+          try{localStorage.setItem(KEY,"1")}catch(e){}
+          if(!sessionStorage.getItem(KEY)){
+            try{sessionStorage.setItem(KEY,"1")}catch(e){}
+            location.reload();
+          }
+        };
+        wipe();
+      }
+    })();
+  </script>
 
   <!-- SPLASH -->
   <section id="splash" class="splash show">
@@ -920,16 +945,16 @@
         }
 
         const app = document.createElement("script");
-        app.src = "script.js?v=20260927-v26";
+        app.src = "script.js?v=20260927-v27";
         app.onload = () => {
           window.CHAOUI_APP_LOADED = true;
           console.log("CHAoui core loaded");
           const auth13 = document.createElement("script");
-          auth13.src = "auth-v13.js?v=20260927-v26";
+          auth13.src = "auth-v13.js?v=20260927-v27";
           auth13.onload = () => {
             console.log("CHAoui Auth V26 loaded");
             const v23 = document.createElement("script");
-            v23.src = "v23-redesign.js?v=20260927-v26";
+            v23.src = "v23-redesign.js?v=20260927-v27";
             v23.onload = () => console.log("CHAoui V26 runtime loaded");
             v23.onerror = () => console.warn("CHAoui V26 runtime failed");
             document.head.appendChild(v23);
@@ -990,7 +1015,7 @@
       window.addEventListener("load", () => {
 
         navigator.serviceWorker
-          .register("./sw.js?v=20260927-v26", { updateViaCache: "none" })
+          .register("./sw.js?v=20260927-v27", { updateViaCache: "none" })
           .then(() => {
             console.log("CHAOUI PWA ready 🔥");
           })
