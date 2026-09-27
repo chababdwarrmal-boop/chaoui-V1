@@ -1,11 +1,11 @@
-const CACHE_NAME="chaoui-v27-mobile-reset-20260927";
+const CACHE_NAME="chaoui-v28-splash-fix-20260927";
 const APP_FILES=[
   "./","./index.html","./style.css","./manifest.json","./icon.svg","./icon-192.png","./icon-512.png",
   "./chaoui-mark.svg",
   "./script.js?v=20260927-v27",
-  "./auth-v13.js?v=20260927-v27",
-  "./v23-redesign.css?v=20260927-v27",
-  "./v23-redesign.js?v=20260927-v27"
+  "./auth-v13.js?v=20260927-v28",
+  "./v23-redesign.css?v=20260927-v28",
+  "./v23-redesign.js?v=20260927-v28"
 ];
 self.addEventListener("install",e=>{
   e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_FILES)).catch(()=>{}));
