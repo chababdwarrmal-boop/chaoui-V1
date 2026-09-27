@@ -1,5 +1,29 @@
 const CACHE_NAME="chaoui-v26-clean-runtime-20260927";
-const APP_FILES=["./","./index.html","./style.css","./clean-v19.css","./clean-v19.js","./manifest.json","./icon.svg","./icon-192.png","./icon-512.png","./chaoui-mark.svg","./script.js?v=20260925-playerhq3","./universe.js?v=20260925-universe5","./social.js?v=20260925-chat2","./matches-v2.js?v=20260925-matches2","./matches-v2.css?v=20260925-match3","./tournament-v2.js?v=20260925-tournaments2","./tournament-v2.css?v=20260925-tournaments2","./tournament-v2-observer.js?v=20260925-tournaments2","./competitive-core-v5.js?v=20260925-core5","./competitive-core-v5.css?v=20260925-core5","./visual-v6.js?v=20260927-v22","./visual-v6.css?v=20260925-v8","./auth-v13.js?v=20260927-v26","./functional-core-v17.js?v=20260926-v17","./functional-core-v17.css?v=20260926-v17","./v23-redesign.css?v=20260927-v26","./v23-redesign.js?v=20260927-v26"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_FILES)).catch(()=>{}));self.skipWaiting()});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
-self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(fetch(e.request).then(r=>{caches.open(CACHE_NAME).then(c=>c.put(e.request,r.clone())).catch(()=>{});return r}).catch(()=>caches.match(e.request)))})
+const APP_FILES=[
+  "./","./index.html","./style.css","./manifest.json","./icon.svg","./icon-192.png","./icon-512.png",
+  "./chaoui-mark.svg",
+  "./script.js?v=20260927-v26",
+  "./auth-v13.js?v=20260927-v26",
+  "./v23-redesign.css?v=20260927-v26",
+  "./v23-redesign.js?v=20260927-v26"
+];
+self.addEventListener("install",e=>{
+  e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_FILES)).catch(()=>{}));
+  self.skipWaiting();
+});
+self.addEventListener("activate",e=>{
+  e.waitUntil(
+    caches.keys()
+      .then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key))))
+      .then(()=>self.clients.claim())
+  );
+});
+self.addEventListener("fetch",e=>{
+  if(e.request.method!=="GET")return;
+  e.respondWith(
+    fetch(e.request).then(response=>{
+      caches.open(CACHE_NAME).then(cache=>cache.put(e.request,response.clone())).catch(()=>{});
+      return response;
+    }).catch(()=>caches.match(e.request))
+  );
+});
