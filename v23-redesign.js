@@ -144,14 +144,14 @@ async function loadOwner(){
   supabaseClient.from("tournaments").select("id,name,status,format,game,current_players,capacity,start_at,entry_type,created_at").order("created_at",{ascending:false}).limit(100),
   supabaseClient.from("matches").select("id,tournament_id,player_a,player_b,status,round,score_a,score_b,scheduled_at").order("scheduled_at",{ascending:false}).limit(100),
   supabaseClient.from("complaints").select("*").order("created_at",{ascending:false}).limit(50),
-  supabaseClient.from("tournament_players").select("id,tournament_id,player_id,status,registration_name,registration_whatsapp,registration_efootball_name,registration_type,preferred_time,connection_type,created_at").in("status",["pending","waitlist"]).order("created_at",{ascending:false}).limit(100),
+  supabaseClient.from("tournament_players").select("id,tournament_id,player_id,status,registration_name,registration_whatsapp,registration_efootball_name,registration_type,preferred_time,connection_type,created_at").order("created_at",{ascending:false}).order("created_at",{ascending:false}).limit(100),
   supabaseClient.from("app_settings").select("*").eq("id",1).maybeSingle()
  ]);
  const [p,t,m,c,r,s]=await q();ownerCache={players:p.data||[],tournaments:t.data||[],matches:m.data||[],complaints:c.data||[],registrations:r.data||[],settings:s.data||null};return ownerCache;
 }
 function ownerShell(){
  const host=$("organizer")||$("king");if(!host)return;
- host.className="page v23-owner-shell";host.style.display="";
+ host.className="page v23-owner-shell active-page";host.style.display="block";
  const role=window.currentProfile?.role==="owner"?"OWNER":"ORGANIZER";
  const nav=[["overview","⌂","الرئيسية"],["registrations","📝","التسجيلات"],["tournaments","🏆","البطولات"],["players","👥","اللاعبون"],["matches","⚔","المباريات"],["issues","⚠","المشكلات"],["settings","⚙","الإعدادات"]];
  host.innerHTML='<div class="v23-owner-grid"><aside class="v23-owner-sidebar"><div class="v23-owner-brand"><img src="'+logo+'"><div><b>CHAoui PRO</b><small>'+role+' COMMAND CENTER</small></div></div><div class="v23-owner-nav">'+nav.map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+'</span>'+x[2]+"</button>").join("")+'</div><button class="v23-btn danger" id="v23OwnerLogout" style="width:100%;margin-top:12px">تسجيل الخروج</button></aside><main class="v23-owner-main"><div class="v23-owner-top"><div><h1>'+esc(ownerTab==="overview"?"مركز القيادة":nav.find(x=>x[0]===ownerTab)?.[2]||"لوحة الإدارة")+'</h1><p>إدارة البطولة واللاعبين والمباريات من مكان واحد.</p></div><span class="v23-owner-badge">'+role+"</span></div><div id="v23OwnerBody"></div></main></div>"+'<nav class="v23-owner-nav-mobile">'+nav.slice(0,5).map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+' </span><b>'+x[2]+"</b></button>").join("")+"</nav>";
