@@ -141,20 +141,46 @@ async function loadOwner(){
  if(!["owner","organizer"].includes(window.currentProfile?.role))return;
  const q=async()=>Promise.all([
   supabaseClient.from("profiles").select("id,display_name,username,role,rating,points,wins,losses,draws,player_code,created_at").order("created_at",{ascending:false}).limit(200),
-  supabaseClient.from("tournaments").select("id,name,status,format,game,current_players,capacity,start_at,entry_type,created_at").order("created_at",{ascending:false}).limit(100),
+  supabaseClient.from("tournaments").select("id,name,status,format,game,current_players,capacity,start_at,entry_type,organizer_id,created_at").order("created_at",{ascending:false}).limit(100),
   supabaseClient.from("matches").select("id,tournament_id,player_a,player_b,status,round,score_a,score_b,scheduled_at").order("scheduled_at",{ascending:false}).limit(100),
   supabaseClient.from("complaints").select("*").order("created_at",{ascending:false}).limit(50),
   supabaseClient.from("tournament_players").select("id,tournament_id,player_id,status,registration_name,registration_whatsapp,registration_efootball_name,registration_type,preferred_time,connection_type,created_at").order("created_at",{ascending:false}).order("created_at",{ascending:false}).limit(100),
   supabaseClient.from("app_settings").select("*").eq("id",1).maybeSingle()
  ]);
- const [p,t,m,c,r,s]=await q();ownerCache={players:p.data||[],tournaments:t.data||[],matches:m.data||[],complaints:c.data||[],registrations:r.data||[],settings:s.data||null};return ownerCache;
+ const [p,t,m,c,r,s]=await q();
+ ownerCache={players:p.data||[],tournaments:t.data||[],matches:m.data||[],complaints:c.data||[],registrations:r.data||[],settings:s.data||null};
+ if(window.currentProfile?.role==="organizer"){
+   const uid=window.currentUser?.id;
+   const ownTournamentIds=new Set(ownerCache.tournaments.filter(x=>x.organizer_id===uid).map(x=>x.id));
+   const ownRegistrations=ownerCache.registrations.filter(x=>ownTournamentIds.has(x.tournament_id));
+   const ownMatches=ownerCache.matches.filter(x=>ownTournamentIds.has(x.tournament_id));
+   const ownPlayerIds=new Set(ownRegistrations.map(x=>x.player_id).filter(Boolean));
+   ownerCache.tournaments=ownerCache.tournaments.filter(x=>ownTournamentIds.has(x.id));
+   ownerCache.registrations=ownRegistrations;
+   ownerCache.matches=ownMatches;
+   ownerCache.players=ownerCache.players.filter(x=>ownPlayerIds.has(x.id)||x.id===uid);
+   ownerCache.complaints=[];
+ }
+ return ownerCache;
 }
 function ownerShell(){
  const host=$("organizer")||$("king");if(!host)return;
  host.className="page v23-owner-shell active-page";host.style.display="block";
  const role=window.currentProfile?.role==="owner"?"OWNER":"ORGANIZER";
  const nav=[["overview","⌂","الرئيسية"],["registrations","📝","التسجيلات"],["tournaments","🏆","البطولات"],["players","👥","اللاعبون"],["matches","⚔","المباريات"],["issues","⚠","المشكلات"],["settings","⚙","الإعدادات"]];
- host.innerHTML='<div class="v23-owner-grid"><aside class="v23-owner-sidebar"><div class="v23-owner-brand"><img src="'+logo+'"><div><b>CHAoui PRO</b><small>'+role+' COMMAND CENTER</small></div></div><div class="v23-owner-nav">'+nav.map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+'</span>'+x[2]+"</button>").join("")+'</div><button class="v23-btn danger" id="v23OwnerLogout" style="width:100%;margin-top:12px">تسجيل الخروج</button></aside><main class="v23-owner-main"><div class="v23-owner-top"><div><h1>'+esc(ownerTab==="overview"?"مركز القيادة":nav.find(x=>x[0]===ownerTab)?.[2]||"لوحة الإدارة")+'</h1><p>إدارة البطولة واللاعبين والمباريات من مكان واحد.</p></div><span class="v23-owner-badge">'+role+"</span></div><div id="v23OwnerBody"></div></main></div>"+'<nav class="v23-owner-nav-mobile">'+nav.slice(0,5).map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+' </span><b>'+x[2]+"</b></button>").join("")+"</nav>";
+ const navHtml=nav.map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+"</span>"+x[2]+"</button>").join("");
+ const mobileHtml=nav.slice(0,5).map(x=>'<button type="button" class="'+(ownerTab===x[0]?"active":"")+'" data-otab="'+x[0]+'"><span>'+x[1]+"</span><b>"+x[2]+"</b></button>").join("");
+ host.innerHTML=`<div class="v23-owner-grid">
+   <aside class="v23-owner-sidebar">
+     <div class="v23-owner-brand"><img src="${logo}" alt="CHAoui PRO"><div><b>CHAoui PRO</b><small>${role} COMMAND CENTER</small></div></div>
+     <div class="v23-owner-nav">${navHtml}</div>
+     <button class="v23-btn danger" id="v23OwnerLogout" type="button" style="width:100%;margin-top:12px">تسجيل الخروج</button>
+   </aside>
+   <main class="v23-owner-main">
+     <div class="v23-owner-top"><div><h1>${esc(ownerTab==="overview"?"مركز القيادة":nav.find(x=>x[0]===ownerTab)?.[2]||"لوحة الإدارة")}</h1><p>إدارة البطولة واللاعبين والمباريات من مكان واحد.</p></div><span class="v23-owner-badge">${role}</span></div>
+     <div id="v23OwnerBody"></div>
+   </main>
+ </div><nav class="v23-owner-nav-mobile">${mobileHtml}</nav>`;
  bindOwnerNav(host);
 }
 function bindOwnerNav(host){host.querySelectorAll("[data-otab]").forEach(b=>b.onclick=async()=>{ownerTab=b.dataset.otab;await renderOwner()});$("v23OwnerLogout")?.addEventListener("click",()=>window.logoutUser?.())}
@@ -166,10 +192,21 @@ async function renderOwner(){
   body.innerHTML='<div class="v23-owner-kpis"><div class="v23-owner-kpi"><span>اللاعبون</span><b>'+o.players.length+'</b></div><div class="v23-owner-kpi"><span>بطولات مفتوحة</span><b>'+open+'</b></div><div class="v23-owner-kpi"><span>مباشرة</span><b>'+live+'</b></div><div class="v23-owner-kpi"><span>تدخل مطلوب</span><b>'+(o.registrations.length+activeMatches+issues)+'</b></div></div><section class="v23-owner-section"><div class="v23-owner-card"><div class="v23-section-head"><h3>أهم ما يحتاج تدخلك</h3><span>NOW</span></div><div class="v23-list"><div class="v23-row"><div class="v23-row-main"><b>طلبات التسجيل</b><small>قبول، لائحة انتظار أو رفض</small></div><div class="v23-row-meta"><span class="v23-pill gold">'+o.registrations.length+'</span><button class="v23-btn" data-otab="registrations">فتح</button></div></div><div class="v23-row"><div class="v23-row-main"><b>مباريات نشطة</b><small>نتائج مجدولة أو في انتظار التأكيد</small></div><div class="v23-row-meta"><span class="v23-pill cyan">'+activeMatches+'</span><button class="v23-btn" data-otab="matches">فتح</button></div></div><div class="v23-row"><div class="v23-row-main"><b>مشكلات مفتوحة</b><small>شكايات تحتاج متابعة</small></div><div class="v23-row-meta"><span class="v23-pill red">'+issues+'</span><button class="v23-btn danger" data-otab="issues">فتح</button></div></div></div></div></section><section class="v23-owner-section"><div class="v23-owner-card"><div class="v23-section-head"><h3>البطولات الأخيرة</h3><button class="v23-btn gold" data-action="create">+ إنشاء بطولة</button></div><div class="v23-list">'+(o.tournaments.slice(0,6).map(t=>'<div class="v23-row"><div class="v23-row-main"><b>'+esc(t.name)+'</b><small>'+esc(t.format||"1VS1")+' · '+Number(t.current_players||0)+'/'+Number(t.capacity||0)+'</small></div><div class="v23-row-meta">'+statusLabel(t.status)+'<button class="v23-btn" data-action="tournament" data-id="'+esc(t.id)+'">فتح</button></div></div>').join("")||'<div class="v23-empty"><b>مازال ما كاينة حتى بطولة.</b>أنشئ أول بطولة.</div>')+'</div></div></section>';
  } else if(ownerTab==="registrations"){
   const pids=[...new Set(o.registrations.map(x=>x.player_id).filter(Boolean))],tids=[...new Set(o.registrations.map(x=>x.tournament_id).filter(Boolean))];
-  const [pr,tr]=await Promise.all([pids.length?supabaseClient.from("profiles").select("id,display_name,username,efootball_name,rating").in("id",pids):Promise.resolve({data:[]}),tids.length?supabaseClient.from("tournaments").select("id,name").in("id",tids):Promise.resolve({data:[]})]);
+  const [pr,tr]=await Promise.all([
+    pids.length?supabaseClient.from("profiles").select("id,display_name,username,efootball_name,rating").in("id",pids):Promise.resolve({data:[]}),
+    tids.length?supabaseClient.from("tournaments").select("id,name,capacity,current_players").in("id",tids):Promise.resolve({data:[]})
+  ]);
   const pm={};(pr.data||[]).forEach(x=>pm[x.id]=x);const tm={};(tr.data||[]).forEach(x=>tm[x.id]=x);
-  body.innerHTML='<section class="v23-owner-section"><div class="v23-owner-card"><div class="v23-section-head"><h3>طلبات التسجيل</h3><span>'+o.registrations.length+' PENDING</span></div><div class="v23-list">'+(o.registrations.map(r=>{const p=pm[r.player_id]||{};const t=tm[r.tournament_id]||{};return '<div class="v23-row"><div class="v23-row-main"><b>'+esc(p.display_name||r.registration_name||"Player")+'</b><small>'+esc(t.name||"Tournament")+' · '+esc(r.registration_efootball_name||p.efootball_name||"eFootball")+' · '+esc(r.registration_whatsapp||"")+'</small></div><div class="v23-row-meta">'+statusLabel(r.status)+'</div></div>'}).join("")||'<div class="v23-empty"><b>ما كايناش طلبات معلقة.</b>كل التسجيلات معالجة.</div>')+'</div></div></section>';
- } else if(ownerTab==="tournaments"){
+  const pending=o.registrations.filter(x=>x.status==="pending"),waitlist=o.registrations.filter(x=>x.status==="waitlist"),processed=o.registrations.filter(x=>["accepted","rejected"].includes(x.status));
+  body.innerHTML='<section class="v23-owner-section"><div class="v23-owner-card"><div class="v23-section-head"><div><h3>طلبات التسجيل</h3><span>'+pending.length+' جديدة · '+waitlist.length+' انتظار · '+processed.length+' معالجة</span></div><span>REVIEW</span></div><div class="v23-list">'+
+    (o.registrations.slice().sort((a,b)=>String(a.status).localeCompare(String(b.status))).map(r=>{
+      const p=pm[r.player_id]||{},t=tm[r.tournament_id]||{};
+      const actions=r.status==="pending"||r.status==="waitlist"
+        ? '<button class="v23-btn gold" data-review="accepted" data-id="'+esc(r.id)+'">قبول</button><button class="v23-btn" data-review="waitlist" data-id="'+esc(r.id)+'">انتظار</button><button class="v23-btn danger" data-review="rejected" data-id="'+esc(r.id)+'">رفض</button>'
+        : '';
+      return '<article class="v23-row" data-registration-row="'+esc(r.id)+'"><div class="v23-row-main"><b>'+esc(p.display_name||r.registration_name||"Player")+'</b><small>'+esc(t.name||"Tournament")+' · '+esc(r.registration_efootball_name||p.efootball_name||"eFootball")+' · WhatsApp '+esc(r.registration_whatsapp||"—")+'</small><small>الوقت: '+esc(r.preferred_time||"—")+' · الاتصال: '+esc(r.connection_type||"—")+' · '+fmtDate(r.created_at)+'</small></div><div class="v23-row-meta">'+statusLabel(r.status)+actions+'</div></article>';
+    }).join("")||'<div class="v23-empty"><b>ما كايناش تسجيلات دابا.</b>منين لاعب يسجل غادي يبان هنا للمراجعة.</div>')+'</div></div></section>';
+} else if(ownerTab==="tournaments"){
   body.innerHTML='<section class="v23-owner-section"><div class="v23-owner-card"><div class="v23-section-head"><h3>إدارة البطولات</h3><button class="v23-btn gold" data-action="create">+ بطولة جديدة</button></div><div class="v23-list">'+(o.tournaments.map(t=>'<div class="v23-row"><div class="v23-row-main"><b>'+esc(t.name)+'</b><small>'+esc(t.game||"eFootball")+' · '+esc(t.format||"1VS1")+' · '+Number(t.current_players||0)+'/'+Number(t.capacity||0)+'</small></div><div class="v23-row-meta">'+statusLabel(t.status)+'<button class="v23-btn" data-action="tournament" data-id="'+esc(t.id)+'">فتح</button></div></div>').join("")||'<div class="v23-empty"><b>لا بطولات.</b>أنشئ أول وحدة.</div>')+'</div></div></section>';
  } else if(ownerTab==="players"){
   body.innerHTML='<section class="v23-owner-section"><div class="v23-owner-card"><div class="v23-section-head"><h3>اللاعبون</h3><span>'+o.players.length+' TOTAL</span></div><input class="v23-owner-search" id="v23PlayerSearch" placeholder="قلب بالاسم أو username..."><div class="v23-list" id="v23PlayersList" style="margin-top:9px">'+o.players.map(p=>'<div class="v23-row v23-player-owner-row" data-search="'+esc((p.display_name||"")+" "+(p.username||""))+'"><div class="v23-row-main"><b>'+esc(p.display_name||p.username||"Player")+'</b><small>@'+esc(p.username||"player")+' · '+esc(p.role||"player")+' · Rating '+Number(p.rating||0)+'</small></div><div class="v23-row-meta"><span class="v23-pill cyan">'+Number(p.rating||0)+'</span>'+(p.role==="player"&&window.currentProfile?.role==="owner"?'<button class="v23-btn" data-action="organizer" data-id="'+esc(p.id)+'">إدارة الصلاحية</button>':"")+'</div></div>').join("")+'</div></div></section>';
@@ -189,6 +226,13 @@ function bindOwnerBody(body){
  body.querySelectorAll("[data-otab]").forEach(b=>b.onclick=async()=>{ownerTab=b.dataset.otab;await renderOwner()});
  body.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>window.showPage?.(b.dataset.page));
  bindPageButtons(body);
+ body.querySelectorAll("[data-review]").forEach(b=>b.onclick=async()=>{
+   const id=b.dataset.id,decision=b.dataset.review;if(!id)return;
+   body.querySelectorAll("[data-review]").forEach(x=>x.disabled=true);
+   const r=await supabaseClient.rpc("review_tournament_registration",{p_registration_id:id,p_decision:decision});
+   if(r.error){toast(r.error.message==="CAPACITY_REACHED"?"البطولة عامرة دابا. دير Waitlist أو زيد السعة.":"تعذر تحديث التسجيل.");await renderOwner();return}
+   toast(decision==="accepted"?"تم قبول اللاعب ✓":decision==="waitlist"?"تحط فـ لائحة الانتظار ✓":"تم رفض التسجيل ✓");await renderOwner();
+ });
  body.querySelectorAll("[data-setting]").forEach(b=>b.onclick=async()=>{if(window.currentProfile?.role!=="owner")return;const key=b.dataset.setting;const value=!Boolean(ownerCache.settings?.[key]);const r=await supabaseClient.from("app_settings").update({[key]:value}).eq("id",1);if(r.error)return toast("تعذر تغيير الإعداد.");toast("تبدلات حالة المنصة ✓");await renderOwner()});
 }
 async function renderStaff(){
