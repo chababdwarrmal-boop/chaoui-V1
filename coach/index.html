@@ -96,15 +96,34 @@ function render(){document.getElementById('recommended').innerHTML=programs.slic
 function filterPrograms(type,btn){document.querySelectorAll('#programTabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('programList').innerHTML=programs.filter(p=>type==='all'||p.type===type).map(p=>'<div class="card"><div class="sectionhead"><div><span class="tag">'+p.time+'</span><h3>'+p.name+'</h3></div><button class="play" onclick="startProgram('+JSON.stringify(p.id)+')">▶ Démarrer</button></div><p>'+p.desc+'</p><p style="color:var(--muted);margin-top:8px">Étapes : '+p.items.length+'</p></div>').join('')}
 function filterExercises(cat,btn){document.querySelectorAll('#exerciseTabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('exerciseList').innerHTML=exercises.filter(e=>cat==='all'||e.cat===cat).map(exerciseCard).join('')}
 function startSession(){go('warmup');runSequence('warm')}
-function startProgram(id){let p=programs.find(x=>x.id===id);if(!p)return;alert('Programme « '+p.name+' » prêt. Commence par l’échauffement puis suis les étapes dans l’ordre.');go('warmup')}
-function doExercise(name,time){go('timer');document.getElementById('timerLabel').textContent=name;let m=parseInt(time)||5;setTimer(Math.min(120,m*60))}
+function startProgram(id){
+let p=programs.find(x=>x.id===id); if(!p)return;
+go('program');
+const list=p.items.map((id,i)=>id==='warm'?['🔥','Échauffement','8–10 min']:id==='cool'?['🧘','Récupération','5–8 min']:(()=>{const e=exercises.find(x=>x.id===id);return e?['⚽',e.name,e.time]:['⚽','Étape training','5 min']})());
+document.getElementById('programList').innerHTML='<div class="card"><span class="tag">'+p.time+'</span><h3>'+p.name+'</h3><p>'+p.desc+'</p><div class="list" style="margin-top:14px">'+list.map((x,i)=>'<div class="row"><div><b>'+(i+1)+'. '+x[0]+' '+x[1]+'</b><p>'+x[2]+'</p></div><button class="play" onclick="programStep('+JSON.stringify(x[1])+','+JSON.stringify(x[2])+')">▶ Start</button></div>').join('')+'</div><br><button class="cta" onclick="markSession('+JSON.stringify(p.time)+')">✓ Terminer la séance</button></div>';
+}(name,time){go('timer');document.getElementById('timerLabel').textContent=name;let m=parseInt(time)||5;setTimer(Math.min(120,m*60))}
 function quick(cat){let e=exercises.find(x=>x.cat===cat);if(e)doExercise(e.name,e.time)}
 function runSequence(type){go('timer');document.getElementById('timerLabel').textContent=type==='warm'?'ÉCHAUFFEMENT':'RÉCUPÉRATION';setTimer(60);setTimeout(toggleTimer,250)}
 function setTimer(sec){clearInterval(timer.interval);timer.seconds=timer.total=sec;timer.running=false;document.getElementById('timerBtn').textContent='▶ Démarrer';paintTimer()}
 function resetTimer(){setTimer(timer.total)}
 function paintTimer(){let m=String(Math.floor(timer.seconds/60)).padStart(2,'0'),s=String(timer.seconds%60).padStart(2,'0');document.getElementById('time').textContent=m+':'+s;document.getElementById('bar').style.width=(timer.seconds/timer.total*100)+'%'}
 function toggleTimer(){if(timer.running){clearInterval(timer.interval);timer.running=false;document.getElementById('timerBtn').textContent='▶ Reprendre';return}if(timer.seconds<=0)setTimer(timer.total);timer.running=true;document.getElementById('timerBtn').textContent='⏸ Pause';timer.interval=setInterval(()=>{timer.seconds--;paintTimer();if(timer.seconds<=0){clearInterval(timer.interval);timer.running=false;document.getElementById('timerBtn').textContent='↻ Recommencer';navigator.vibrate?.([180,80,180]);}},1000)}
-function intervalTimer(work,rest){timer.work=work;timer.rest=rest;timer.phase='work';timer.round=1;document.getElementById('timerLabel').textContent='TRAVAIL • '+work+'s / REPOS • '+rest+'s';setTimer(work);setTimeout(toggleTimer,250)}
+function intervalTimer(work,rest){
+clearInterval(timer.interval);timer.work=work;timer.rest=rest;timer.phase='work';timer.round=1;
+document.getElementById('timerLabel').textContent='TRAVAIL • '+work+'s / REPOS • '+rest+'s';
+timer.seconds=timer.total=work;timer.running=false;paintTimer();timer.running=true;document.getElementById('timerBtn').textContent='⏸ Pause';
+timer.interval=setInterval(()=>{
+ timer.seconds--;paintTimer();
+ if(timer.seconds<=0){
+   if(timer.phase==='work'){timer.phase='rest';timer.seconds=timer.total=rest;document.getElementById('timerLabel').textContent='REPOS • '+rest+'s';}
+   else{timer.round++;timer.phase='work';timer.seconds=timer.total=work;document.getElementById('timerLabel').textContent='TRAVAIL • '+work+'s • Tour '+timer.round;}
+   paintTimer();navigator.vibrate?.([120]);
+ }
+},1000);
+}
+function markSession(time){
+ const mins=parseInt(time)||30;state.done+=1;state.minutes+=mins;state.week+=1;save();alert('Séance terminée ✓');go('home');
+}
 render();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
