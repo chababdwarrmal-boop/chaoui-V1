@@ -1,0 +1,13 @@
+{
+  "name":"Coach Football Offline",
+  "short_name":"Coach Football",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#07110d",
+  "theme_color":"#07110d",
+  "description":"Coach de football personnel utilisable hors ligne.",
+  "icons":[
+    {"src":"../icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"../icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
