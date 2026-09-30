@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07110d">
+<meta name="description" content="Coach Football Offline — entraînement, timer, échauffement, tactique et progression sans internet.">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>Coach Football Offline</title>
+<style>
+:root{--bg:#07110d;--panel:#0d1b15;--panel2:#11251c;--line:#20382d;--text:#f4faf6;--muted:#91a69b;--accent:#55e38a;--accent2:#b7ffcf;--danger:#ff7777;--shadow:0 18px 50px #0006}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#173b29 0,#07110d 38%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit;border:0;cursor:pointer}.app{max-width:1100px;margin:auto;padding:18px 18px 100px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.ball{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#8cffb4,#26ad63);display:grid;place-items:center;font-size:23px;box-shadow:0 10px 30px #35d87933}.brand b{font-size:19px}.brand small{display:block;color:var(--muted);margin-top:2px}.offline{border:1px solid #315240;background:#10251a;padding:9px 12px;border-radius:999px;color:var(--accent2);font-size:12px}
+.hero{background:linear-gradient(135deg,#153b27,#0c2118 58%,#102019);border:1px solid #2b513d;border-radius:26px;padding:24px;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero:after{content:"⚽";position:absolute;right:-8px;bottom:-30px;font-size:170px;opacity:.06;transform:rotate(-18deg)}.eyebrow{color:var(--accent);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.12em}.hero h1{font-size:clamp(28px,5vw,48px);margin:8px 0}.hero p{color:#b9cfc3;max-width:650px;line-height:1.6;margin:0 0 18px}.cta{background:var(--accent);color:#06120b;font-weight:800;padding:13px 18px;border-radius:14px}.ghost{background:#ffffff0a;border:1px solid #ffffff16;padding:12px 16px;border-radius:14px}.actions{display:flex;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.stat,.card{background:#0c1913;border:1px solid var(--line);border-radius:18px;padding:16px}.stat strong{font-size:25px}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:5px}.section{margin-top:25px}.section h2{margin:0 0 12px;font-size:21px}.sectionhead{display:flex;justify-content:space-between;align-items:center}.link{background:none;color:var(--accent);font-size:13px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card h3{margin:0 0 7px}.card p{color:var(--muted);line-height:1.5;margin:0;font-size:14px}.tag{display:inline-block;background:#153225;color:var(--accent2);padding:5px 8px;border-radius:8px;font-size:11px;margin-bottom:10px}.exercise{display:flex;justify-content:space-between;gap:12px;align-items:center}.exercise .meta{color:var(--muted);font-size:12px}.play{background:#153b27;color:var(--accent);border:1px solid #28573e;padding:9px 12px;border-radius:11px}.tabs{display:flex;gap:7px;overflow:auto;padding:5px 0 12px;scrollbar-width:none}.tabs button{white-space:nowrap;background:#0d1b15;border:1px solid var(--line);padding:10px 13px;border-radius:12px;color:var(--muted)}.tabs button.active{background:#183a29;color:var(--accent2);border-color:#376c4e}.page{display:none}.page.active{display:block}.bottom{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:min(1100px,100%);padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:#07110df2;backdrop-filter:blur(18px);border-top:1px solid #1c3228;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.bottom button{background:none;color:var(--muted);padding:7px 3px;font-size:11px}.bottom button b{display:block;font-size:18px;margin-bottom:2px}.bottom button.active{color:var(--accent)}.timer{background:linear-gradient(145deg,#10251a,#09150f);border:1px solid #294b38;border-radius:24px;padding:25px;text-align:center}.timer .time{font-variant-numeric:tabular-nums;font-size:72px;font-weight:800;letter-spacing:.03em;margin:8px 0}.timerbar{height:8px;background:#172a20;border-radius:99px;overflow:hidden}.timerbar i{display:block;height:100%;background:var(--accent);width:100%;transition:width .2s}.timergrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}.timergrid button{padding:13px;border-radius:13px;background:#173426;border:1px solid #2a513d}.timergrid .main{background:var(--accent);color:#06120b;font-weight:800}.list{display:grid;gap:9px}.row{background:#0d1b15;border:1px solid var(--line);padding:13px 14px;border-radius:14px;display:flex;justify-content:space-between;align-items:center}.progress{height:10px;background:#16281f;border-radius:99px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:var(--accent);border-radius:99px}.field{display:grid;gap:7px;margin:10px 0}.field input,.field select{width:100%;background:#09150f;color:var(--text);border:1px solid var(--line);padding:12px;border-radius:12px;outline:none}.tactic{position:relative;aspect-ratio:1.45;background:linear-gradient(#1c673e,#12512f);border-radius:20px;border:3px solid #70c98f55;overflow:hidden}.tactic:before,.tactic:after{content:"";position:absolute;left:0;right:0;border-top:2px solid #ffffff33;top:50%}.tactic:after{left:50%;top:0;bottom:0;border-top:0;border-left:2px solid #ffffff33}.dot{position:absolute;width:42px;height:42px;border-radius:50%;background:#fff;color:#10251a;display:grid;place-items:center;font-size:11px;font-weight:800;box-shadow:0 5px 12px #0004}.dot.g{background:#06120b;color:#fff;border:2px solid var(--accent)}.tip{background:#10271b;border-left:3px solid var(--accent);padding:12px 14px;border-radius:10px;color:#c8d8ce;line-height:1.5}.empty{color:var(--muted);padding:22px;text-align:center;border:1px dashed var(--line);border-radius:15px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.app{padding:14px 14px 96px}.hero{padding:20px}.timer .time{font-size:56px}}
+@media(min-width:801px){.bottom{position:static;transform:none;width:auto;background:none;border:0;backdrop-filter:none;margin-top:30px;border-radius:20px;grid-template-columns:repeat(5,1fr)}.bottom button{border:1px solid var(--line);background:#0c1913;border-radius:13px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="brand"><div class="ball">⚽</div><div><b>Coach Football</b><small>Offline • Training Assistant</small></div></div><div class="offline">● 100% OFFLINE</div></header>
+
+<div id="home" class="page active">
+<section class="hero"><div class="eyebrow">Ta séance du jour</div><h1>Entraîne-toi comme un joueur sérieux.</h1><p>Un coach personnel dans ton téléphone : échauffement, exercices, chrono, tactique, récupération et progression. Les fonctions essentielles restent disponibles sans internet.</p><div class="actions"><button class="cta" onclick="startWorkout()">▶ Commencer la séance</button><button class="ghost" onclick="go('training')">Voir le programme</button></div></section>
+<div class="grid"><div class="stat"><strong id="statSessions">0</strong><span>Séances terminées</span></div><div class="stat"><strong id="statMinutes">0</strong><span>Minutes entraînées</span></div><div class="stat"><strong id="statStreak">0</strong><span>Jours consécutifs</span></div><div class="stat"><strong id="statLevel">Débutant</strong><span>Niveau actuel</span></div></div>
+<section class="section"><div class="sectionhead"><h2>Programme du jour</h2><button class="link" onclick="go('training')">Tout voir</button></div><div id="todayCards" class="cards"></div></section>
+<section class="section"><h2>Avant de commencer</h2><div class="tip">💧 Eau prête • 👟 chaussures adaptées • 🧠 100% concentration • 🩹 arrête-toi si une douleur anormale apparaît.</div></section>
+</div>
+
+<div id="training" class="page">
+<section class="section"><div class="sectionhead"><h2>Training</h2><button class="link" onclick="startWorkout()">▶ Démarrer</button></div><div class="tabs" id="trainingTabs"><button class="active" onclick="filterTraining('all',this)">Tout</button><button onclick="filterTraining('speed',this)">Vitesse</button><button onclick="filterTraining('ball',this)">Ballon</button><button onclick="filterTraining('fitness',this)">Fitness</button><button onclick="filterTraining('finish',this)">Finition</button></div><div id="trainingList" class="list"></div></section>
+</div>
+
+<div id="exercises" class="page">
+<section class="section"><h2>Bibliothèque d'exercices</h2><div class="cards" id="exerciseGrid"></div></section>
+</div>
+
+<div id="timer" class="page">
+<section class="section"><h2>Timer de coach</h2><div class="timer"><div class="eyebrow" id="timerLabel">PRÊT</div><div class="time" id="time">00:30</div><div class="timerbar"><i id="bar"></i></div><div class="timergrid"><button class="main" onclick="toggleTimer()" id="timerBtn">▶ Démarrer</button><button onclick="resetTimer()">↺ Reset</button><button onclick="setTimer(30)">30 sec</button><button onclick="setTimer(60)">60 sec</button></div></div><div class="section"><h2>Intervalles</h2><div class="cards"><div class="card"><span class="tag">TRAVAIL</span><h3>30 secondes</h3><p>Explosivité, dribble, sprint court.</p></div><div class="card"><span class="tag">REPOS</span><h3>20 secondes</h3><p>Respire et prépare la répétition suivante.</p></div></div></div></section>
+</div>
+
+<div id="progress" class="page">
+<section class="section"><h2>Ma progression</h2><div class="card"><div class="sectionhead"><b>Objectif hebdomadaire</b><b id="goalText">0 / 3 séances</b></div><div class="progress"><i id="goalBar" style="width:0%"></i></div></div><div class="section"><div class="cards" id="skills"></div></div><div class="section"><h2>Ajouter une séance</h2><div class="card"><div class="field"><label>Minutes entraînées</label><input id="minutesInput" type="number" min="1" value="45"></div><button class="cta" onclick="logSession()">+ Enregistrer la séance</button></div></div></section>
+</div>
+
+<div id="tactical" class="page">
+<section class="section"><h2>Tactical Board</h2><div class="card"><div class="field"><label>Formation</label><select id="formation" onchange="drawFormation()"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option></select></div><div id="pitch" class="tactic"></div></div><div class="section"><h2>Principes</h2><div class="cards"><div class="card"><span class="tag">DÉFENSE</span><h3>Bloc compact</h3><p>Garde les distances courtes entre défense, milieu et attaque.</p></div><div class="card"><span class="tag">ATTAQUE</span><h3>Créer la largeur</h3><p>Écarte le jeu pour ouvrir des espaces à l'intérieur.</p></div><div class="card"><span class="tag">TRANSITION</span><h3>Réagir vite</h3><p>Après perte : pression immédiate ou repli organisé.</p></div></div></div></section>
+</div>
+
+<div id="warmup" class="page">
+<section class="section"><h2>🔥 Échauffement — 8 min</h2><div id="warmList" class="list"></div><div class="section"><button class="cta" onclick="runSequence('warm')">▶ Lancer l'échauffement</button></div></section>
+</div>
+
+<div id="cooldown" class="page">
+<section class="section"><h2>🧘 Cool-down — 5 min</h2><div id="coolList" class="list"></div><div class="section"><div class="tip">Respire lentement. Les étirements doivent rester confortables, jamais forcés.</div><br><button class="cta" onclick="runSequence('cool')">▶ Lancer la récupération</button></div></section>
+</div>
+
+<nav class="bottom">
+<button class="active" data-page="home" onclick="go('home')"><b>⌂</b>Accueil</button>
+<button data-page="training" onclick="go('training')"><b>🏃</b>Training</button>
+<button data-page="exercises" onclick="go('exercises')"><b>⚽</b>Exercices</button>
+<button data-page="timer" onclick="go('timer')"><b>⏱</b>Timer</button>
+<button data-page="progress" onclick="go('progress')"><b>📈</b>Progress</button>
+</nav>
+</div>
+<script>
+const exercises=[
+{id:'s1',cat:'speed',name:'Sprints 10m',desc:'6 accélérations explosives avec retour en marchant.',time:'8 min'},
+{id:'s2',cat:'speed',name:'Échelle imaginaire',desc:'Petits appuis rapides : avant, latéral, entrée-sortie.',time:'6 min'},
+{id:'b1',cat:'ball',name:'Conduite pied faible',desc:'Conduis le ballon uniquement avec ton pied faible.',time:'10 min'},
+{id:'b2',cat:'ball',name:'Slalom 6 cônes',desc:'Contrôle proche du pied, changement de direction.',time:'8 min'},
+{id:'b3',cat:'ball',name:'Contrôle orienté',desc:'Contrôle vers l'espace puis accélération.',time:'8 min'},
+{id:'f1',cat:'finish',name:'Finition 1 touche',desc:'Contrôle court puis frappe précise dans les zones.',time:'10 min'},
+{id:'f2',cat:'finish',name:'Frappe pied faible',desc:'Séries de frappes placées sans chercher la puissance.',time:'8 min'},
+{id:'fit1',cat:'fitness',name:'Circuit 4×',desc:'Squats, fentes, gainage et mountain climbers.',time:'12 min'},
+{id:'fit2',cat:'fitness',name:'Endurance intervalle',desc:'40s course / 20s marche × 8.',time:'8 min'}
+];
+const warm=[['Course légère','2 min'],['Mobilité chevilles + genoux','1 min'],['Ouverture hanches','1 min'],['Montées de genoux','1 min'],['Talons-fesses','1 min'],['Pas latéraux','1 min'],['3 accélérations progressives','1 min']];
+const cool=[['Marche lente + respiration','1 min'],['Mollets','1 min'],['Quadriceps','1 min'],['Ischio-jambiers','1 min'],['Hanches + respiration','1 min']];
+let state=JSON.parse(localStorage.getItem('coachOffline')||'null')||{sessions:0,minutes:0,days:0,lastDay:null,skills:{Vitesse:50,Ballon:50,Physique:45,Finition:40}};
+let timer={seconds:30,total:30,running:false,interval:null};
+
+function save(){localStorage.setItem('coachOffline',JSON.stringify(state));updateStats()}
+function updateStats(){
+document.getElementById('statSessions').textContent=state.sessions;document.getElementById('statMinutes').textContent=state.minutes;document.getElementById('statStreak').textContent=state.days;document.getElementById('statLevel').textContent=state.minutes<180?'Débutant':state.minutes<600?'Intermédiaire':'Avancé';
+let n=Math.min(state.sessions,3);document.getElementById('goalText').textContent=n+' / 3 séances';document.getElementById('goalBar').style.width=(n/3*100)+'%';
+document.getElementById('skills').innerHTML=Object.entries(state.skills).map(([k,v])=>'<div class="card"><div class="sectionhead"><b>'+k+'</b><span>'+v+'%</span></div><div class="progress"><i style="width:'+v+'%"></i></div></div>').join('');
+}
+function go(page){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('.bottom button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));window.scrollTo({top:0,behavior:'smooth'});if(page==='tactical')drawFormation()}
+function cardsFor(list){return list.map(e=>'<div class="card exercise"><div><span class="tag">'+({speed:'VITESSE',ball:'BALLON',fitness:'FITNESS',finish:'FINITION'}[e.cat])+'</span><h3>'+e.name+'</h3><p>'+e.desc+'</p><div class="meta">⏱ '+e.time+'</div></div><button class="play" onclick="openTimer('+JSON.stringify(e.name)+')">▶</button></div>').join('')}
+function render(){document.getElementById('todayCards').innerHTML=cardsFor(exercises.slice(0,3));filterTraining('all',document.querySelector('#trainingTabs button'));document.getElementById('exerciseGrid').innerHTML=exercises.map(e=>'<div class="card"><span class="tag">'+({speed:'VITESSE',ball:'BALLON',fitness:'FITNESS',finish:'FINITION'}[e.cat])+'</span><h3>'+e.name+'</h3><p>'+e.desc+'</p><br><button class="play" onclick="openTimer('+JSON.stringify(e.name)+')">▶ Faire cet exercice</button></div>').join('');document.getElementById('warmList').innerHTML=warm.map(x=>'<div class="row"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('');document.getElementById('coolList').innerHTML=cool.map(x=>'<div class="row"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('');updateStats()}
+function filterTraining(cat,btn){document.querySelectorAll('#trainingTabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('trainingList').innerHTML=cardsFor(cat==='all'?exercises:exercises.filter(e=>e.cat===cat))}
+function startWorkout(){go('warmup');runSequence('warm')}
+function runSequence(type){setTimer(type==='warm'?60:60);document.getElementById('timerLabel').textContent=type==='warm'?'ÉCHAUFFEMENT':'RÉCUPÉRATION';go('timer');setTimeout(toggleTimer,250)}
+function openTimer(name){go('timer');document.getElementById('timerLabel').textContent=name;setTimer(30)}
+function setTimer(sec){clearInterval(timer.interval);timer.seconds=timer.total=sec;timer.running=false;document.getElementById('timerBtn').textContent='▶ Démarrer';paintTimer()}
+function resetTimer(){setTimer(timer.total)}
+function paintTimer(){let m=String(Math.floor(timer.seconds/60)).padStart(2,'0'),s=String(timer.seconds%60).padStart(2,'0');document.getElementById('time').textContent=m+':'+s;document.getElementById('bar').style.width=(timer.seconds/timer.total*100)+'%'}
+function toggleTimer(){if(timer.running){clearInterval(timer.interval);timer.running=false;document.getElementById('timerBtn').textContent='▶ Reprendre';return}timer.running=true;document.getElementById('timerBtn').textContent='⏸ Pause';timer.interval=setInterval(()=>{timer.seconds--;paintTimer();if(timer.seconds<=0){clearInterval(timer.interval);timer.running=false;document.getElementById('timerBtn').textContent='↻ Recommencer';navigator.vibrate?.([180,80,180]);}},1000)}
+function logSession(){let mins=Math.max(1,parseInt(document.getElementById('minutesInput').value||45));let today=new Date().toISOString().slice(0,10);if(state.lastDay!==today){state.days+=1;state.lastDay=today}state.sessions++;state.minutes+=mins;Object.keys(state.skills).forEach(k=>state.skills[k]=Math.min(100,state.skills[k]+Math.ceil(mins/30)));save();alert('Séance enregistrée ✓');go('progress')}
+function drawFormation(){let f=document.getElementById('formation').value;let coords={ '4-3-3':[['G',8,50],['DC',24,25],['DC',24,75],['DL',27,8],['DR',27,92],['MC',48,30],['MC',48,50],['MC',48,70],['AG',72,15],['BU',78,50],['AD',72,85]], '4-4-2':[['G',8,50],['DC',24,30],['DC',24,70],['DL',27,8],['DR',27,92],['MG',48,12],['MC',48,40],['MC',48,60],['MD',48,88],['BU',76,38],['BU',76,62]], '4-2-3-1':[['G',8,50],['DC',24,30],['DC',24,70],['DL',27,8],['DR',27,92],['M',46,38],['M',46,62],['AG',65,18],['MOC',62,50],['AD',65,82],['BU',80,50]], '3-5-2':[['G',8,50],['DC',24,25],['DC',24,50],['DC',24,75],['MG',48,8],['MC',48,32],['MC',48,50],['MC',48,68],['MD',48,92],['BU',78,38],['BU',78,62]]};document.getElementById('pitch').innerHTML=coords[f].map(x=>'<div class="dot '+(x[0]==='G'?'g':'')+'" style="left:calc('+x[2]+'% - 21px);top:calc('+x[1]+'% - 21px)">'+x[0]+'</div>').join('')}
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
